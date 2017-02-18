@@ -1,5 +1,9 @@
 import os
 
+def _swap_ship(position_1, position_2, player, space_ship, game_board):
+    game_board[position_2][player].update({space_ship:game_board[position_1][player][space_ship]}) 
+    del game_board[position_1][player][space_ship]
+
 def _build_board(game_board, size):
     """Build an empty game board.
         
@@ -54,9 +58,9 @@ def _build_from_cis(path, game_data):
                             
                                   
 game_data ={}
-_build_board(game_data, 40)
+_build_board(game_data, 5)
 _build_from_cis('C:/Users/Hugo/Desktop/test.cis', game_data)
-
+_swap_ship((1,1), (2,2), 0, 'titanic', game_data)
 print game_data
 
 
