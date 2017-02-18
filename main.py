@@ -1,19 +1,43 @@
 import os
 
-def _build_board(data, size):
+def _build_board(game_board, size):
+    """Build an empty game board.
+        
+    Parameters
+    -------
+    game_board: empty dict that will contain all the element board (dict)
+    size: size of the board (x, y size must be the same ????) (tuple (int, int))
+    """
     for x in range(1,size+1):
         for y in range(1,size+1):
-            data[(x, y)] = {0:{}, 1:{}, 2:{}} #build each element of the board (empty dict for player 0,1,2) 
+            game_board[(x, y)] = {0:{}, 1:{}, 2:{}} #build each element of the board (empty dict for player 0,1,2) 
 
 def _add_ship(player, position, ship_info, game_board):
+    """Add a ship to a certain position.
+        
+    Parameters
+    -------
+    player: is the player's number (0: abandoned, 1:player1, 2:player2) (int)
+    position: position for the new spaceship (tuple(int, int))
+    ship_info: ship info (see data structure ???) (dict)
+    game_board: contains all the game board element (dict)
+    """
     game_board[position][player].update(ship_info)
     
  
 def _build_from_cis(path, game_data):
+    """Build game board from .cis file
+        
+    Parameters
+    -------
+    path: path to the cis file (str)
+    game_data: game board (dict)
+    """
+    
     fh = open(path, 'r')
     
-    if not fh:
-        return 0
+    #if not fh:
+        #Gestion d'erreur ? 
         
     lines_list = fh.readlines();
     for line in lines_list[1:]:
