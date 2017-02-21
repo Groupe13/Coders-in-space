@@ -20,14 +20,27 @@ def _attack_position(position, ship_info, game_board):
                 del game_board[position][player] #delete the ship from the game
 
 def _move_ship(position_1, position_2, player, space_ship, game_board):
+    """Move the ship of a player to an antoher position
+    Parameters:
+    ------------
+    position_1: The initial position of the ship (tuple(int, int))
+    position_2: The final position of the ship (tuple(int, int))
+    player: The player who makes the move (int) #Use???????????????????
+    space_ship: The name of the ship (str)
+    game_board: The board of the game (dict)
+    
+    Notes:
+    ---------
+    player: Must be one of this possibilities(0: abandoned, 1:player1, 2:player2)
+    """
     game_board[position_2][player].update({space_ship:game_board[position_1][player][space_ship]}) #CAN BE IMPROVED
     del game_board[position_1][player][space_ship]
 
 def _build_board(game_board, size):
     """Build an empty game board.
         
-    Parameters
-    -------
+    Parameters:
+    ------------
     game_board: empty dict that will contain all the element board (dict)
     size: size of the board (x, y size must be the same ????) (tuple (int, int))
     """
@@ -39,8 +52,8 @@ def _build_board(game_board, size):
 def _add_ship(player, position, ship_info, game_board):
     """Add a ship to a certain position.
         
-    Parameters
-    -------
+    Parameters:
+    -----------
     player: is the player's number (0: abandoned, 1:player1, 2:player2) (int)
     position: position for the new spaceship (tuple(int, int))
     ship_info: ship info (see data structure ???) (dict)
@@ -52,8 +65,8 @@ def _add_ship(player, position, ship_info, game_board):
 def _build_from_cis(path, game_data):
     """Build game board from .cis file
         
-    Parameters
-    -------
+    Parameters:
+    ------------
     path: path to the cis file (str)
     game_data: game board (dict)
     """
@@ -72,7 +85,21 @@ def _build_from_cis(path, game_data):
         
         _add_ship(0, (int(line_elements[0]), int(line_elements[1])), ship_info, game_data) #cast str to int to get the coordonates
                 
-                   
+def _buy_boat(player, game_data):
+    """Buy the boat for a given player
+   
+    Parameters:
+    ------------
+    player: The player who buy a boat (int)
+    game_data: The game board (dict)
+    
+    Notes:
+    ---------
+    player: Must be one of this possibilities(0: abandoned, 1:player1, 2:player2)
+    """
+    
+                       
+                                                             
  ###TEST ZONE###               
  
                     
