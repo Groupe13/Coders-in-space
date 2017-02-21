@@ -2,7 +2,13 @@ import os
 import math
 def _ship_characteristic(ship_type):
     if ship_type == 'battlecruiser':
-        return {}
+        return {'max_speed':1, 'health':20, 'attack':4, 'range':10, 'cost':30}
+    elif ship_type == 'destroyer':
+        return {'max_speed':2, 'health':8, 'attack':2, 'range':7, 'cost':20}
+    elif ship_type == 'fighter':
+        return {'max_speed':5, 'health':3, 'attack':1, 'range':5, 'cost':10}
+    else:
+        print 'error'
         
 
 def _attack_position(position, ship_info, game_board):
@@ -29,18 +35,7 @@ def _build_board(game_board, size):
         for y in range(1,size+1):
             game_board[(x, y)] = {0:{}, 1:{}, 2:{}} #build each element of the board (empty dict for player 0,1,2) 
 
-def _update_ui(game_board):
-    #print 'Len board : %d' % (len(game_board)) 
-    board_size = int(math.sqrt(len(game_board)))
-    
-    for x in range(board_size):
-        for y in range(board_size):
-            print '------------------------------------------'.center(190, ' ')
-    
-    for i in range (40):
-        print 'yoyoyoy'
-            
-            
+                        
 def _add_ship(player, position, ship_info, game_board):
     """Add a ship to a certain position.
         
