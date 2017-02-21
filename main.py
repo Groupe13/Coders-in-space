@@ -1,7 +1,20 @@
 import os
+import math
+def _ship_characteristic(ship_type):
+    if ship_type == 'battlecruiser':
+        return {}
+        
 
-def _swap_ship(position_1, position_2, player, space_ship, game_board):
-    game_board[position_2][player].update({space_ship:game_board[position_1][player][space_ship]}) 
+def _attack_position(position, ship_info, game_board):
+    damage = ship_info['damage']
+    for player in game_board[position]: #iterate through the players
+        for ship in player: #iterate through the player's ship
+            ship['health'] -= damage #apply damages
+            if ship['health'] <= 0: #verify if the ship his destroyed
+                del game_board[position][player] #delete the ship from the game
+
+def _move_ship(position_1, position_2, player, space_ship, game_board):
+    game_board[position_2][player].update({space_ship:game_board[position_1][player][space_ship]}) #CAN BE IMPROVED
     del game_board[position_1][player][space_ship]
 
 def _build_board(game_board, size):
@@ -16,6 +29,18 @@ def _build_board(game_board, size):
         for y in range(1,size+1):
             game_board[(x, y)] = {0:{}, 1:{}, 2:{}} #build each element of the board (empty dict for player 0,1,2) 
 
+def _update_ui(game_board):
+    #print 'Len board : %d' % (len(game_board)) 
+    board_size = int(math.sqrt(len(game_board)))
+    
+    for x in range(board_size):
+        for y in range(board_size):
+            print '------------------------------------------'.center(190, ' ')
+    
+    for i in range (40):
+        print 'yoyoyoy'
+            
+            
 def _add_ship(player, position, ship_info, game_board):
     """Add a ship to a certain position.
         
@@ -53,15 +78,19 @@ def _build_from_cis(path, game_data):
         _add_ship(0, (int(line_elements[0]), int(line_elements[1])), ship_info, game_data) #cast str to int to get the coordonates
                 
                    
- ###TEST ZONE###                     
+ ###TEST ZONE###               
+ 
+                    
+                                                 
                          
                             
                                   
 game_data ={}
 _build_board(game_data, 5)
 _build_from_cis('C:/Users/Hugo/Desktop/test.cis', game_data)
-_swap_ship((1,1), (2,2), 0, 'titanic', game_data)
-print game_data
+_move_ship((1,1), (2,2), 0, 'titanic', game_data)
+_update_ui(game_data)
+#print game_data
 
 
 
