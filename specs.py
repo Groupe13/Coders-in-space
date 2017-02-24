@@ -1,3 +1,9 @@
+def main(path):
+    """principal function which contain the game
+    Parameters:
+    -----------
+    path: path of the .cis file which contains information to play  
+    """
 def _ship_characteristic(ship_type):
     """return a dictionnary of information for a type of boat
     
