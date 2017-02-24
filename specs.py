@@ -1,3 +1,10 @@
+def _make_action(dictionnary, 
+def _game_loop(dictionnary):
+    """Start the game until the end
+    Parameters:
+    -----------
+    dictionnary: dictionnary which contain the informations of the game
+    """
 def main(path):
     """principal function which contain the game
     Parameters:
