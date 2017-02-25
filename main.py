@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import math
 def _ship_characteristic(ship_type):
@@ -33,45 +34,134 @@ def _move_ship(position_1, position_2, player, space_ship, game_board):
     ---------
     player: Must be one of this possibilities(0: abandoned, 1:player1, 2:player2)
     """
-    #Check the speed of the ship and make the move
-    #initial_position = game_data['ships'][%d][%s] %(player,space_ship) 
+    #1=up,2=up-right,3=right,4=down-right,5=down;6=down-left,7=left,8=up-left
+    #go through the dic to get all the ship names
+    for team in range(0,3):
+        for elements in game_data['ships'][team]:
+            #Get info for each ship
+            current_pos = game_data['ships'][team][elements]
+            current_speed = game_data['board'][current_pos][team][elements]['speed']
+            current_orientation = game_data['board'][current_pos][team][elements]['orientation']
+            converted_pos = str(current_pos)
+            x = converted_pos[1]
+            y = converted_pos[4]
+            
+            #Move #****SI > BOARD : retirer taille board !! ou x/y <0 : ajouter taille board ========> pour faire un tore************************************************* 
+            # A faire vérifier !
+            
+            if current_orientation == 1:
+                y += current_speed
+                if y > board_size_y: #Check si dépasse du board
+                    y -= board_size_y #Remède au problème et fait "traverser" le board
+           
+            elif current_orientation == 2:
+                #X = ? Y = ?
+                if y > board_size_y:
+                    y -= board_size_y
+                if x > board_size_x:
+                    x -= board_size_x
+                    
+            elif current_orientation == 3:
+                x += current_speed
+                if x > board_size_x:
+                    x -= board_size_x
+           
+            elif current_orientation == 4:
+                #X = ? Y = ?
+                if x > board_size_x:
+                    x -= board_size_x
+                if y < 0:
+                    y += board_size_y
+          
+            elif current_orientation == 5:
+                y -= current_speed
+                if y < 0:
+                    y += board_size_y
+           
+            elif current_orientation == 6:
+                #X = ? Y = ?
+                if x < 0:
+                    x += board_size_x
+                if y < 0:
+                    y += board_size_y
+          
+            elif current_orientation == 7:
+                x -= current_speed
+                if x < 0:
+                    x += board_size_x
+           
+            elif current_orientation == 8:
+                #X = ? Y = ?
+                if x < 0:
+                    x += board_size_x
+                if y > board_size_y:
+                    y -= board_size_y
+                
+    #Update pos...
+    #######################################
     
-    #...
-    game_board[position_2][player].update({space_ship:game_board[position_1][player][space_ship]}) #CAN BE IMPROVED
-    del game_board[position_1][player][space_ship]
+    #pas utilisé / vérif; 
+    #game_board[position_2][player].update({space_ship:game_board[position_1][player][space_ship]}) #CAN BE IMPROVED
+    #del game_board[position_1][player][space_ship]
   
     
 def _turn_ship(space_ship,direction,game_data,player):
     """Change the orientation of a ship
     Parameters:
     ------------
-    direction: Must be right(Anti-clockwise) or left(clockwise) (str)
     space_ship: The name of the ship (str)
+    direction: Must be right(Anti-clockwise) or left(clockwise) (str)
     game_data: The board and all the informations of the game (dict)
     player: The player who makes the move (int)
     """
     #1=up,2=up-right,3=right,4=down-right,5=down;6=down-left,7=left,8=up-left
-   
+    #Get the current direction
+    position = game_data['ships'][%d][%s] %(player,space_ship)
+    direction = game_data['board'][%s][%d][%s]['orientation'] %(position,player,space_ship)
+    
     if direction == 'right':#Anti-clockwise
-        position = game_data['ships'][%d][%s] %(player,space_ship)
-        direction = game_data['board'][%s][%d][%s]['orientation'] %(position,player,space_ship)
         if direction == 1:
             new_direction = 8
         else: 
             new_direction = direction - 1
     
     elif direction == 'left':#clockwise
-        position = game_data['ships'][%d][%s] %(player,space_ship)
-        direction = game_data['board'][%s][%d][%s]['orientation'] %(position,player,space_ship)
         if direction == 8:
             new_direction = 1
         else: 
             new_direction = direction + 1
+   
+    #Update the information
+    game_data['board'][%s][%d][%s]['orientation'] %(position,player,space_ship) = new_direction
 
-def _ship_acceleration(way):
+
+def _ship_acceleration(space_ship,way,game_data,player):
+    """Change the acceleration of a ship
+    Parameters:
+    ------------
+    space_ship: The name of the ship (str)
+    way: Must be slower or faster (str)
+    game_data: The board and all the informations of the game (dict)
+    player: The player who makes the move (int)
+    """
+    #Get the current speed
+    position = game_data['ships'][%d][%s] %(player,space_ship)
+    speed = game_data['board'][%s][%d][%s]['speed'] %(position,player,space_ship)
+    max_speed = _ship_characteristic(%s) %(game_data['board'][position][player][space_ship]['type']
+    max_speed = max_speed['max_speed']
     
+    #faster
+    if way == 'faster':
+        if speed < max_speed:
+            speed += 1
+    #slower
+    if way == 'slower':
+        if speed > 0:
+            speed -= 1
+    #update
+    game_data['board'][%s][%d][%s]['speed'] %(position,player,space_ship) = speed
 
-
+            
 def _build_board(game_board, size):
     """Build an empty game board.
         
@@ -151,6 +241,41 @@ _update_ui(game_data)
 #print game_data
 
 
+
+
+
+game_data = {'board': {(1, 1): {0: {}, 1: {}, 2: {}},
+           (1, 2): {0: {'Jeanhip': {'health': 20,
+                                    'orientation': 1,
+                                    'type': 'battlecruiser',
+                                    'speed': 1}},
+                    1: {},
+                    2: {}},
+           (1, 3): {0: {}, 1: {}, 2: {}},
+           (2, 1): {0: {'Msship': {'health': 20,
+                                   'orientation': 2,
+                                   'type': 'battlecruiser',
+                                   'speed': 1}},
+                    1: {},
+                    2: {}},
+           (2, 2): {0: {}, 1: {}, 2: {}},
+           (2, 3): {0: {}, 1: {}, 2: {}},
+           (3, 1): {0: {}, 1: {}, 2: {}},
+           (3, 2): {0: {}, 1: {}, 2: {}},
+           (3, 3): {0: {}, 1: {}, 2: {}}},
+ 'ships': {0: {'Jeanhip': (1, 2), 'Msship': (2, 1)}, 1: {}, 2: {}}}
+for team in range(0,3):
+    for elements in game_data['ships'][team]:
+        #Get info for each ship
+        current_pos = game_data['ships'][team][elements]
+        current_speed = game_data['board'][current_pos][team][elements]['speed']
+        current_orientation = game_data['board'][current_pos][team][elements]['orientation']
+        print current_pos
+        positionstr = str(current_pos)
+        posX= positionstr[1]
+        posY= positionstr[4]
+        print positionstr
+        print posX,posY
 
 
 
