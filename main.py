@@ -39,10 +39,37 @@ def _move_ship(position_1, position_2, player, space_ship, game_board):
     #...
     game_board[position_2][player].update({space_ship:game_board[position_1][player][space_ship]}) #CAN BE IMPROVED
     del game_board[position_1][player][space_ship]
-    #...
-def _turn_ship #TODO
-def _faster_ship #TODO
-def _slower_ship #TODO
+  
+    
+def _turn_ship(space_ship,direction,game_data,player):
+    """Change the orientation of a ship
+    Parameters:
+    ------------
+    direction: Must be right(Anti-clockwise) or left(clockwise) (str)
+    space_ship: The name of the ship (str)
+    game_data: The board and all the informations of the game (dict)
+    player: The player who makes the move (int)
+    """
+    #1=up,2=up-right,3=right,4=down-right,5=down;6=down-left,7=left,8=up-left
+   
+    if direction == 'right':#Anti-clockwise
+        position = game_data['ships'][%d][%s] %(player,space_ship)
+        direction = game_data['board'][%s][%d][%s]['orientation'] %(position,player,space_ship)
+        if direction == 1:
+            new_direction = 8
+        else: 
+            new_direction = direction - 1
+    
+    elif direction == 'left':#clockwise
+        position = game_data['ships'][%d][%s] %(player,space_ship)
+        direction = game_data['board'][%s][%d][%s]['orientation'] %(position,player,space_ship)
+        if direction == 8:
+            new_direction = 1
+        else: 
+            new_direction = direction + 1
+
+def _ship_acceleration(way):
+    
 
 
 def _build_board(game_board, size):
