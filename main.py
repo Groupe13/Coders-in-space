@@ -79,14 +79,14 @@ def _turn_ship(space_ship,direction,game_data,player):
     direction = game_data['board'][position][player][space_ship]['orientation']
     
     if direction == 'right':#Anti-clockwise
-        if direction == 1:
-            new_direction = 8
+        if direction == 0:
+            new_direction = 7
         else: 
             new_direction = direction - 1
     
     elif direction == 'left':#clockwise
-        if direction == 8:
-            new_direction = 1
+        if direction == 7:
+            new_direction = 0
         else: 
             new_direction = direction + 1
    
