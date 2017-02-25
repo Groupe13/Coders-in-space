@@ -64,11 +64,62 @@ def _move_ship(ship_name, player, game_data):
     game_data['ships'][player][ship_name] = new_position
 
 
-def _turn_ship(space_ship, direction, game_data, player):
-    """"""
+def _turn_ship(space_ship,direction,game_data,player):
+    """Change the orientation of a ship
+    Parameters:
+    ------------
+    space_ship: The name of the ship (str)
+    direction: Must be right(Anti-clockwise) or left(clockwise) (str)
+    game_data: The board and all the informations of the game (dict)
+    player: The player who makes the move (int)
+    """
+    #0=up,1=up-right,2=right,3=down-right,4=down;5=down-left,6=left,7=up-left
+    #Get the current direction
+    position = game_data['ships'][player][space_ship]
+    direction = game_data['board'][position][player][space_ship]['orientation']
+    
+    if direction == 'right':#Anti-clockwise
+        if direction == 1:
+            new_direction = 8
+        else: 
+            new_direction = direction - 1
+    
+    elif direction == 'left':#clockwise
+        if direction == 8:
+            new_direction = 1
+        else: 
+            new_direction = direction + 1
+   
+    #Update the information
+    game_data['board'][position][player][space_ship]['orientation'] = new_direction
 
 
-def _ship_acceleration(space_ship, way, game_data, player):
+def _ship_acceleration(space_ship,way,game_data,player):
+    """Change the acceleration of a ship
+    Parameters:
+    ------------
+    space_ship: The name of the ship (str)
+    way: Must be slower or faster (str)
+    game_data: The board and all the informations of the game (dict)
+    player: The player who makes the move (int)
+    """
+    #Get the current speed
+    position = game_data['ships'][player][space_ship]
+    speed = game_data['board'][position][player][space_ship]['speed']
+    max_speed = _ship_characteristic(game_data['board'][position][player][space_ship]['type'])
+    max_speed = max_speed['max_speed']
+    
+    #faster
+    if way == 'faster':
+        if speed < max_speed:
+            speed += 1
+    #slower
+    if way == 'slower':
+        if speed > 0:
+            speed -= 1
+    #update
+    game_data['board'][position][player][space_ship]['speed'] = speed
+
     """"""
 
 
