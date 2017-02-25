@@ -23,9 +23,9 @@ def _move_ship(position_1, position_2, player, space_ship, game_board):
     """Move the ship of a player to an antoher position
     Parameters:
     ------------
-    position_1: The initial position of the ship (tuple(int, int))
+    position_1: The initial position of the ship (tuple(int, int)) #Useless
     position_2: The final position of the ship (tuple(int, int))
-    player: The player who makes the move (int) #Use???????????????????
+    player: The player who makes the move (int)
     space_ship: The name of the ship (str)
     game_board: The board of the game (dict)
     
@@ -33,8 +33,17 @@ def _move_ship(position_1, position_2, player, space_ship, game_board):
     ---------
     player: Must be one of this possibilities(0: abandoned, 1:player1, 2:player2)
     """
+    #Check the speed of the ship and make the move
+    #initial_position = game_data['ships'][%d][%s] %(player,space_ship) 
+    
+    #...
     game_board[position_2][player].update({space_ship:game_board[position_1][player][space_ship]}) #CAN BE IMPROVED
     del game_board[position_1][player][space_ship]
+    #...
+def _turn_ship #TODO
+def _faster_ship #TODO
+def _slower_ship #TODO
+
 
 def _build_board(game_board, size):
     """Build an empty game board.
