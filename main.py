@@ -64,7 +64,7 @@ def _move_ship(ship_name, player, game_data):
     game_data['ships'][player][ship_name] = new_position
 
 
-def _turn_ship(space_ship,direction,game_data,player):
+def _turn_ship(space_ship, direction_str ,game_data,player):
     """Change the orientation of a ship
     Parameters:
     ------------
@@ -78,20 +78,14 @@ def _turn_ship(space_ship,direction,game_data,player):
     position = game_data['ships'][player][space_ship]
     direction = game_data['board'][position][player][space_ship]['orientation']
     
-    if direction == 'right':#Anti-clockwise
-        if direction == 0:
-            new_direction = 7
-        else: 
-            new_direction = direction - 1
-    
-    elif direction == 'left':#clockwise
-        if direction == 7:
-            new_direction = 0
-        else: 
-            new_direction = direction + 1
+    if direction_str == 'right':#Anti-clockwise
+        direction -= 1
+    elif direction_str == 'left':#clockwise
+        direction += 1
    
     #Update the information
-    game_data['board'][position][player][space_ship]['orientation'] = new_direction
+    game_data['board'][position][player][space_ship]['orientation'] = direction % 8 #congruency in Z
+    print 'direction : ', direction % 8
 
 
 def _ship_acceleration(space_ship,way,game_data,player):
