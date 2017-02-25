@@ -162,7 +162,7 @@ def _ship_acceleration(space_ship,way,game_data,player):
     game_data['board'][%s][%d][%s]['speed'] %(position,player,space_ship) = speed
 
             
-def _build_board(game_board, size):
+def _build_board(game_board, x, y):
     """Build an empty game board.
         
     Parameters:
@@ -170,12 +170,12 @@ def _build_board(game_board, size):
     game_board: empty dict that will contain all the element board (dict)
     size: size of the board (x, y size must be the same ????) (tuple (int, int))
     """
-    for x in range(1,size+1):
-        for y in range(1,size+1):
-            game_board[(x, y)] = {0:{}, 1:{}, 2:{}} #build each element of the board (empty dict for player 0,1,2) 
+    for mx in range(1, x + 1):
+        for my in range(1, y + 1):
+            game_board[(mx, my)] = {0: {}, 1: {}, 2: {}}
 
                         
-def _add_ship(player, position, ship_info, game_board):
+def _add_ship(player, position, ship_name, ship_type, game_data):
     """Add a ship to a certain position.
         
     Parameters:
@@ -185,7 +185,8 @@ def _add_ship(player, position, ship_info, game_board):
     ship_info: ship info (see data structure ???) (dict)
     game_board: contains all the game board element (dict)
     """
-    game_board[position][player].update(ship_info)
+    game_data['board'][position][player][ship_name] = {'type':ship_type, 'orientation':'up', 'health':_ship_characteristics(ship_type)['health'], 'speed':0}
+    game_data['ships'][player][ship_name] = position
     
  
 def _build_from_cis(path, game_data):
@@ -196,20 +197,20 @@ def _build_from_cis(path, game_data):
     path: path to the cis file (str)
     game_data: game board (dict)
     """
-    
+
     fh = open(path, 'r')
-    
-    #if not fh:
-        #Gestion d'erreur ? 
-        
-    lines_list = fh.readlines();
+
+    lines_list = fh.readlines()
+    board_size = lines_list[0].split(' ')
+
+    _build_board(game_data['board'], int(board_size[0]), int(board_size[1]))
+
     for line in lines_list[1:]:
-        line_elements = line.split(' ') #split the line to get each element
-        ship_name = line_elements[2].split(':')#split to get the ship name and type
-        
-        ship_info = {ship_name[0]:{'type': ship_name[1], 'orientation':line_elements[3]}} #build shit info (type, orientation)
-        
-        _add_ship(0, (int(line_elements[0]), int(line_elements[1])), ship_info, game_data) #cast str to int to get the coordonates
+        line_elements = line.split(' ')  # split the line to get each element
+        ship_name_type = line_elements[2].split(':')  # split to get the ship name and type
+
+        _add_ship(0, (int(line_elements[0]), int(line_elements[1])), ship_name_type[0], ship_name_type[1],
+                  game_data)  # cast str to int to get the coordonates
                 
 def _buy_boat(player, game_data):
     """Buy the boat for a given player
