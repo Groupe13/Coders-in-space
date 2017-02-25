@@ -106,7 +106,7 @@ def _ship_acceleration(space_ship,way,game_data,player):
     #Get the current speed
     position = game_data['ships'][player][space_ship]
     speed = game_data['board'][position][player][space_ship]['speed']
-    max_speed = _ship_characteristic(game_data['board'][position][player][space_ship]['type'])
+    max_speed = _ship_characteristics(game_data['board'][position][player][space_ship]['type'])
     max_speed = max_speed['max_speed']
     
     #faster
