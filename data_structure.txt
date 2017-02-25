@@ -2,14 +2,14 @@ Data structure:
 {'board': {(1, 1): {0: {}, 1: {}, 2: {}},
            (1, 2): {0: {'Jeanhip': {'health': 20,
                                     'orientation': 1,
-                                    'type': 'battlecruiser'
+                                    'type': 'battlecruiser',
                                     'speed': 1}},
                     1: {},
                     2: {}},
            (1, 3): {0: {}, 1: {}, 2: {}},
            (2, 1): {0: {'Msship': {'health': 20,
                                    'orientation': 2,
-                                   'type': 'battlecruiser'
+                                   'type': 'battlecruiser',
                                    'speed': 1}},
                     1: {},
                     2: {}},
