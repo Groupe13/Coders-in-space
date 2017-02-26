@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-import os
-import math
 import pprint
 
 
 def _apply_tore(x, y, game_data):
-    """"""
     board_x = game_data['const']['board_size']['x']
     board_y = game_data['const']['board_size']['y']
-    print 'test', board_x,board_y
+    print 'test', board_x, board_y
 
     if x > board_x:
         x -= board_x
@@ -23,9 +20,7 @@ def _apply_tore(x, y, game_data):
     return (x, y)
 
 
-
 def _move_ship(ship_name, player, game_data):
-
     position = game_data['ships'][player][ship_name]
     print position
     x = position[0]
@@ -55,7 +50,6 @@ def _move_ship(ship_name, player, game_data):
         x -= speed
         y -= speed
 
-
     new_position = _apply_tore(x, y, game_data)
     print 'new position : ', new_position
     game_data['board'][new_position][player][ship_name] = game_data['board'][position][player][ship_name]
@@ -64,7 +58,7 @@ def _move_ship(ship_name, player, game_data):
     game_data['ships'][player][ship_name] = new_position
 
 
-def _turn_ship(space_ship, direction_str ,game_data,player):
+def _turn_ship(space_ship, direction_str, game_data, player):
     """Change the orientation of a ship
     Parameters:
     ------------
@@ -73,22 +67,22 @@ def _turn_ship(space_ship, direction_str ,game_data,player):
     game_data: The board and all the informations of the game (dict)
     player: The player who makes the move (int)
     """
-    #0=up,1=up-right,2=right,3=down-right,4=down;5=down-left,6=left,7=up-left
-    #Get the current direction
+    # 0=up,1=up-right,2=right,3=down-right,4=down;5=down-left,6=left,7=up-left
+    # Get the current direction
     position = game_data['ships'][player][space_ship]
     direction = game_data['board'][position][player][space_ship]['orientation']
-    
-    if direction_str == 'right':#Anti-clockwise
+
+    if direction_str == 'right':  # Anti-clockwise
         direction -= 1
-    elif direction_str == 'left':#clockwise
+    elif direction_str == 'left':  # clockwise
         direction += 1
-   
-    #Update the information
-    game_data['board'][position][player][space_ship]['orientation'] = direction % 8 #congruency in Z
+
+    # Update the information
+    game_data['board'][position][player][space_ship]['orientation'] = direction % 8  # congruency in Z
     print 'direction : ', direction % 8
 
 
-def _ship_acceleration(space_ship,way,game_data,player):
+def _ship_acceleration(space_ship, way, game_data, player):
     """Change the acceleration of a ship
     Parameters:
     ------------
@@ -97,21 +91,21 @@ def _ship_acceleration(space_ship,way,game_data,player):
     game_data: The board and all the informations of the game (dict)
     player: The player who makes the move (int)
     """
-    #Get the current speed
+    # Get the current speed
     position = game_data['ships'][player][space_ship]
     speed = game_data['board'][position][player][space_ship]['speed']
     max_speed = _ship_characteristics(game_data['board'][position][player][space_ship]['type'])
     max_speed = max_speed['max_speed']
-    
-    #faster
+
+    # faster
     if way == 'faster':
         if speed < max_speed:
             speed += 1
-    #slower
+    # slower
     if way == 'slower':
         if speed > 0:
             speed -= 1
-    #update
+    # update
     game_data['board'][position][player][space_ship]['speed'] = speed
 
     """"""
@@ -268,9 +262,8 @@ def _buy_boat(player, game_data):
     ###TEST ZONE###
 
 
-game_data = {'board': {}, 'ships': {0: {}, 1: {}, 2: {}}, 'const':{'board_size':{'x':0, 'y':0}}}
+game_data = {'board': {}, 'ships': {0: {}, 1: {}, 2: {}}, 'const': {'board_size': {'x': 0, 'y': 0}}}
 _build_from_cis('C:/Users/Hugo/Desktop/test.cis', game_data)
 pprint.pprint(game_data['board'])
 game_data['board'][(10, 2)][0]['hugo']['speed'] = 5
 _move_ship('hugo', 0, game_data)
-
