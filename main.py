@@ -108,8 +108,6 @@ def _ship_acceleration(space_ship, way, game_data, player):
     # update
     game_data['board'][position][player][space_ship]['speed'] = speed
 
-    """"""
-
 
 def _ship_characteristics(ship_type):
     if ship_type == 'battlecruiser':
