@@ -96,12 +96,11 @@ def _buy_boat(player, game_data):
     player: Must be one of this possibilities(0: abandoned, 1:player1, 2:player2)
     """
     
-def _is_in_range(boat_name, player, attack_position):
+def _is_in_range(ship_position, attack_position):
     """Verify is the case attacked is in the range of the boat
     Parameters:
     -----------
-    boat_name: name of the boat that has to attack (str)
-    player: number of the player who is playing (int)
+    ship_position: position of the ship which has to attack (tuple)
     attack_position: coordonate of the case that the boat has to attack (tuple)
         
     Returns:
