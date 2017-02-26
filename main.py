@@ -162,13 +162,32 @@ def _check_and_memory_attack(ship_name, player, attack_position):
     return attack_list
 
 
-def _attack_position(position, ship_info, game_board):
-    damage = ship_info['damage']
-    for player in game_board[position]:  # iterate through the players
-        for ship in player:  # iterate through the player's ship
-            ship['health'] -= damage  # apply damages
-            if ship['health'] <= 0:  # verify if the ship his destroyed
-                del game_board[position][player]  # delete the ship from the game
+def _make_attacks (attacks_list):
+
+    """makes the attacks that can be made
+    
+    Parameters:
+    -----------
+    attack_list: list of the attacks that can be made (list)
+
+    Notes:
+    ------
+    the list has to be made by "_check_and_memory_attack" 
+    """  
+    #get the information needed
+    for attack in atacks_list:
+        damage = attack[0]
+        position = attack[1]
+    
+    for player in game_data['board'][position]:
+        for ship in player:
+            #attack only player's ship
+            if player == 1 or player == 2:
+                ship['health'] -= damage  # apply damages
+                if ship['health'] <= 0:  # verify if the ship his destroyed
+                    # delete the ship from the game
+                    del game_data['board'][position][player][ship]
+                    del game_data['ships'][player][ship]
 
 
 def _build_board(game_board, x, y):
