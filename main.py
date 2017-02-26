@@ -149,17 +149,15 @@ def _check_and_memory_attack(ship_name, player, attack_position):
     attack_list = ()
     #get the position of the ship attacking
     ship_position = game_data[ships][player][ship_name]
-    #verify is the ship attacked is in the range of the ship attacking
-    in_range = is_in_range(ship_position, attack_position)
 
     #deals with the possible attack
-    if in_range:
+    if is_in_range(ship_position, attack_position):
         #get the type of the ship attacking
-        ship_type = game_data[board][ship_position][player][ship_name][type]
+        ship_type = game_data['board'][ship_position][player][ship_name][type]
         #get the information about the ship attacking
         information = _ship_characteristics(ship_type)
         #add the information of the possible attack
-        attack_list += information[attack]
+        attack_list += information['attack']
         attack_list += attack position
     return attack_list
 
