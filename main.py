@@ -5,6 +5,7 @@ import pprint
 def _apply_tore(x, y, game_data):
     board_x = game_data['const']['board_size']['x']
     board_y = game_data['const']['board_size']['y']
+    print 'test', board_x, board_y
 
     if x > board_x:
         x -= board_x
@@ -39,9 +40,6 @@ def _move_ship(ship_name, player, game_data):
     orientation = game_data['board'][position][player][ship_name]['orientation']
     speed = game_data['board'][position][player][ship_name]['speed']
 
-    if speed == 0:
-        return
-
     if orientation == 0:
         y -= speed
     elif orientation == 1:
@@ -64,49 +62,50 @@ def _move_ship(ship_name, player, game_data):
         y -= speed
 
     new_position = _apply_tore(x, y, game_data)
+    print 'new position : ', new_position
     game_data['board'][new_position][player][ship_name] = game_data['board'][position][player][ship_name]
     del game_data['board'][position][player][ship_name]
 
     game_data['ships'][player][ship_name] = new_position
 
 
-def _turn_ship(ship_name, direction_str, game_data, player):
+def _turn_ship(space_ship, direction_str, game_data, player):
     """Change the orientation of a ship
     Parameters:
     ------------
-    ship_name: The name of the ship (str)
+    space_ship: The name of the ship (str)
     direction: Must be right(Anti-clockwise) or left(clockwise) (str)
     game_data: The board and all the informations of the game (dict)
     player: The player who makes the move (int)
     """
     # 0=up,1=up-right,2=right,3=down-right,4=down;5=down-left,6=left,7=up-left
     # Get the current direction
-    position = game_data['ships'][player][ship_name]
-    direction = game_data['board'][position][player][ship_name]['orientation']
+    position = game_data['ships'][player][space_ship]
+    direction = game_data['board'][position][player][space_ship]['orientation']
 
     if direction_str == 'right':  # Anti-clockwise
-        direction += 1
-    elif direction_str == 'left':  # clockwise
         direction -= 1
+    elif direction_str == 'left':  # clockwise
+        direction += 1
 
     # Update the information
-    game_data['board'][position][player][ship_name]['orientation'] = direction % 8  # congruency in Z
+    game_data['board'][position][player][space_ship]['orientation'] = direction % 8  # congruency in Z
     print 'direction : ', direction % 8
 
 
-def _ship_acceleration(ship_name, way, game_data, player):
+def _ship_acceleration(space_ship, way, game_data, player):
     """Change the acceleration of a ship
     Parameters:
     ------------
-    ship_name: The name of the ship (str)
+    space_ship: The name of the ship (str)
     way: Must be slower or faster (str)
     game_data: The board and all the informations of the game (dict)
     player: The player who makes the move (int)
     """
     # Get the current speed
-    position = game_data['ships'][player][ship_name]
-    speed = game_data['board'][position][player][ship_name]['speed']
-    max_speed = _ship_characteristics(game_data['board'][position][player][ship_name]['type'])
+    position = game_data['ships'][player][space_ship]
+    speed = game_data['board'][position][player][space_ship]['speed']
+    max_speed = _ship_characteristics(game_data['board'][position][player][space_ship]['type'])
     max_speed = max_speed['max_speed']
 
     # faster
@@ -118,7 +117,7 @@ def _ship_acceleration(ship_name, way, game_data, player):
         if speed > 0:
             speed -= 1
     # update
-    game_data['board'][position][player][ship_name]['speed'] = speed
+    game_data['board'][position][player][space_ship]['speed'] = speed
 
 
 def _ship_characteristics(ship_type):
@@ -130,11 +129,6 @@ def _ship_characteristics(ship_type):
         return {'max_speed': 5, 'health': 3, 'attack': 1, 'range': 5, 'cost': 10}
     else:
         print 'error'
-
-def _is_in_range(target_position, ship_name, player, game_data):
-    current_position = game_data['ships'][player][ship_name]
-    ship_type = game_data['board'][current_position][player][ship_name]['type']
-    max_range = _ship_characteristics(ship_type)['range']
 
 def _check_and_memory_attack(ship_name, player, attack_position):
     """Returns a list of the attack if it can be made 
@@ -157,15 +151,17 @@ def _check_and_memory_attack(ship_name, player, attack_position):
     #variable declaration
     attack_list = ()
     #get the position of the ship attacking
-    ship_position = game_data['ships'][player][ship_name]
-    ship_type = game_data['board'][ship_position][player][ship_name]['type']
-    if _is_in_range(attack_position, ship_name, player, game_data):
+    ship_position = game_data[ships][player][ship_name]
+
+    #deals with the possible attack
+    if is_in_range(ship_position, attack_position):
         #get the type of the ship attacking
+        ship_type = game_data['board'][ship_position][player][ship_name][type]
         #get the information about the ship attacking
         information = _ship_characteristics(ship_type)
         #add the information of the possible attack
         attack_list += information['attack']
-        attack_list += attack_position
+        attack_list += attack position
     return attack_list
 
 
@@ -182,19 +178,19 @@ def _make_attacks (attacks_list):
     the list has to be made by "_check_and_memory_attack" 
     """  
     #get the information needed
-    for attack in attacks_list:
+    for attack in atacks_list:
         damage = attack[0]
         position = attack[1]
-
-        for player in game_data['board'][position]:
-            for ship in player:
-                #attack only player's ship
-                if player == 1 or player == 2:
-                    ship['health'] -= damage  # apply damages
-                    if ship['health'] <= 0:  # verify if the ship his destroyed
-                        # delete the ship from the game
-                        del game_data['board'][position][player][ship]
-                        del game_data['ships'][player][ship]
+    
+    for player in game_data['board'][position]:
+        for ship in player:
+            #attack only player's ship
+            if player == 1 or player == 2:
+                ship['health'] -= damage  # apply damages
+                if ship['health'] <= 0:  # verify if the ship his destroyed
+                    # delete the ship from the game
+                    del game_data['board'][position][player][ship]
+                    del game_data['ships'][player][ship]
 
 
 def _build_board(game_board, x, y):
@@ -210,7 +206,7 @@ def _build_board(game_board, x, y):
             game_board[(mx, my)] = {0: {}, 1: {}, 2: {}}
 
 
-def _add_ship(player, ship_name, ship_type, game_data, position = (1,1) ):
+def _add_ship(player, position, ship_name, ship_type, game_data):
     """Add a ship to a certain position.
 
     Parameters:
@@ -221,13 +217,11 @@ def _add_ship(player, ship_name, ship_type, game_data, position = (1,1) ):
     game_board: contains all the game board element (dict)
     """
     orientation = 1
-    if player == 1:
-        position = game_data['const']['default_position'][1]
     if player == 2:
-        position = game_data['const']['default_position'][2]
         orientation = 5
 
-    game_data['board'][position][player][ship_name] = {'type': ship_type, 'orientation': orientation, 'health': _ship_characteristics(ship_type)['health'], 'speed': 0}
+    game_data['board'][position][player][ship_name] = {'type': ship_type, 'orientation': orientation,
+                                                       'health': _ship_characteristics(ship_type)['health'], 'speed': 0}
     game_data['ships'][player][ship_name] = position
 
 
@@ -248,13 +242,6 @@ def _build_from_cis(path, game_data):
     x_board_size = int(board_size[0])
     y_board_size = int(board_size[1])
 
-    game_data['const']['default_position'] = {}
-    game_data['const']['default_position'][1] = (10,10)
-    game_data['const']['default_position'][2] = (x_board_size - 10, y_board_size - 10)
-
-
-    print game_data['const']['default_position'][1], game_data['const']['default_position'][2]
-
     _build_board(game_data['board'], x_board_size, y_board_size)
     game_data['const']['board_size']['x'] = x_board_size
     game_data['const']['board_size']['y'] = y_board_size
@@ -262,8 +249,8 @@ def _build_from_cis(path, game_data):
         line_elements = line.split(' ')  # split the line to get each element
         ship_name_type = line_elements[2].split(':')  # split to get the ship name and type
 
-        _add_ship(0, ship_name_type[0], ship_name_type[1],
-                  game_data, (int(line_elements[0]), int(line_elements[1])))  # cast str to int to get the coordonates
+        _add_ship(0, (int(line_elements[0]), int(line_elements[1])), ship_name_type[0], ship_name_type[1],
+                  game_data)  # cast str to int to get the coordonates
 
 
 def _buy_boat(player, game_data):
@@ -322,13 +309,10 @@ def _make_action(dictionnary, answer_one, answer_two):
         
 
     ###TEST ZONE###
-    ###TEST ZONE###
 
 
 game_data = {'board': {}, 'ships': {0: {}, 1: {}, 2: {}}, 'const': {'board_size': {'x': 0, 'y': 0}}}
 _build_from_cis('C:/Users/Hugo/Desktop/test.cis', game_data)
-_add_ship(1, 'hugo', 'fighter', game_data)
-#pprint.pprint(game_data['board'])
-_ship_acceleration('hugo', 'faster', game_data, 1)
-_move_ship('hugo', 1, game_data)
 pprint.pprint(game_data['board'])
+game_data['board'][(10, 2)][0]['hugo']['speed'] = 5
+_move_ship('hugo', 0, game_data)
