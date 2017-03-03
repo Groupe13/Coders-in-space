@@ -266,7 +266,47 @@ def _buy_boat(player, game_data):
     player: Must be one of this possibilities(0: abandoned, 1:player1, 2:player2)
     """
 
-
+def _make_action(dictionnary, answer_one, answer_two):
+    """
+    Parameters:
+    -----------
+    dictionnary: dictionnary which contain the informations of the game
+    answer_one: The command of the player one (str)
+    answer_two: The command of the player two (str)
+    """
+    
+    command = answer_one.split(' ')
+    for elements in command: #split all the str in command
+        action = elements.split(':') #split each command in two elements
+        if action[1] == 'slower':
+            _ship_acceleration(action[0],'slower', dictionnary, 1)
+        elif action[1] == 'faster':
+            _ship_acceleration(action[0],'faster', dictionnary, 1)
+        elif action[1] == 'right':
+            _turn_ship(action[0], 'right', dictionnary, 1)
+        elif action[1] == 'left':
+            _turn_ship(action[0], 'left', dictionnary, 1):
+        elif '-' in action[2]:
+            #TODO
+            coordstr = action[2].split('-')
+            x = coordstr[0]
+            y = coordstr[1]
+            
+            
+    command = answer_one.split(' ')
+    for elements in command: #split all the str in command
+        action = elements.split(':') #split each command in two elements
+        if action[1] == 'slower':
+            _ship_acceleration(action[0],'slower', dictionnary, 2)
+        elif action[1] == 'faster':
+            _ship_acceleration(action[0],'faster', dictionnary, 2)
+        elif action[1] == 'right':
+            _turn_ship(action[0], 'right', dictionnary,2)
+        elif action[1] == 'left':
+            _turn_ship(action[0], 'left', dictionnary, 2):
+        elif '-' in action[2]:
+            #TODO          
+        
 
     ###TEST ZONE###
 
