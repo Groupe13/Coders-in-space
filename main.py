@@ -21,6 +21,17 @@ def _apply_tore(x, y, game_data):
 
 
 def _move_ship(ship_name, player, game_data):
+    """Move the ship of a player to an antoher position
+    Parameters:
+    -----------
+    boat_name: name of the boat who is moving (str)
+    player: The player who makes the move (int) 
+    
+    
+    Notes:
+    ------
+    player: Must be one of this possibilities(0: abandoned, 1:player1, 2:player2)
+    """
     position = game_data['ships'][player][ship_name]
     print position
     x = position[0]
