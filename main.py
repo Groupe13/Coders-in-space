@@ -1,10 +1,46 @@
 # -*- coding: utf-8 -*-
 import pprint
+import random
 
+def _make_actions():
+    """"""
+
+def _game_loop(game_data):
+    """
+    """
+    while len(game_data['ships'][1]) > 0 and len(game_data['ships'][2]) > 0 and game_data['variables']['last_damage'] < 10: # <= ????
+        answer_one = raw_input('What does player one want to play?')
+        answer_two = raw_input('What does player two want to play?')
+        #_make_actions(game_data, answer_one, answer_two) # need to implement it
+
+    if game_data['variables']['last_damage'] == 10:
+        player_money1 = 0
+        player_money2 = 0
+        for player in game_data['ships']:
+            for ship in game_data['ships'][player]:
+                print player, ship
+                boat_type = game_data['board'][game_data['ships'][player][ship]][player][ship]['type']
+                if player == 1:
+                    player_money1 += game_data['boat_characteristics'][boat_type]['cost']
+                else:
+                    player_money2 += game_data['boat_characteristics'][boat_type]['cost']
+
+            if player_money1 > player_money2:
+                return 1
+            elif player_money1 > player_money2:
+                return 2
+            else:
+                winner = random.randint(1, 2)
+                return winner
+
+    elif len(game_data['ships'][1])==0:
+        return 2
+    elif len(game_data['ships'][2])==0:
+        return 1
 
 def _apply_tore(x, y, game_data):
-    board_x = game_data['const']['board_size']['x']
-    board_y = game_data['const']['board_size']['y']
+    board_x = game_data['variables']['board_size']['x']
+    board_y = game_data['variables']['board_size']['y']
 
     if x > board_x:
         x -= board_x
@@ -95,8 +131,7 @@ def _ship_acceleration(ship_name, way, game_data, player):
     # Get the current speed
     position = game_data['ships'][player][ship_name]
     speed = game_data['board'][position][player][ship_name]['speed']
-    max_speed = _ship_characteristics(game_data['board'][position][player][ship_name]['type'])
-    max_speed = max_speed['max_speed']
+    max_speed = game_data['boat_characteristics'][game_data['board'][position][player][ship_name]['type']]['max_speed'] #
 
     # faster
     if way == 'faster':
@@ -110,20 +145,10 @@ def _ship_acceleration(ship_name, way, game_data, player):
     game_data['board'][position][player][ship_name]['speed'] = speed
 
 
-def _ship_characteristics(ship_type):
-    if ship_type == 'battlecruiser':
-        return {'max_speed': 1, 'health': 20, 'attack': 4, 'range': 10, 'cost': 30}
-    elif ship_type == 'destroyer':
-        return {'max_speed': 2, 'health': 8, 'attack': 2, 'range': 7, 'cost': 20}
-    elif ship_type == 'fighter':
-        return {'max_speed': 5, 'health': 3, 'attack': 1, 'range': 5, 'cost': 10}
-    else:
-        print 'error'
-
 def _is_in_range(target_position, ship_name, player, game_data):
     current_position = game_data['ships'][player][ship_name]
     ship_type = game_data['board'][current_position][player][ship_name]['type']
-    max_range = _ship_characteristics(ship_type)['range']
+    max_range = game_data['boat_characteristics'][ship_type]['range']
 
 def _check_and_memory_attack(ship_name, player, attack_position):
     """Returns a list of the attack if it can be made
@@ -151,7 +176,7 @@ def _check_and_memory_attack(ship_name, player, attack_position):
     if _is_in_range(attack_position, ship_name, player, game_data):
         #get the type of the ship attacking
         #get the information about the ship attacking
-        information = _ship_characteristics(ship_type)
+        information = game_data['boat_characteristics'][ship_type]
         #add the information of the possible attack
         attack_list += information['attack']
         attack_list += attack_position
@@ -211,12 +236,12 @@ def _add_ship(player, ship_name, ship_type, game_data, position = (1,1) ):
     """
     orientation = 1
     if player == 1:
-        position = game_data['const']['default_position'][1]
+        position = game_data['variables']['default_position'][1]
     if player == 2:
-        position = game_data['const']['default_position'][2]
+        position = game_data['variables']['default_position'][2]
         orientation = 5
 
-    game_data['board'][position][player][ship_name] = {'type': ship_type, 'orientation': orientation, 'health': _ship_characteristics(ship_type)['health'], 'speed': 0}
+    game_data['board'][position][player][ship_name] = {'type': ship_type, 'orientation': orientation, 'health': game_data['boat_characteristics'][ship_type]['health'], 'speed': 0}
     game_data['ships'][player][ship_name] = position
 
 
@@ -237,16 +262,16 @@ def _build_from_cis(path, game_data):
     x_board_size = int(board_size[0])
     y_board_size = int(board_size[1])
 
-    game_data['const']['default_position'] = {}
-    game_data['const']['default_position'][1] = (10,10)
-    game_data['const']['default_position'][2] = (x_board_size - 10, y_board_size - 10)
+    game_data['variables']['default_position'] = {}
+    game_data['variables']['default_position'][1] = (10,10)
+    game_data['variables']['default_position'][2] = (x_board_size - 10, y_board_size - 10)
 
 
-    print game_data['const']['default_position'][1], game_data['const']['default_position'][2]
+    print game_data['variables']['default_position'][1], game_data['variables']['default_position'][2]
 
     _build_board(game_data['board'], x_board_size, y_board_size)
-    game_data['const']['board_size']['x'] = x_board_size
-    game_data['const']['board_size']['y'] = y_board_size
+    game_data['variables']['board_size']['x'] = x_board_size
+    game_data['variables']['board_size']['y'] = y_board_size
     for line in lines_list[1:]:
         line_elements = line.split(' ')  # split the line to get each element
         ship_name_type = line_elements[2].split(':')  # split to get the ship name and type
@@ -274,10 +299,34 @@ def _buy_boat(player, game_data):
     ###TEST ZONE###
 
 
-game_data = {'board': {}, 'ships': {0: {}, 1: {}, 2: {}}, 'const': {'board_size': {'x': 0, 'y': 0}}}
+
+
+game_data = {'board': {},
+             'boat_characteristics': {'battlecruiser': {'attack': 4,
+                                                        'cost': 30,
+                                                        'health': 20,
+                                                        'max_speed': 1,
+                                                        'range': 10},
+                                      'destroyer': {'attack': 2,
+                                                    'cost': 20,
+                                                    'health': 8,
+                                                    'max_speed': 2,
+                                                    'range': 7},
+                                      'fighter': {'attack': 1,
+                                                  'cost': 10,
+                                                  'health': 3,
+                                                  'max_speed': 5,
+                                                  'range': 5}},
+             'ships': {0: {}, 1: {}, 2: {}},
+             'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0}}
+
+pprint.pprint(game_data)
 _build_from_cis('C:/Users/Hugo/Desktop/test.cis', game_data)
 _add_ship(1, 'hugo', 'fighter', game_data)
 #pprint.pprint(game_data['board'])
 _ship_acceleration('hugo', 'faster', game_data, 1)
 _move_ship('hugo', 1, game_data)
-pprint.pprint(game_data['board'])
+#pprint.pprint(game_data['board'])
+
+game_data['variables']['last_damage'] = 10
+print _game_loop(game_data)
