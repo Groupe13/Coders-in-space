@@ -4,23 +4,23 @@ import pprint
 import random
 
 
-def process_order(game_data, player, player_orders, attacks):
+def process_order(player, player_orders, attacks, game_data):
     orders = player_orders.split(' ')
     for elements in orders:  # split all the str in orders
         action = elements.split(':')  # split each orders in two elements
         print 'TEST', action
         if action[1] == 'slower' or action[1] == 'faster':
-            _ship_acceleration(action[0], action[1], game_data, player)
+            _ship_acceleration(player, action[0], action[1], game_data)
         elif action[1] == 'right' or action[1] == 'left':
-            _turn_ship(action[0], action[1], game_data, player)
+            _turn_ship(player, action[0], action[1], game_data)
         elif '-' in action[1]:
             coord_str = action[1].split('-')
             target = (int(coord_str[0]), int(coord_str[1]))
-            _check_and_memory_attack(action[0], player, target,
+            _check_and_memory_attack(player, action[0], target,
                                      attacks, game_data)
 
 
-def _check_and_memory_attack(ship_name, player, attack_position, attacks_list, game_data):
+def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, game_data):
     """Append to a list the attack if it can be made
 
     Parameters:
@@ -38,7 +38,7 @@ def _check_and_memory_attack(ship_name, player, attack_position, attacks_list, g
     # get the position of the ship attacking
     ship_position = game_data['ships'][player][ship_name]
     ship_type = game_data['board'][ship_position][player][ship_name]['type']
-    if _is_in_range(attack_position, ship_name, player, game_data):
+    if _is_in_range(player, ship_name, attack_position, game_data):
         # get the type of the ship attacking
         # get the information about the ship attacking
         attacks_list.append(
@@ -46,7 +46,7 @@ def _check_and_memory_attack(ship_name, player, attack_position, attacks_list, g
              'power': game_data['boat_characteristics'][ship_type]['attack']})
 
 
-def _make_actions(game_data, player1_orders, players2_orders):
+def _make_actions(player1_orders, player2_orders, game_data):
     """
     Parameters:
     -----------
@@ -54,8 +54,9 @@ def _make_actions(game_data, player1_orders, players2_orders):
     player_orders: The orders of the player one (str)
     """
     attacks_list = list()
-    process_order(game_data, 1, player1_orders, attacks_list)
-    process_order(game_data, 2, players2_orders, attacks_list)
+    process_order(1, player1_orders, attacks_list, game_data)
+    process_order(2, player2_orders, attacks_list, game_data)
+
     _make_attacks(attacks_list, game_data)
 
 
@@ -68,7 +69,7 @@ def _game_loop(game_data):
 
         player1_orders = raw_input('What does player one want to play?')
         player2_orders = raw_input('What does player two want to play?')
-        _make_actions(game_data, player1_orders, player2_orders)  # need to implement it
+        _make_actions(player1_orders, player2_orders, game_data)  # need to implement it
         pprint.pprint(game_data['board'][(10, 10)])
 
     if game_data['variables']['last_damage'] == 10:
@@ -112,7 +113,7 @@ def _apply_tore(x_coordinate, y_coordinate, game_data):
     return x_coordinate, y_coordinate
 
 
-def _move_ship(ship_name, player, game_data):
+def _move_ship(player, ship_name, game_data):
     position = game_data['ships'][player][ship_name]
     x_coordinate = position[0]
     y_coordinate = position[1]
@@ -151,7 +152,7 @@ def _move_ship(ship_name, player, game_data):
     game_data['ships'][player][ship_name] = new_position
 
 
-def _turn_ship(ship_name, direction_str, game_data, player):
+def _turn_ship(player, ship_name, direction_str, game_data):
     """Change the orientation of a ship
     Parameters:
     ------------
@@ -174,7 +175,7 @@ def _turn_ship(ship_name, direction_str, game_data, player):
     game_data['board'][position][player][ship_name]['orientation'] = direction % 8  # congruency in Z
 
 
-def _ship_acceleration(ship_name, way, game_data, player):
+def _ship_acceleration(player, ship_name, way, game_data):
     """Change the acceleration of a ship
     Parameters:
     ------------
@@ -201,7 +202,7 @@ def _ship_acceleration(ship_name, way, game_data, player):
     game_data['board'][position][player][ship_name]['speed'] = speed
 
 
-def _is_in_range(target_position, ship_name, player, game_data):
+def _is_in_range(player, ship_name, target_position, game_data):
     current_position = game_data['ships'][player][ship_name]
     ship_type = game_data['board'][current_position][player][ship_name]['type']
     max_range = game_data['boat_characteristics'][ship_type]['range']
@@ -241,7 +242,7 @@ def _make_attacks(attacks_list, game_data):
                         game_data['board'][position][player][ship]['health'] = health
 
 
-def _build_board(game_board, x_size, y_size):
+def _build_board(x_size, y_size, game_board):
     """Build an empty game board.
 
     Parameters:
@@ -298,7 +299,7 @@ def _build_from_cis(path, game_data):
     game_data['variables']['default_position'][1] = (10, 10)
     game_data['variables']['default_position'][2] = (x_board_size - 10, y_board_size - 10)
 
-    _build_board(game_data['board'], x_board_size, y_board_size)
+    _build_board(x_board_size, y_board_size, game_data['board'])
     game_data['variables']['board_size']['x'] = x_board_size
     game_data['variables']['board_size']['y'] = y_board_size
     for line in lines_list[1:]:
