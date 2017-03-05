@@ -87,8 +87,8 @@ def _game_loop(game_data):
             and len(game_data['ships'][2]) > 0 \
             and game_data['variables']['last_damages'] < 10:
 
-        player1_orders = raw_input('What does player one want to play?')
-        player2_orders = raw_input('What does player two want to play?')
+        player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
+        player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
         _make_actions(player1_orders, player2_orders, game_data)  # need to implement it
         pprint.pprint(game_data['board'][(10, 10)])
 
@@ -309,12 +309,36 @@ def _build_board(x_size, y_size, game_board):
     ------------
     x_size: The size of the board in abscissa (int)
     y_size: The ziez of the board in ordinate (int)
-    game_board: empty dict that will contain all the element board (dict)
+    game_board: empty dict that will contain all the element of board (dict)
     """
     
     for x_coordinate in range(1, x_size + 1):
         for y_coordinate in range(1, y_size + 1):
             game_board[(x_coordinate, y_coordinate)] = {0: {}, 1: {}, 2: {}}
+
+
+    player1_orders = raw_input('Player1 - What boat do you want to buy ? :').lower()
+    player2_orders = raw_input('Player2 - What boat do you want to buy ? :').lower()
+
+    ship_list_player1 = player1_orders.split(' ')
+    ship_list_player2 = player2_orders.split(' ')
+    _buy_and_add_ships(1, ship_list_player1, game_data)
+    _buy_and_add_ships(2, ship_list_player2, game_data)
+
+
+def _buy_and_add_ships(player, ships_list, game_data):
+    """"""
+    wallet = game_data['variables']['wallet'][player]
+
+    for ship in ships_list:
+        name, ship_type = ship.split(':')
+        wallet -= game_data['boat_characteristics'][ship_type]['cost']
+        if wallet >= 0:
+            _add_ship(player, name, ship_type, game_data)
+
+    game_data['variables']['wallet'][player] = 0
+
+
 
 
 def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
@@ -376,6 +400,7 @@ def _build_from_cis(path, game_data):
                   (int(line_elements[0]),
                    int(line_elements[1])))  # cast str to int to get the coordonates
 
+
     ###TEST ZONE###
     ###TEST ZONE###
 
@@ -397,7 +422,7 @@ game_datas = {'board': {},
                                                   'max_speed': 5,
                                                   'range': 5}},
              'ships': {0: {}, 1: {}, 2: {}},
-             'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0}}
+             'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0, 'wallet':{1:100, 2:100}}}
 
 _build_from_cis('C:/Users/Hugo/Desktop/test.cis', game_datas)
 
@@ -409,8 +434,8 @@ ship_types = ('destroyer', 'battlecruiser', 'fighter')
 for name in names:
     t = random.randint(0, 2)
     team = random.randint(1, 2)
-    _add_ship(team, name, ship_types[t], game_datas)
+    #_add_ship(team, name, ship_types[t], game_datas)
 
 pprint.pprint(game_datas['ships'])
-
+pprint.pprint(game_datas['board'])
 _game_loop(game_datas)
