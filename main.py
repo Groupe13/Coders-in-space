@@ -74,6 +74,12 @@ def _make_actions(player1_orders, player2_orders, game_data):
 
     _make_attacks(attacks_list, game_data)
 
+def _move_all_ships(game_data):
+    """"""
+    for player in game_data['ships']:
+        if player != 0:
+            for ship_name in game_datas['ships'][player]:
+                _move_ship(player, ship_name, game_data)
 
 def _game_loop(game_data):
     """The main function wich choose a winner and execute the game.
@@ -82,7 +88,7 @@ def _game_loop(game_data):
     -----------
     game_data: The board and all the informations of the game (dict)
     """
-    
+
     while len(game_data['ships'][1]) > 0 \
             and len(game_data['ships'][2]) > 0 \
             and game_data['variables']['last_damages'] < 10:
@@ -90,7 +96,8 @@ def _game_loop(game_data):
         player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
         player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
         _make_actions(player1_orders, player2_orders, game_data)  # need to implement it
-        pprint.pprint(game_data['board'][(10, 10)])
+        _move_all_ships(game_data)
+
 
     if game_data['variables']['last_damage'] == 10:
         player_money1 = 0
@@ -317,6 +324,7 @@ def _build_board(x_size, y_size, game_board):
             game_board[(x_coordinate, y_coordinate)] = {0: {}, 1: {}, 2: {}}
 
 
+def _buy_ships(game_data):
     player1_orders = raw_input('Player1 - What boat do you want to buy ? :').lower()
     player2_orders = raw_input('Player2 - What boat do you want to buy ? :').lower()
 
@@ -434,8 +442,6 @@ ship_types = ('destroyer', 'battlecruiser', 'fighter')
 for name in names:
     t = random.randint(0, 2)
     team = random.randint(1, 2)
-    #_add_ship(team, name, ship_types[t], game_datas)
+    _add_ship(team, name, ship_types[t], game_datas)
 
-pprint.pprint(game_datas['ships'])
-pprint.pprint(game_datas['board'])
-_game_loop(game_datas)
+_move_all_ships(game_datas)
