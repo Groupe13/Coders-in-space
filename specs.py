@@ -1,4 +1,4 @@
-def process_order(player, player_orders, attaks_list, game_data):
+def _process_order(player, player_orders, attaks_list, game_data):
     """Procces an order asked by a player.
     
     Parameters:
