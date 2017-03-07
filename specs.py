@@ -10,7 +10,7 @@ def _process_order(player, player_orders, attaks_list, game_data):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Elise Hallaert (V.1 5/03/17)
     implementation: 
     """
 
@@ -33,7 +33,7 @@ def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, g
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Hugo Jacques (V.1 5/03/17)
     implementation: 
     """
  
@@ -48,7 +48,7 @@ def _make_actions(player1_orders, player2_orders, game_data):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Elise Hallaert (V.1 4/03/17)
     implementation: 
     """
 
@@ -61,7 +61,7 @@ def _game_loop(game_data):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Elise Hallaert (V.1 4/03/17)
     implementation: 
     """
 
@@ -76,7 +76,7 @@ def _apply_tore(x_coordinate, y_coordinate, game_data):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Hugo Jacques (V.1 4/03/17)
     implementation: 
     """
  
@@ -91,7 +91,7 @@ def _move_ship(player, ship_name, game_data):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Métens Guillaume (V.1 4/03/17)
     implementation: 
     """
  
@@ -107,7 +107,7 @@ def _turn_ship(player, ship_name, direction_str, game_data):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Métens Guillaume (V.1 4/03/17)
     implementation: 
     """
 
@@ -123,7 +123,7 @@ def _ship_acceleration(player, ship_name, way, game_data):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Hugo Jacques (V.1 4/03/17)
     implementation: 
     """
  
@@ -147,7 +147,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Métens Guillaume (V.1 5/03/17)
     implementation: 
     """
     
@@ -164,7 +164,7 @@ def _make_attacks(attacks_list, game_data):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Elise Hallaert (V.1 4/03/17)
     implementation: 
     """
  
@@ -179,7 +179,7 @@ def _build_board(x_size, y_size, game_board):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Hugo Jacques (V.1 3/03/17)
     implementation: 
     """
 
@@ -196,7 +196,7 @@ def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Métens Guillaume (V.1 3/03/17)
     implementation: 
     """
     
@@ -210,6 +210,6 @@ def _build_from_cis(path, game_data):
     
     Version:
     --------
-    specification: (V.1 /03/17)
+    specification: Elise Hallaert (V.1 3/03/17)
     implementation: 
     """
