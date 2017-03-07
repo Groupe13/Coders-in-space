@@ -259,6 +259,7 @@ def _make_attacks(attacks_list, game_data):
     specification: Elise Hallaert (V.1 4/03/17)
     implementation: 
     """
+    
 def _build_board(x_size, y_size, game_board):
     """Build an empty game board.
 
