@@ -7,6 +7,11 @@ def _process_order(player, player_orders, attaks_list, game_data):
     player_orders: The order wich the player want to process (str)
     attacks_list: A list wich contains all the attacks (list)
     game_data: The board and all the informations of the game (dict)
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
 
 def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, game_data):
@@ -25,6 +30,11 @@ def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, g
     -----
     If the attack cannot be made, the list is empty
     The first element is the power of the attack, the second one is the position
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
  
 def _make_actions(player1_orders, player2_orders, game_data):
@@ -35,6 +45,11 @@ def _make_actions(player1_orders, player2_orders, game_data):
     player1_orders: The orders of the player one (str)
     player2_orders: The orders of the player two (str)
     game_data: The board and all the informations of the game (dict)
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
 
 def _game_loop(game_data):
@@ -43,6 +58,11 @@ def _game_loop(game_data):
     Parameters:
     -----------
     game_data: The board and all the informations of the game (dict)
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
 
 def _apply_tore(x_coordinate, y_coordinate, game_data):
@@ -53,6 +73,11 @@ def _apply_tore(x_coordinate, y_coordinate, game_data):
     x_coordinate: The abscissa of the ship (int)
     y_coordinate: The ordinate of the sip (int) 
     game_data: The board and all the informations of the game (dict)
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
  
 def _move_ship(player, ship_name, game_data):
@@ -63,6 +88,11 @@ def _move_ship(player, ship_name, game_data):
     player: The player who makes the action (int)
     ship_name: The name of the ship (str)
     game_data: The board and all the informations of the game (dict)
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
  
 def _turn_ship(player, ship_name, direction_str, game_data):
@@ -74,6 +104,11 @@ def _turn_ship(player, ship_name, direction_str, game_data):
     ship_name: The name of the ship (str)
     direction_str: Must be left(Anti-clockwise) or right(clockwise) (str)
     game_data: The board and all the informations of the game (dict)
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
 
 def _ship_acceleration(player, ship_name, way, game_data):
@@ -85,6 +120,11 @@ def _ship_acceleration(player, ship_name, way, game_data):
     ship_name: The name of the ship (str)
     way: Must be slower or faster (str)
     game_data: The board and all the informations of the game (dict)
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
  
 def _is_in_range(player, ship_name, target_position, game_data):
@@ -104,6 +144,11 @@ def _is_in_range(player, ship_name, target_position, game_data):
     Notes:
     ------
     in_range is True if the case can be attacked, False otherwhise
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
     
 def _make_attacks(attacks_list, game_data):
@@ -116,6 +161,11 @@ def _make_attacks(attacks_list, game_data):
     Notes:
     ------
     the list has to be made by "_check_and_memory_attack"
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
  
 def _build_board(x_size, y_size, game_board):
@@ -126,6 +176,11 @@ def _build_board(x_size, y_size, game_board):
     x_size: The size of the board in abscissa (int)
     y_size: The ziez of the board in ordinate (int)
     game_board: empty dict that will contain all the element board (dict)
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
 
 def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
@@ -138,6 +193,11 @@ def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
     ship_type: The type of the boat (str)
     position: position for the new spaceship (tuple(int, int))
     game_data: The board and all the informations of the game (dict)
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
     
 def _build_from_cis(path, game_data):
@@ -147,4 +207,9 @@ def _build_from_cis(path, game_data):
     ------------
     path: path to the cis file (str)
     game_data: The board and all the informations of the game (dict)
+    
+    Version:
+    --------
+    specification: (V.1 /03/17)
+    implementation: 
     """
