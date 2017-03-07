@@ -32,6 +32,7 @@ def process_order(player, player_orders, attaks_list, game_data):
 
 def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, game_data):
     """Append to a list the attack if it can be made.
+   
     Parameters:
     -----------
     player: number of the player who is playing (int)
@@ -39,11 +40,12 @@ def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, g
     attack_position: place where the boat has to attack (tuple)
     attacks_list: A list wich contains all the attacks (list)
     game_data: The board and all the informations of the game (dict)
+    
     Note:
     -----
     If the attack cannot be made, the list is empty
     The first element is the power of the attack, the second one is the position
-    """
+   """
     # get the position of the ship attacking
     ship_position = game_data['ships'][player][ship_name]
     ship_type = game_data['board'][ship_position][player][ship_name]['type']
@@ -278,9 +280,11 @@ def _is_in_range(player, ship_name, target_position, game_data):
 
 def _make_attacks(attacks_list, game_data):
     """makes the attacks that can be made.
+   
     Parameters:
     -----------
     attacks_list: list of the attacks that can be made (list)
+    
     Notes:
     ------
     the list has to be made by "_check_and_memory_attack"
@@ -306,6 +310,7 @@ def _make_attacks(attacks_list, game_data):
 
 def _build_board(x_size, y_size, game_board):
     """Build an empty game board.
+    
     Parameters:
     ------------
     x_size: The size of the board in abscissa (int)
@@ -319,6 +324,13 @@ def _build_board(x_size, y_size, game_board):
 
 
 def _buy_ships(game_data):
+    """Ask to the player what he wants to buy.
+   
+    Parameters:
+    ------------
+    game_board: empty dict that will contain all the element of board (dict)
+    """
+    
     player1_orders = raw_input('Player1 - What boat do you want to buy ? :').lower()
     player2_orders = raw_input('Player2 - What boat do you want to buy ? :').lower()
 
@@ -329,7 +341,14 @@ def _buy_ships(game_data):
 
 
 def _buy_and_add_ships(player, ships_list, game_data):
-    """"""
+    """Place the new ship one the board.
+    
+    Parameters:
+    ------------
+    player: The player who makes the action (int)
+    ships_list: The list wich contains all the new ships (list)
+    game_board: empty dict that will contain all the element of board (dict)
+    """
     wallet = game_data['variables']['wallet'][player]
 
     for ship in ships_list:
@@ -345,6 +364,7 @@ def _buy_and_add_ships(player, ships_list, game_data):
 
 def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
     """Add a ship to a certain position.
+   
     Parameters:
     -----------
     player: The player who makes the action (int)
