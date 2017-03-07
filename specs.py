@@ -194,6 +194,11 @@ def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
     position: position for the new spaceship (tuple(int, int))
     game_data: The board and all the informations of the game (dict)
     
+    Notes:
+    ------
+    The optional parameter "position" is only use when a ship is added with the cis file. Otherwise the position is re-alculated
+    
+    
     Version:
     --------
     specification: Métens Guillaume (V.1 3/03/17)
@@ -220,6 +225,11 @@ def main(path):
     Parameters:
     -----------
     path: path of the .cis file which contain the information of the game played (path)
+   
+   Version:
+    --------
+    specification: Hugo Jacques (V.1 5/03/17)
+    implementation: 
     """
 def _show_game(game_data):
     """Show the board and the information about the game played
@@ -227,3 +237,9 @@ def _show_game(game_data):
     Parameters:
     -----------
     game_data: dictionary which contains all the information about the game played (dict)
+    
+    Version:
+    --------
+    specification: Métens Guillaume (V.1 5/03/17)
+    implementation: 
+    """
