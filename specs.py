@@ -72,7 +72,7 @@ def _turn_ship(player, ship_name, direction_str, game_data):
     ------------
     player: The player who makes the action (int)
     ship_name: The name of the ship (str)
-    direction_str: Must be right(Anti-clockwise) or left(clockwise) (str)
+    direction_str: Must be left(Anti-clockwise) or right(clockwise) (str)
     game_data: The board and all the informations of the game (dict)
     """
 
