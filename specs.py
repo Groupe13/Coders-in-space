@@ -60,8 +60,8 @@ def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
     player: The player who makes the action (int)
     ship_name: The name of the ship (str)
     ship_type: The type of the boat (str)
-    position: position for the new spaceship (tuple(int, int))
     game_data: The board and all the informations of the game (dict)
+    position: position for the new spaceship (tuple(int, int))
     
     Notes:
     ------
