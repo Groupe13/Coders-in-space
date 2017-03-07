@@ -82,7 +82,6 @@ def _apply_tore(x_coordinate, y_coordinate, game_data):
     specification: Hugo Jacques (V.1 4/03/17)
     implementation: 
     """
- 
 def _move_ship(player, ship_name, game_data):
     """Move the ship of a player to a new position.
     
@@ -96,8 +95,7 @@ def _move_ship(player, ship_name, game_data):
     --------
     specification: Métens Guillaume (V.1 4/03/17)
     implementation: 
-    """
- 
+    """ 
 def _turn_ship(player, ship_name, direction_str, game_data):
     """Change the orientation of a ship.
    
@@ -128,8 +126,7 @@ def _ship_acceleration(player, ship_name, way, game_data):
     --------
     specification: Hugo Jacques (V.1 4/03/17)
     implementation: 
-    """
- 
+    """ 
 def _is_in_range(player, ship_name, target_position, game_data):
     """Verify if the case attacked by a ship is in the range of or not.
     
@@ -171,7 +168,6 @@ def _make_attacks(attacks_list, game_data):
     specification: Elise Hallaert (V.1 4/03/17)
     implementation: 
     """
- 
 def _build_board(x_size, y_size, game_board):
     """Build an empty game board.
 
@@ -217,3 +213,17 @@ def _build_board_from_cis(path, game_data):
     specification: Elise Hallaert (V.1 3/03/17)
     implementation: 
     """
+    
+def main(path):
+    """Execute the game
+   
+    Parameters:
+    -----------
+    path: path of the .cis file which contain the information of the game played (path)
+    """
+def _show_game(game_data):
+    """Show the board and the information about the game played
+    
+    Parameters:
+    -----------
+    game_data: dictionary which contains all the information about the game played (dict)
