@@ -389,7 +389,7 @@ def _buy_and_add_ships(player, ships_list, game_data):
     ships_list: The list wich contains all the new ships (list)
     game_board: empty dict that will contain all the element of board (dict)
     """
-    wallet = game_data['variables']['wallet'][player]
+    wallet = 100
 
     for ship in ships_list:
         name, ship_type = ship.split(':')
