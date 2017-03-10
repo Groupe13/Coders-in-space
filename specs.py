@@ -66,6 +66,7 @@ def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
     Notes:
     ------
     The optional parameter "position" is only use when a ship is added with the cis file. Otherwise the position is re-alculated
+    Player: it's the player number 0: abandoned, 1:player1, 2:player2
     
     
     Version:
