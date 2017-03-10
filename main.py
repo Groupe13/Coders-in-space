@@ -460,7 +460,7 @@ def _build_from_cis(path, game_data):
                   game_data,
                   (int(line_elements[0]),
                    int(line_elements[1])))  # cast str to int to get the coordonates       
-def _buy_IA():
+def _IA_buy():
     wallet = 100
     action =''
     name = i
@@ -479,6 +479,28 @@ def _buy_IA():
         name += 'a'
     return action
 
+
+def _IA_play(game_data):
+    for ship in game_data['ships'][1]:
+        action += ship
+        possibility = random.randint(1,5)
+        if possibility == 1:
+            action += ':slower '
+        elif possibility ==2:
+            action += ':faster '
+        elif possibility ==3:
+            action += ':left '
+        elif possibility ==4:
+            action += ':right '
+        else:
+            size_x = game_data['variables']['board_size']['x']
+            size_y = game_data['variables']['board_size']['y']
+            
+            x = random.randint (1,size_x)
+            y = random.randint (1,size_y)
+            str(x)
+            str(y)
+            action += ':' + x+ '-'+y +' '
     ###TEST ZONE###
     ###TEST ZONE###
 
