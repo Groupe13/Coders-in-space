@@ -4,6 +4,46 @@ import pprint
 import random
 
 
+def _update_ui(game_data):
+    x_size = game_data['variables']['board_size']['x']
+    y_size = game_data['variables']['board_size']['y']
+
+    border = (150 - x_size) / 2
+    border_str = ' ' * border
+    x_numbers_str = border_str + '   '
+
+    positions_save = {}
+
+    for number in range(1, x_size+1):
+        x_numbers_str += ' \033[4m%02d\033[0m' % (number)
+
+
+    for player in game_data['ships']:
+        for ship in game_data['ships'][player]:
+            pos = game_data['ships'][player][ship]
+            if not pos in positions_save:
+                positions_save[pos] = 0
+            positions_save[pos]+=1
+    print positions_save
+    print x_numbers_str
+
+    for row in range(1, y_size + 1):
+        line = border_str + ' %02d|' % row
+
+        for column in range(1, x_size+1):
+            if (column, row) in positions_save:
+                line +=  '\033[4m%02d\033[0m|' % positions_save[(column, row)]
+            else:
+                line += '__|'
+
+        print line
+        line = ''
+
+
+    print positions_save
+
+
+
 def process_order(player, player_orders, attaks_list, game_data):
     """Procces an order asked by a player.
     
@@ -384,6 +424,7 @@ def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
                                                        'health': game_data['boat_characteristics'][ship_type]['health'],
                                                        'speed': 0}
     game_data['ships'][player][ship_name] = position
+    print 'ships added!'
 
 
 def _build_from_cis(path, game_data):
@@ -454,6 +495,7 @@ ship_types = ('destroyer', 'battlecruiser', 'fighter')
 for name in names:
     t = random.randint(0, 2)
     team = random.randint(1, 2)
-    _add_ship(team, name, ship_types[t], game_datas)
+    _add_ship(0, name, ship_types[t], game_datas, (random.randint(1, 30), random.randint(1, 30)))
+_update_ui(game_datas)
 
-_move_all_ships(game_datas)
+pprint.pprint(game_datas['ships'])
