@@ -2,13 +2,59 @@
 import math
 import pprint
 import random
+import termcolor
+
+def _game_loop(game_data):
+    """The main function wich choose a winner and execute the game.
+
+    Parameters:
+    -----------
+    game_data: The board and all the informations of the game (dict)
+    """
+
+    while len(game_data['ships'][1]) > 0 \
+            and len(game_data['ships'][2]) > 0 \
+            and game_data['variables']['last_damages'] < 10:
+
+        player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
+        player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
+        _make_actions(player1_orders, player2_orders, game_data)  # need to implement it
+        _move_all_ships(game_data)
+        _get_neutral_ships(game_data)
+        _update_ui(game_data)
+        pprint.pprint(game_data['ships'])
+
+
+
+    if game_data['variables']['last_damages'] == 10:
+        player_money1 = 0
+        player_money2 = 0
+        for player in game_data['ships']:
+            for ship in game_data['ships'][player]:
+                boat_type = game_data['board'][game_data['ships'][player][ship]][player][ship]['type']
+                if player == 1:
+                    player_money1 += game_data['boat_characteristics'][boat_type]['cost']
+                else:
+                    player_money2 += game_data['boat_characteristics'][boat_type]['cost']
+
+            if player_money1 > player_money2:
+                return 1
+            elif player_money1 > player_money2:
+                return 2
+            else:
+                return random.randint(1, 2)  # determine the winner randomly
+
+    elif len(game_data['ships'][1]) == 0:
+        return 2
+    elif len(game_data['ships'][2]) == 0:
+        return 1
 
 
 def _update_ui(game_data):
     x_size = game_data['variables']['board_size']['x']
     y_size = game_data['variables']['board_size']['y']
 
-    border = (150 - x_size) / 2
+    border = (150+3 - x_size*3) / 2
     border_str = ' ' * border
     x_numbers_str = border_str + '   '
 
@@ -108,8 +154,8 @@ def _make_actions(player1_orders, player2_orders, game_data):
     """
    
     attacks_list = list()
-    process_order(1, player1_orders, attacks_list, game_data)
-    process_order(2, player2_orders, attacks_list, game_data)
+    if player1_orders: process_order(1, player1_orders, attacks_list, game_data)
+    if player2_orders: process_order(2, player2_orders, attacks_list, game_data)
 
     _make_attacks(attacks_list, game_data)
 
@@ -119,48 +165,6 @@ def _move_all_ships(game_data):
         if player != 0:
             for ship_name in game_datas['ships'][player]:
                 _move_ship(player, ship_name, game_data)
-
-def _game_loop(game_data):
-    """The main function wich choose a winner and execute the game.
-    
-    Parameters:
-    -----------
-    game_data: The board and all the informations of the game (dict)
-    """
-
-    while len(game_data['ships'][1]) > 0 \
-            and len(game_data['ships'][2]) > 0 \
-            and game_data['variables']['last_damages'] < 10:
-
-        player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
-        player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
-        _make_actions(player1_orders, player2_orders, game_data)  # need to implement it
-        _move_all_ships(game_data)
-
-
-    if game_data['variables']['last_damage'] == 10:
-        player_money1 = 0
-        player_money2 = 0
-        for player in game_data['ships']:
-            for ship in game_data['ships'][player]:
-                boat_type = game_data['board'][game_data['ships'][player][ship]][player][ship]['type']
-                if player == 1:
-                    player_money1 += game_data['boat_characteristics'][boat_type]['cost']
-                else:
-                    player_money2 += game_data['boat_characteristics'][boat_type]['cost']
-
-            if player_money1 > player_money2:
-                return 1
-            elif player_money1 > player_money2:
-                return 2
-            else:
-                return random.randint(1, 2)  # determine the winner randomly
-
-    elif len(game_data['ships'][1]) == 0:
-        return 2
-    elif len(game_data['ships'][2]) == 0:
-        return 1
-
 
 def _apply_tore(x_coordinate, y_coordinate, game_data):
     """Apply the effect of a tore if the ship is outside the board.
@@ -186,6 +190,24 @@ def _apply_tore(x_coordinate, y_coordinate, game_data):
         y_coordinate += board_y
 
     return x_coordinate, y_coordinate
+
+
+
+def _get_neutral_ships(game_data):
+    for ship in game_data['ships'][0].copy():
+        position = game_data['ships'][0][ship]
+        player = None
+
+        if game_data['board'][position][1] and not game_data['board'][position][2]:
+            player = 1
+        elif not game_data['board'][position][1] and game_data['board'][position][2]:
+            player = 2
+
+        if player != None:
+            game_data['board'][position][player][ship] = game_data['board'][position][0][ship]
+            game_data['ships'][player][ship] = game_data['ships'][0][ship]
+            del game_data['board'][position][0][ship]
+            del game_data['ships'][0][ship]
 
 
 def _move_ship(player, ship_name, game_data):
@@ -234,6 +256,7 @@ def _move_ship(player, ship_name, game_data):
     del game_data['board'][position][player][ship_name]
 
     game_data['ships'][player][ship_name] = new_position
+
 
 
 def _turn_ship(player, ship_name, direction_str, game_data):
@@ -371,8 +394,8 @@ def _buy_ships(game_data):
     game_board: empty dict that will contain all the element of board (dict)
     """
     
-    player1_orders = raw_input('Player1 - What boat do you want to buy ? :').lower()
-    player2_orders = raw_input('Player2 - What boat do you want to buy ? :').lower()
+    player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
+    player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
 
     ship_list_player1 = player1_orders.split(' ')
     ship_list_player2 = player2_orders.split(' ')
@@ -402,7 +425,7 @@ def _buy_and_add_ships(player, ships_list, game_data):
 
 
 
-def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
+def _add_ship(player, ship_name, ship_type, game_data, position=None):
     """Add a ship to a certain position.
    
     Parameters:
@@ -413,18 +436,22 @@ def _add_ship(player, ship_name, ship_type, game_data, position=(1, 1)):
     position: position for the new spaceship (tuple(int, int))
     game_data: The board and all the informations of the game (dict)
     """
+    ship_name = ship_name.lower()
     orientation = 1
-    if player == 1:
-        position = game_data['variables']['default_position'][1]
-    if player == 2:
-        position = game_data['variables']['default_position'][2]
-        orientation = 5
+    if position != None:
+        if player == 1:
+            position = game_data['variables']['default_position'][1]
+        if player == 2:
+            position = game_data['variables']['default_position'][2]
+            orientation = 5
+    else:
+        position = position
 
     game_data['board'][position][player][ship_name] = {'type': ship_type, 'orientation': orientation,
                                                        'health': game_data['boat_characteristics'][ship_type]['health'],
                                                        'speed': 0}
     game_data['ships'][player][ship_name] = position
-    print 'ships added!'
+
 
 
 def _build_from_cis(path, game_data):
@@ -462,7 +489,7 @@ def _build_from_cis(path, game_data):
                    int(line_elements[1])))  # cast str to int to get the coordonates
 
 
-    ###TEST ZONE###
+                ###TEST ZONE###
     ###TEST ZONE###
 
 
@@ -488,14 +515,15 @@ game_datas = {'board': {},
 _build_from_cis('C:/Users/Hugo/Desktop/test.cis', game_datas)
 
 names = (
-'Serenity', 'Orion', 'Windsong', 'Escape', 'Whisper', 'CarpeDiem', 'SummerWind', 'Serendipity', 'Falcon', 'Falcon1',
-'Falcon2')
-ship_types = ('destroyer', 'battlecruiser', 'fighter')
+'Falcon', 'Falcon2', 'Falcon3', 'Falcon4', 'Falcon5', 'Falcon6')
+
 
 for name in names:
     t = random.randint(0, 2)
     team = random.randint(1, 2)
-    _add_ship(0, name, ship_types[t], game_datas, (random.randint(1, 30), random.randint(1, 30)))
-_update_ui(game_datas)
+    _add_ship(t, name.lower(), 'fighter', game_datas, (random.randint(1, 20), random.randint(1, 20)))
 
+_update_ui(game_datas)
 pprint.pprint(game_datas['ships'])
+print "*******************************************************"
+_game_loop(game_datas)
