@@ -83,7 +83,6 @@ def _update_ui(game_data):
                 line += '__|'
 
         print line
-        line = ''
 
 
     print positions_save
@@ -412,7 +411,7 @@ def _buy_and_add_ships(player, ships_list, game_data):
     ships_list: The list wich contains all the new ships (list)
     game_board: empty dict that will contain all the element of board (dict)
     """
-    wallet = game_data['variables']['wallet'][player]
+    wallet = 100
 
     for ship in ships_list:
         name, ship_type = ship.split(':')
@@ -486,11 +485,50 @@ def _build_from_cis(path, game_data):
                   ship_name_type[1],
                   game_data,
                   (int(line_elements[0]),
-                   int(line_elements[1])))  # cast str to int to get the coordonates
+                   int(line_elements[1])))  # cast str to int to get the coordonates       
+def _IA_buy():
+    wallet = 100
+    action =''
+    name = i
+    while wallet > 0:
+        action += name
+        ship = random.randint(1,3)
+        if ship == 1:
+            action += 'fighter'
+            wallet -= 10
+        elif ship ==2:
+            action += 'destroyer'
+            wallet -= 20
+        else:
+            action += 'battlecruiser'
+            wallet -= 30
+        name += 'a'
+    return action
 
 
-                ###TEST ZONE###
+def _IA_play(game_data):
+    for ship in game_data['ships'][1]:
+        action += ship
+        possibility = random.randint(1,5)
+        if possibility == 1:
+            action += ':slower '
+        elif possibility ==2:
+            action += ':faster '
+        elif possibility ==3:
+            action += ':left '
+        elif possibility ==4:
+            action += ':right '
+        else:
+            size_x = game_data['variables']['board_size']['x']
+            size_y = game_data['variables']['board_size']['y']
+            
+            x = random.randint (1,size_x)
+            y = random.randint (1,size_y)
+            str(x)
+            str(y)
+            action += ':' + x+ '-'+y +' '
     ###TEST ZONE###
+
 
 
 game_datas = {'board': {},
@@ -523,7 +561,8 @@ for name in names:
     team = random.randint(1, 2)
     _add_ship(t, name.lower(), 'fighter', game_datas, (random.randint(1, 20), random.randint(1, 20)))
 
+
 _update_ui(game_datas)
 pprint.pprint(game_datas['ships'])
-print "*******************************************************"
 _game_loop(game_datas)
+
