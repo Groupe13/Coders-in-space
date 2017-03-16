@@ -1,23 +1,42 @@
 # -*- coding: utf-8 -*-
-import math
 import pprint
 import random
 import termcolor
 
 
-def _game_loop(game_data):
+def _game_loop(game_data,player1,player2):
     """The main function wich choose a winner and execute the game.
 
     Parameters:
     -----------
     game_data: The board and all the informations of the game (dict)
+    player1: Set if the player1 is a player or the IA (str)
+    player2: Set if the player2 is a player or the IA (str)
+
+    Note:
+    -----
+    player1 and player2 must be 'IA' or 'human' or 'remote'
+
     """
 
     while len(game_data['ships'][1]) > 0 \
             and len(game_data['ships'][2]) > 0 \
             and game_data['variables']['last_damages'] < 10:
-        player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
-        player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
+        
+        if player1 == 'IA':
+            player1_orders = _get_IA_orders(game_data)
+        elif player1 == 'remote':
+            player1_orders = get_remote_control #A vérif
+        else:
+            player1_orders = player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
+        
+        if player2 == 'IA':
+            player2_orders = _get_IA_orders(game_data)
+        elif player2 == 'remote':
+            player2_orders = get_remote_control #A vérif
+        else:
+            player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()        
+        
         _make_actions(player1_orders, player2_orders, game_data)  # need to implement it
         _move_all_ships(game_data)
         _get_neutral_ships(game_data)
@@ -354,7 +373,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
     ship_type = game_data['board'][current_position][player][ship_name]['type']
     max_range = game_data['boat_characteristics'][ship_type]['range']
 
-    manhattan_dist = math.fabs(target_position[0] - current_position[0]) + math.fabs(
+    manhattan_dist = abs(target_position[0] - current_position[0]) + abs(
         target_position[1] - current_position[1])
     return manhattan_dist <= max_range
 
@@ -507,7 +526,7 @@ def _build_from_cis(path, game_data):
 def _IA_buy():
     wallet = 100
     action = ''
-    name = i
+    name = i #WTF
     while wallet > 0:
         action += name
         ship = random.randint(1, 3)
@@ -524,7 +543,8 @@ def _IA_buy():
     return action
 
 
-def _IA_play(game_data):
+def _get_IA_orders(game_data):
+    action = []
     for ship in game_data['ships'][1]:
         action += ship
         possibility = random.randint(1, 5)
@@ -545,6 +565,7 @@ def _IA_play(game_data):
             str(x)
             str(y)
             action += ':' + x + '-' + y + ' '
+        return action
             ###TEST ZONE###
 
 
