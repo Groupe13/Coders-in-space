@@ -21,6 +21,29 @@ def main(path, player_1, player_2):
     specification: Hugo Jacques (V.1 5/03/17)
     implementation: 
     """
+    game_data = {'board': {},
+                  'boat_characteristics': {'battlecruiser': {'attack': 4,
+                                                             'cost': 30,
+                                                             'health': 20,
+                                                             'max_speed': 1,
+                                                             'range': 10},
+                                           'destroyer': {'attack': 2,
+                                                         'cost': 20,
+                                                         'health': 8,
+                                                         'max_speed': 2,
+                                                         'range': 7},
+                                           'fighter': {'attack': 1,
+                                                       'cost': 10,
+                                                       'health': 3,
+                                                       'max_speed': 5,
+                                                       'range': 5}},
+                  'ships': {0: {}, 1: {}, 2: {}},
+                  'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0, 'wallet': {1: 100, 2: 100}}}
+    _buy_ships(game_data)
+    _build_from_cis(path, game_data)
+    _update_ui(game_data)
+    _game_loop(game_data, player_1, player_2)
+
 def _show_game(game_data):
     """Show the board and the information about the game played
     
@@ -704,36 +727,6 @@ def _get_IA_orders(game_data):
         return action
             ###TEST ZONE###
 
-
-game_datas = {'board': {},
-              'boat_characteristics': {'battlecruiser': {'attack': 4,
-                                                         'cost': 30,
-                                                         'health': 20,
-                                                         'max_speed': 1,
-                                                         'range': 10},
-                                       'destroyer': {'attack': 2,
-                                                     'cost': 20,
-                                                     'health': 8,
-                                                     'max_speed': 2,
-                                                     'range': 7},
-                                       'fighter': {'attack': 1,
-                                                   'cost': 10,
-                                                   'health': 3,
-                                                   'max_speed': 5,
-                                                   'range': 5}},
-              'ships': {0: {}, 1: {}, 2: {}},
-              'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0, 'wallet': {1: 100, 2: 100}}}
-
-_build_from_cis('test.cis', game_datas)
-
-names = (
-    'Falcon', 'Falcon2', 'Falcon3', 'Falcon4', 'Falcon5', 'Falcon6')
-
-for name in names:
-    t = random.randint(0, 2)
-    team = random.randint(1, 2)
-    _add_ship(t, name.lower(), 'fighter', game_datas, (random.randint(1, 20), random.randint(1, 20)))
-
-_update_ui(game_datas)
-_game_loop(game_datas)
+if __name__ == '__main__':
+    main('test.cis', '', '')
 
