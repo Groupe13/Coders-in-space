@@ -39,6 +39,7 @@ def main(path, player_1, player_2):
                                                        'range': 5}},
                   'ships': {0: {}, 1: {}, 2: {}},
                   'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0, 'wallet': {1: 100, 2: 100}}}
+
     _buy_ships(game_data)
     _build_from_cis(path, game_data)
     _update_ui(game_data)
@@ -551,7 +552,7 @@ def _build_board(x_size, y_size, game_board):
             game_board[(x_coordinate, y_coordinate)] = {0: {}, 1: {}, 2: {}}
 
 
-def _buy_ships(game_data):
+def _buy_ships(game_data, player1, player2):
     """Ask to the player what he wants to buy.
    
     Parameters:
@@ -563,14 +564,20 @@ def _buy_ships(game_data):
     specification: Métens Guillaume (V.1 3/03/17)
     implementation: 
     """
+    player1_orders = ''
+    player2_orders = ''
+    if player1 == 'IA':
+        player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
+    else:
+        player1_orders = _buy_IA()
 
-    player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
-    player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
+    if player2 == 'IA':
+        player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
+    else:
+        player2_orders = _buy_IA()
 
-    ship_list_player1 = player1_orders.split(' ')
-    ship_list_player2 = player2_orders.split(' ')
-    _buy_and_add_ships(1, ship_list_player1, game_data)
-    _buy_and_add_ships(2, ship_list_player2, game_data)
+    _buy_and_add_ships(1, player1_orders.split(' '), game_data)
+    _buy_and_add_ships(2, player_orders.split(' '), game_data)
 
 
 def _buy_and_add_ships(player, ships_list, game_data):
