@@ -523,17 +523,17 @@ def _build_from_cis(path, game_data):
                    int(line_elements[1])))  # cast str to int to get the coordonates
 
 
-def _IA_buy():
+def _buy_IA():
     wallet = 100
-    action = ''
-    name = i #WTF
+    action =''
+    name = 'i'
     while wallet > 0:
         action += name
-        ship = random.randint(1, 3)
+        ship = random.randint(1,3)
         if ship == 1:
             action += 'fighter'
             wallet -= 10
-        elif ship == 2:
+        elif ship ==2:
             action += 'destroyer'
             wallet -= 20
         else:
@@ -541,7 +541,6 @@ def _IA_buy():
             wallet -= 30
         name += 'a'
     return action
-
 
 def _get_IA_orders(game_data):
     action = []
