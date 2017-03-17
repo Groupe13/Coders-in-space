@@ -40,7 +40,7 @@ def main(path, player_1, player_2):
                   'ships': {0: {}, 1: {}, 2: {}},
                   'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0, 'wallet': {1: 100, 2: 100}}}
 
-    _buy_ships(game_data)
+    _buy_ships(game_data,player_1,player_2)
     _build_from_cis(path, game_data)
     _update_ui(game_data)
     _game_loop(game_data, player_1, player_2)
@@ -566,18 +566,23 @@ def _buy_ships(game_data, player1, player2):
     """
     player1_orders = ''
     player2_orders = ''
-    if player1 == 'IA':
+    
+    if player1 == 'player':
         player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
+    elif player1 == 'remote':
+        player1_orders = get_remote_orders()
     else:
         player1_orders = _buy_IA()
 
-    if player2 == 'IA':
+    if player2 == 'player':
         player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
+    if player1 == 'remote':
+        player2_orders = get_remote_orders()
     else:
         player2_orders = _buy_IA()
 
     _buy_and_add_ships(1, player1_orders.split(' '), game_data)
-    _buy_and_add_ships(2, player_orders.split(' '), game_data)
+    _buy_and_add_ships(2, player2_orders.split(' '), game_data)
 
 
 def _buy_and_add_ships(player, ships_list, game_data):
@@ -601,6 +606,7 @@ def _buy_and_add_ships(player, ships_list, game_data):
     wallet = 100
 
     for ship in ships_list:
+        print ship
         name, ship_type = ship.split(':')
         wallet -= game_data['boat_characteristics'][ship_type]['cost']
         if wallet >= 0:
@@ -698,13 +704,13 @@ def _buy_IA():
         action += name
         ship = random.randint(1,3)
         if ship == 1:
-            action += 'fighter'
+            action += ':fighter '
             wallet -= 10
         elif ship ==2:
-            action += 'destroyer'
+            action += ':destroyer '
             wallet -= 20
         else:
-            action += 'battlecruiser'
+            action += ':battlecruiser '
             wallet -= 30
         name += 'a'
     return action
@@ -735,5 +741,5 @@ def _get_IA_orders(game_data):
             ###TEST ZONE###
 
 if __name__ == '__main__':
-    main('test.cis', '', '')
+    main('test.cis', 'IA', 'player')
 
