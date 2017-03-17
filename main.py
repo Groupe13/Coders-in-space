@@ -3,14 +3,20 @@ import pprint
 import random
 import termcolor
 
-def main(path):
+def main(path, player_1, player_2):
     """Execute the game
    
     Parameters:
     -----------
     path: path of the .cis file which contain the information of the game played (path)
+    player_1: type of the player one (str)
+    player_2: type of the player two (str)
+    
+    Notes:
+    ------
+    The types can be IA, remote or player
    
-   Version:
+    Version:
     --------
     specification: Hugo Jacques (V.1 5/03/17)
     implementation: 
@@ -33,6 +39,10 @@ def _game_loop(game_data,player1,player2):
     Parameters:
     -----------
     game_data: Dictionary which contain all the information of the game (dict)
+    
+    Notes:
+    ------
+    Player can be IA, remote or player
     
     Version:
     --------
@@ -151,7 +161,7 @@ def _process_order(player, player_orders, attacks_list, game_data):
     Notes:
     ------
     player_orders must have the same syntax than the orders given by the player
-    attacks_list 
+    Player can be 1 for player one and 2 for player two
     
     Version:
     --------
@@ -190,9 +200,11 @@ def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, g
     attack_position: place where the ship has to attack (tuple)
     attacks_list: A list wich contains all the attacks (list)
     game_data: Dictionary which contain all the information of the game (dict)
+    
     Note:
     -----
     If the attack cannot be made, nothing is added to the list, otherwhise, there is a dictionnary which contain 'target' and 'power'
+    Player can be 1 for player one and 2 for player two
     
     Version:
     --------
@@ -309,6 +321,10 @@ def _move_ship(player, ship_name, game_data):
     ship_name: The name of the ship (str)
     game_data: Dictionary which contain all the information of the game (dict)
     
+    Note:
+    -----
+    Player can be 1 for player one and 2 for player two
+    
     Version:
     --------
     specification: Métens Guillaume (V.1 4/03/17)
@@ -363,6 +379,10 @@ def _turn_ship(player, ship_name, direction_str, game_data):
     direction_str: Must be left(Anti-clockwise) or right(clockwise) (str)
     game_data: Dictionary which contain all the information of the game (dict)
     
+    Note:
+    -----
+    Player can be 1 for player one and 2 for player two
+    
     Version:
     --------
     specification: Métens Guillaume (V.1 4/03/17)
@@ -392,6 +412,10 @@ def _ship_acceleration(player, ship_name, way, game_data):
     ship_name: The name of the ship (str)
     way: Must be slower or faster (str)
     game_data: Dictionary which contain all the information of the game (dict)
+    
+    Note:
+    -----
+    Player can be 1 for player one and 2 for player two
     
     Version:
     --------
@@ -434,6 +458,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
     Notes:
     ------
     in_range is True if the case can be attacked, False otherwhise
+    Player can be 1 for player one and 2 for player two
     
     Version:
     --------
@@ -534,6 +559,10 @@ def _buy_and_add_ships(player, ships_list, game_data):
     ships_list: The list wich contains all the new ships (list)
     game_board: empty dict that will contain all the element of board (dict)
     
+    Note:
+    -----
+    Player can be 1 for player one and 2 for player two
+    
     Version:
     --------
     specification: Hugo Jacques (V.1 3/03/17)
@@ -565,6 +594,9 @@ def _add_ship(player, ship_name, ship_type, game_data, position=None):
     The optional parameter "position" is only use when a ship is added with the cis file. Otherwise the position is re-alculated
     Player: it's the player number 0: abandoned, 1:player1, 2:player2
     
+    Note:
+    -----
+    Player can be 0 for abandonned ship, 1 for player one and 2 for player two
     
     Version:
     --------
