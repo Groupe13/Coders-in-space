@@ -56,14 +56,14 @@ def _game_loop(game_data,player1,player2):
         if player1 == 'IA':
             player1_orders = _get_IA_orders(game_data)
         elif player1 == 'remote':
-            player1_orders = get_remote_control #A vérif
+            player1_orders = get_remote_control(player)
         else:
             player1_orders = player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
         
         if player2 == 'IA':
-            player2_orders = _get_IA_orders(game_data)
+            player2_orders = _get_IA_orders(connection)
         elif player2 == 'remote':
-            player2_orders = get_remote_control #A vérif
+            player2_orders = get_remote_control(connection)
         else:
             player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()        
         
