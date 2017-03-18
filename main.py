@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import time
 import pprint
 import random
 import termcolor
@@ -78,14 +79,14 @@ def _game_loop(game_data,player1,player2):
             and game_data['variables']['last_damages'] < 10:
         
         if player1 == 'IA':
-            player1_orders = _get_IA_orders(game_data)
+            player1_orders = _get_IA_orders(game_data, 1)
         elif player1 == 'remote':
             player1_orders = get_remote_control(player)
         else:
             player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
         
         if player2 == 'IA':
-            player2_orders = _get_IA_orders(game_data)
+            player2_orders = _get_IA_orders(game_data, 2)
         elif player2 == 'remote':
             player2_orders = get_remote_control(connection)
         else:
@@ -95,6 +96,7 @@ def _game_loop(game_data,player1,player2):
         _move_all_ships(game_data)
         _get_neutral_ships(game_data)
         _update_ui(game_data)
+        time.sleep(7)
 
     if game_data['variables']['last_damages'] == 10:
         player_money1 = 0
@@ -192,9 +194,8 @@ def _process_order(player, player_orders, attacks_list, game_data):
     specification: Hugo Jacques (V.1 5/03/17)
     implementation: 
     """
-
-    orders = player_orders.split(' ')
-    for elements in orders:  # split all the str in orders
+    print 'Player ORDER', player_orders
+    for elements in player_orders.split(' '):  # split all the str in orders
         action = elements.split(':')  # split each orders in two elements
 
         if not action[0] in game_data['ships'][player]:  # verify tat the boat exist or is owned by the player
@@ -282,9 +283,10 @@ def _move_all_ships(game_data):
     specification: Hugo Jacques (V.1 5/03/17)
     implementation: 
     """
+
     for player in game_data['ships']:
         if player != 0:
-            for ship_name in game_datas['ships'][player]:
+            for ship_name in game_data['ships'][player]:
                 _move_ship(player, ship_name, game_data)
 
 
@@ -581,7 +583,6 @@ def _buy_ships(game_data, player1, player2):
     else:
         player2_orders = _buy_IA()
 
-
     _buy_and_add_ships(1, player1_orders, game_data)
     _buy_and_add_ships(2, player2_orders, game_data)
 
@@ -605,9 +606,8 @@ def _buy_and_add_ships(player, ships_list, game_data):
     implementation: 
     """
     wallet = 100
-    print 'SHIP LIST', ships_list
-    for ship in ships_list:
-        print ship
+    for ship in ships_list.split(' '):
+
         name, ship_type = ship.split(':')
         wallet -= game_data['boat_characteristics'][ship_type]['cost']
         if wallet >= 0:
@@ -617,7 +617,6 @@ def _buy_and_add_ships(player, ships_list, game_data):
 
 
 def _add_ship(player, ship_name, ship_type, game_data, position=None):
-    print player, ship_name, ship_type, position
     """Add a ship to a certain position.
     Parameters:
     -----------
@@ -717,12 +716,12 @@ def _buy_IA():
             action += ':battlecruiser'
             wallet -= 30
         action+= ' '
-    print '_build_from_cis', action[:len(action)-1] + '*'
     return action[:len(action) - 1]
 
-def _get_IA_orders(game_data):
-    action = []
-    for ship in game_data['ships'][1]:
+def _get_IA_orders(game_data, player):
+    action = ''
+    print 'All ships', game_data['ships'][player]
+    for ship in game_data['ships'][player]:
         action += ship
         possibility = random.randint(1, 5)
         if possibility == 1:
@@ -739,10 +738,9 @@ def _get_IA_orders(game_data):
 
             x = random.randint(1, size_x)
             y = random.randint(1, size_y)
-            str(x)
-            str(y)
-            action += ':' + x + '-' + y + ' '
-        return action
+
+            action += ':%d-%d ' % (x, y)
+    return action[:len(action)-1]
             ###TEST ZONE###
 
 if __name__ == '__main__':
