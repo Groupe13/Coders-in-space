@@ -4,99 +4,104 @@ import pprint
 import random
 import termcolor
 
+
 def main(path, player_1, player_2):
     """Execute the game
-   
+
     Parameters:
     -----------
     path: path of the .cis file which contain the information of the game played (path)
     player_1: type of the player one (str)
     player_2: type of the player two (str)
-    
+
     Notes:
     ------
     The types can be IA, remote or player
-   
+
     Version:
     --------
     specification: Hugo Jacques (V.1 5/03/17)
-    implementation: 
+    implementation:
     """
     game_data = {'board': {},
-                  'boat_characteristics': {'battlecruiser': {'attack': 4,
-                                                             'cost': 30,
-                                                             'health': 20,
-                                                             'max_speed': 1,
-                                                             'range': 10},
-                                           'destroyer': {'attack': 2,
-                                                         'cost': 20,
-                                                         'health': 8,
-                                                         'max_speed': 2,
-                                                         'range': 7},
-                                           'fighter': {'attack': 1,
-                                                       'cost': 10,
-                                                       'health': 3,
-                                                       'max_speed': 5,
-                                                       'range': 5}},
-                  'ships': {0: {}, 1: {}, 2: {}},
-                  'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0, 'wallet': {1: 100, 2: 100}}}
+                 'boat_characteristics': {'battlecruiser': {'attack': 4,
+                                                            'cost': 30,
+                                                            'health': 20,
+                                                            'max_speed': 1,
+                                                            'range': 10},
+                                          'destroyer': {'attack': 2,
+                                                        'cost': 20,
+                                                        'health': 8,
+                                                        'max_speed': 2,
+                                                        'range': 7},
+                                          'fighter': {'attack': 1,
+                                                      'cost': 10,
+                                                      'health': 3,
+                                                      'max_speed': 5,
+                                                      'range': 5}},
+                 'ships': {0: {}, 1: {}, 2: {}},
+                 'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0, 'wallet': {1: 100, 2: 100}}}
 
     _build_from_cis(path, game_data)
-    _buy_ships(game_data,player_1,player_2)
+    _buy_ships(game_data, player_1, player_2)
     _update_ui(game_data)
     _game_loop(game_data, player_1, player_2)
 
+
 def _show_game(game_data):
     """Show the board and the information about the game played
-    
+
     Parameters:
     -----------
     game_data: dictionary which contains all the information about the game played (dict)
-    
+
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
-    implementation: 
+    implementation:
     """
-def _game_loop(game_data,player1,player2):
+
+
+def _game_loop(game_data, player1, player2):
     """Execute the game and return the winner when the game is over.
-    
+
     Parameters:
     -----------
     game_data: Dictionary which contain all the information of the game (dict)
-    
+
     Notes:
     ------
     Player can be IA, remote or player
-    
+
     Version:
     --------
     specification: Elise Hallaert (V.1 4/03/17)
-    implementation: 
+    implementation:
     """
     while len(game_data['ships'][1]) > 0 \
             and len(game_data['ships'][2]) > 0 \
             and game_data['variables']['last_damages'] < 10:
-        
+
         if player1 == 'IA':
             player1_orders = _get_IA_orders(game_data, 1)
         elif player1 == 'remote':
             player1_orders = get_remote_control(player)
         else:
             player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
-        
+
         if player2 == 'IA':
             player2_orders = _get_IA_orders(game_data, 2)
         elif player2 == 'remote':
             player2_orders = get_remote_control(connection)
         else:
-            player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()        
-        
+            player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
+
         _make_actions(player1_orders, player2_orders, game_data)  # need to implement it
         _move_all_ships(game_data)
         _get_neutral_ships(game_data)
         _update_ui(game_data)
-        time.sleep(7)
+
+        time.sleep(0.5)
 
     if game_data['variables']['last_damages'] == 10:
         player_money1 = 0
@@ -144,7 +149,7 @@ def _update_ui(game_data):
             ship_info = game_data['board'][pos][player][ship]
 
             ships_informations[player] += '%s:%s:%s:h%d:o%d:s%d' % (
-            ship, pos, ship_info['type'], ship_info['health'], ship_info['orientation'], ship_info['speed']) + ' - '
+                ship, pos, ship_info['type'], ship_info['health'], ship_info['orientation'], ship_info['speed']) + ' - '
             if not pos in positions_save:
                 positions_save[pos] = 0
             positions_save[pos] += 1
@@ -176,23 +181,23 @@ def _update_ui(game_data):
 
 def _process_order(player, player_orders, attacks_list, game_data):
     """Procces an order asked by a player.
-    
+
     Parameters:
     -----------
     player: number of the player who is playing (int)
     player_orders: The orders that the player want to process (str)
     attacks_list: The list which will contain the possible attacks (list)
     game_data: Dictionary which contain all the information of the game (dict)
-    
+
     Notes:
     ------
     player_orders must have the same syntax than the orders given by the player
     Player can be 1 for player one and 2 for player two
-    
+
     Version:
     --------
     specification: Hugo Jacques (V.1 5/03/17)
-    implementation: 
+    implementation:
     """
     print 'Player ORDER', player_orders
     for elements in player_orders.split(' '):  # split all the str in orders
@@ -225,16 +230,16 @@ def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, g
     attack_position: place where the ship has to attack (tuple)
     attacks_list: A list wich contains all the attacks (list)
     game_data: Dictionary which contain all the information of the game (dict)
-    
+
     Note:
     -----
     If the attack cannot be made, nothing is added to the list, otherwhise, there is a dictionnary which contain 'target' and 'power'
     Player can be 1 for player one and 2 for player two
-    
+
     Version:
     --------
     specification: Hallaert Elise (V.1 5/03/17)
-    implementation: 
+    implementation:
     """
     # get the position of the ship attacking
     ship_position = game_data['ships'][player][ship_name]
@@ -249,17 +254,17 @@ def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, g
 
 def _make_actions(player1_orders, player2_orders, game_data):
     """Make all the possible actions asked by the players and the shifting
-   
+
     Parameters:
     -----------
     player1_orders: The orders of the player one (str)
     player2_orders: The orders of the player two (str)
     game_data: Dictionary which contain all the information of the game (dict)
-    
+
     Version:
     --------
     specification: Elise Hallaert (V.1 4/03/17)
-    implementation: 
+    implementation:
     """
 
     attacks_list = list()
@@ -273,15 +278,15 @@ def _make_actions(player1_orders, player2_orders, game_data):
 
 def _move_all_ships(game_data):
     """Move all the ship
-    
+
     Parameters:
     -----------
     game_data: Dictionary which contain all the information of the game (dict)
-    
+
     Version:
     --------
     specification: Hugo Jacques (V.1 5/03/17)
-    implementation: 
+    implementation:
     """
 
     for player in game_data['ships']:
@@ -292,17 +297,17 @@ def _move_all_ships(game_data):
 
 def _apply_tore(x_coordinate, y_coordinate, game_data):
     """Apply the effect of a tore if the ship is outside the board.
-    
+
     Parameters:
     -----------
     x_coordinate: The abscissa of the ship (int)
-    y_coordinate: The ordinate of the sip (int) 
+    y_coordinate: The ordinate of the sip (int)
     game_data: Dictionary which contain all the information of the game(dict)
-    
+
     Version:
     --------
     specification: Hugo Jacques (V.1 4/03/17)
-    implementation: 
+    implementation:
     """
 
     board_x = game_data['variables']['board_size']['x']
@@ -340,22 +345,22 @@ def _get_neutral_ships(game_data):
 
 def _move_ship(player, ship_name, game_data):
     """Move the ship of a player to a new position.
-    
+
     Parameters:
     -----------
     player: The player who makes the action (int)
     ship_name: The name of the ship (str)
     game_data: Dictionary which contain all the information of the game (dict)
-    
+
     Note:
     -----
     Player can be 1 for player one and 2 for player two
-    
+
     Version:
     --------
     specification: Métens Guillaume (V.1 4/03/17)
-    implementation: 
-    """ 
+    implementation:
+    """
 
     position = game_data['ships'][player][ship_name]
     x_coordinate = position[0]
@@ -397,22 +402,22 @@ def _move_ship(player, ship_name, game_data):
 
 def _turn_ship(player, ship_name, direction_str, game_data):
     """Change the orientation of a ship.
-   
+
     Parameters:
     ------------
     player: The player who makes the action (int)
     ship_name: The name of the ship (str)
     direction_str: Must be left(Anti-clockwise) or right(clockwise) (str)
     game_data: Dictionary which contain all the information of the game (dict)
-    
+
     Note:
     -----
     Player can be 1 for player one and 2 for player two
-    
+
     Version:
     --------
     specification: Métens Guillaume (V.1 4/03/17)
-    implementation: 
+    implementation:
     """
 
     # 0=up,1=up-right,2=right,3=down-right,4=down;5=down-left,6=left,7=up-left
@@ -431,23 +436,23 @@ def _turn_ship(player, ship_name, direction_str, game_data):
 
 def _ship_acceleration(player, ship_name, way, game_data):
     """Change the speed of a ship.
-    
+
     Parameters:
     ------------
     player: The player who makes the action (int)
     ship_name: The name of the ship (str)
     way: Must be slower or faster (str)
     game_data: Dictionary which contain all the information of the game (dict)
-    
+
     Note:
     -----
     Player can be 1 for player one and 2 for player two
-    
+
     Version:
     --------
     specification: Hugo Jacques (V.1 4/03/17)
-    implementation: 
-    """ 
+    implementation:
+    """
 
     # Get the current speed
     position = game_data['ships'][player][ship_name]
@@ -469,27 +474,27 @@ def _ship_acceleration(player, ship_name, way, game_data):
 
 def _is_in_range(player, ship_name, target_position, game_data):
     """Verify if the case attacked by a ship is in the range of or not.
-    
+
     Parameters:
     -----------
     player: The player who makes the action (int)
     ship_name: The name of the ship (str)
     target_position: The target of the ship (tuple)
     game_data: Dictionary which contain all the information of the game (dict)
-        
+
     Returns:
-    --------    
+    --------
     in_range: if the place can be attacked or not (bool)
-    
+
     Notes:
     ------
     in_range is True if the case can be attacked, False otherwhise
     Player can be 1 for player one and 2 for player two
-    
+
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
-    implementation: 
+    implementation:
     """
 
     current_position = game_data['ships'][player][ship_name]
@@ -510,11 +515,11 @@ def _make_attacks(attacks_list, game_data):
     Notes:
     ------
     the list has to be made by "_process_orders"
-    
+
     Version:
     --------
     specification: Elise Hallaert (V.1 4/03/17)
-    implementation: 
+    implementation:
     """
     # get the information needed
 
@@ -542,11 +547,11 @@ def _build_board(x_size, y_size, game_board):
     x_size: The size of the board in abscissa (int)
     y_size: The ziez of the board in ordinate (int)
     game_board: empty dict that will contain all the element board (dict)
-    
+
     Version:
     --------
     specification: Hugo Jacques (V.1 3/03/17)
-    implementation: 
+    implementation:
     """
 
     for x_coordinate in range(1, x_size + 1):
@@ -556,19 +561,19 @@ def _build_board(x_size, y_size, game_board):
 
 def _buy_ships(game_data, player1, player2):
     """Ask to the player what he wants to buy.
-   
+
     Parameters:
     ------------
     game_board: empty dict that will contain all the element of board (dict)
-    
+
     Version:
     --------
     specification: Métens Guillaume (V.1 3/03/17)
-    implementation: 
+    implementation:
     """
     player1_orders = ''
     player2_orders = ''
-    
+
     if player1 == 'player':
         player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
     elif player1 == 'remote':
@@ -589,21 +594,21 @@ def _buy_ships(game_data, player1, player2):
 
 def _buy_and_add_ships(player, ships_list, game_data):
     """Place the new ship one the board.
-    
+
     Parameters:
     ------------
     player: The player who makes the action (int)
     ships_list: The list wich contains all the new ships (list)
     game_board: empty dict that will contain all the element of board (dict)
-    
+
     Note:
     -----
     Player can be 1 for player one and 2 for player two
-    
+
     Version:
     --------
     specification: Hugo Jacques (V.1 3/03/17)
-    implementation: 
+    implementation:
     """
     wallet = 100
     for ship in ships_list.split(' '):
@@ -625,20 +630,20 @@ def _add_ship(player, ship_name, ship_type, game_data, position=None):
     ship_type: The type of the boat (str)
     game_data: The board and all the informations of the game (dict)
     position: position for the new spaceship (tuple(int, int))
-    
+
     Notes:
     ------
     The optional parameter "position" is only use when a ship is added with the cis file. Otherwise the position is re-alculated
     Player: it's the player number 0: abandoned, 1:player1, 2:player2
-    
+
     Note:
     -----
     Player can be 0 for abandonned ship, 1 for player one and 2 for player two
-    
+
     Version:
     --------
     specification: Métens Guillaume (V.1 3/03/17)
-    implementation: 
+    implementation:
     """
     ship_name = ship_name.lower()
     orientation = 1
@@ -664,11 +669,11 @@ def _build_from_cis(path, game_data):
     ------------
     path: path to the cis file (str)
     game_data: The board and all the informations of the game without the board (dict)
-    
+
     Version:
     --------
     specification: Elise Hallaert (V.1 3/03/17)
-    implementation: 
+    implementation:
     """
 
     file_handle = open(path, 'r')
@@ -680,8 +685,8 @@ def _build_from_cis(path, game_data):
     y_board_size = int(board_size[1])
 
     game_data['variables']['default_position'] = {}
-    game_data['variables']['default_position'][1] = (10, 10)
-    game_data['variables']['default_position'][2] = (x_board_size - 10, y_board_size - 10)
+    game_data['variables']['default_position'][1] = (2, 2)
+    game_data['variables']['default_position'][2] = (x_board_size - 1, y_board_size - 1)
 
     _build_board(x_board_size, y_board_size, game_data['board'])
     game_data['variables']['board_size']['x'] = x_board_size
@@ -700,23 +705,24 @@ def _build_from_cis(path, game_data):
 
 def _buy_IA():
     wallet = 100
-    action =''
+    action = ''
     name = 'i%d'
     while wallet > 0:
         number = random.randint(0, 9999999999)
         action += name % number
-        ship = random.randint(1,3)
+        ship = random.randint(1, 3)
         if ship == 1:
             action += ':fighter'
             wallet -= 10
-        elif ship ==2:
+        elif ship == 2:
             action += ':destroyer'
             wallet -= 20
         else:
             action += ':battlecruiser'
             wallet -= 30
-        action+= ' '
+        action += ' '
     return action[:len(action) - 1]
+
 
 def _get_IA_orders(game_data, player):
     action = ''
@@ -740,9 +746,12 @@ def _get_IA_orders(game_data, player):
             y = random.randint(1, size_y)
 
             action += ':%d-%d ' % (x, y)
-    return action[:len(action)-1]
-            ###TEST ZONE###
+    return action[:len(action) - 1]
+    ###TEST ZONE###
+
 
 if __name__ == '__main__':
+    print 190 * '*'
+    for i in range(1, 50):
+        print '|'
     main('test.cis', 'IA', 'IA')
-
