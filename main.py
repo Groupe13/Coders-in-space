@@ -49,8 +49,6 @@ def main(path, player_1, player_2):
     #building of the board
     _build_from_cis(path, game_data)
     _buy_ships(game_data, player_1, player_2)
-    #buying ships
-    _buy_ships(game_data,player_1,player_2)
     #initialisation of the user design
     _update_ui(game_data)
     #execution of the game
@@ -146,7 +144,7 @@ def _game_loop(game_data,player1,player2):
             #verify who has won the game
             if player_money1 > player_money2:
                 return 1
-            elif player_money1 > player_money2:
+            elif player_money1 < player_money2:
                 return 2
             else:
                 # determine the winner randomly
@@ -191,12 +189,18 @@ def _update_ui(game_data):
     #deal with each player
     for player in game_data['ships']:
         #deal with each ship
+        print '-----------------------------------------------------'
+        print player
         for ship in game_data['ships'][player]:
             #get the position of the ship
+            print ship
             position = game_data['ships'][player][ship]
             #get the information of the ship
+            print position
             ship_info = game_data['board'][position][player][ship]
             #add the information of the ship 
+            print ship_info
+            pprint.pprint(game_data)
             ships_informations[player] += '%s:%s:%s:h%d:o%d:s%d' % (ship, position, ship_info['type'], ship_info['health'], ship_info['orientation'], ship_info['speed']) + ' - '
             if not position in positions_save:
                 positions_save[position] = 0
@@ -253,7 +257,8 @@ def _process_order(player, player_orders, attacks_list, game_data):
     # split all the str in orders
     for elements in player_orders.split(' '): 
         # split each orders in two elements (ship and action)
-        action = elements.split(':')  
+        action = elements.split(':') 
+        print action[0] 
         # verify tat the ship exist or is owned by the player
         if not action[0] in game_data['ships'][player]:  
             print 'Error, the ship "%s" does not exist, or is not yours' % (action[0])
@@ -478,7 +483,7 @@ def _move_ship(player, ship_name, game_data):
     game_data['board'][new_position][player][ship_name] = game_data['board'][position][player][ship_name]
     
     #delete the ship from the ex position
-    del game_data['board'][position][player][ship_name]
+    ###########################################################################################################del game_data['board'][position][player][ship_name]
     #change the position of the ship 
     game_data['ships'][player][ship_name] = new_position
 
@@ -546,15 +551,13 @@ def _ship_acceleration(player, ship_name, way, game_data):
     max_speed = game_data['ship_characteristics'][game_data['board'][position][player][ship_name]['type']]['max_speed']
 
     # faster
-    if way == 'faster':
-        if speed < max_speed:
-            # update the speed of the ship
-            game_data['board'][position][player][ship_name]['speed'] += 1
+    if way == 'faster' and speed < max_speed:
+        # update the speed of the ship
+        game_data['board'][position][player][ship_name]['speed'] += 1
     # slower
-    if way == 'slower':
-        if speed > 0:
-            # update the speed of the ship
-            game_data['board'][position][player][ship_name]['speed'] -= 1
+    if way == 'slower' and speed > 0:
+        # update the speed of the ship
+        game_data['board'][position][player][ship_name]['speed'] -= 1
 
 #---------------------------------------------------------------------------------------------------#
 
@@ -673,16 +676,16 @@ def _buy_ships(game_data, player1, player2):
         player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
     elif player1 == 'remote':
         player1_orders = get_remote_orders()
-    else:
-        player1_orders = _buy_IA()
+    #else:
+     #   player1_orders = _buy_IA()
     
     #verify what is the type of player
     if player2 == 'player':
         player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
     if player1 == 'remote':
         player2_orders = get_remote_orders()
-    else:
-        player2_orders = _buy_IA()
+    #else:
+    #    player2_orders = _buy_IA()
 
     
     _buy_and_add_ships(1, player1_orders, game_data)
@@ -837,7 +840,7 @@ def _buy_IA():
             wallet -= 30
         action += ' '
     return action[:len(action) - 1]
-
+    print action
 
 def _get_IA_orders(game_data, player):
     action = ''
@@ -866,6 +869,6 @@ def _get_IA_orders(game_data, player):
 
 
 if __name__ == '__main__':
-    main('C:/Users/gmetens/Documents/vbfbf/test.cis', 'IA', 'IA')
+    main('C:/Users/gmetens/Documents/vbfbf/test.cis', 'player', 'player')
 
 
