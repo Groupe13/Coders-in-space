@@ -97,7 +97,7 @@ def _game_loop(game_data,player1,player2):
         if player1 == 'IA':
             player1_orders = _get_IA_orders(game_data, 1)
         elif player1 == 'remote':
-            player1_orders = get_remote_control(player)
+            player1_orders = get_remote_control(connection)
         else:
             player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
 
@@ -107,9 +107,6 @@ def _game_loop(game_data,player1,player2):
             player2_orders = get_remote_control(connection)
         else:
             player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
-
-        _make_actions(player1_orders, player2_orders, game_data)  # need to implement it
-        player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
         
         #execute all the actions asked
         _make_actions(player1_orders, player2_orders, game_data)
@@ -200,10 +197,10 @@ def _update_ui(game_data):
             #get the information of the ship
             ship_info = game_data['board'][position][player][ship]
             #add the information of the ship 
-            ships_informations[player] += '%s:%s:%s:h%d:o%d:s%d' % (ship, pos, ship_info['type'], ship_info['health'], ship_info['orientation'], ship_info['speed']) + ' - '
-            if not pos in positions_save:
-                positions_save[pos] = 0
-            positions_save[pos] += 1
+            ships_informations[player] += '%s:%s:%s:h%d:o%d:s%d' % (ship, position, ship_info['type'], ship_info['health'], ship_info['orientation'], ship_info['speed']) + ' - '
+            if not position in positions_save:
+                positions_save[position] = 0
+            positions_save[position] += 1
     # print positions_save
     print x_numbers_str
 
@@ -869,6 +866,6 @@ def _get_IA_orders(game_data, player):
 
 
 if __name__ == '__main__':
-    main('test.cis', 'IA', 'IA')
+    main('C:/Users/gmetens/Documents/vbfbf/test.cis', 'IA', 'IA')
 
 
