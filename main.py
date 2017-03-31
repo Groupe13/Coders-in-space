@@ -27,7 +27,7 @@ def main(path, player_1, player_2):
     
     #initialisation of the main dictionnary
     game_data = {'board': {},
-                 'boat_characteristics': {'battlecruiser': {'attack': 4,
+                 'ship_characteristics': {'battlecruiser': {'attack': 4,
                                                             'cost': 30,
                                                             'health': 20,
                                                             'max_speed': 1,
