@@ -117,7 +117,7 @@ def _game_loop(game_data,player1,player2):
         _update_ui(game_data)
 
 
-        time.sleep(0.001)
+        time.sleep(0.1)
 
 
     # deal with the end of the game
@@ -413,8 +413,8 @@ def _get_neutral_ships(game_data):
         if player != None:
             game_data['board'][position][player][ship] = game_data['board'][position][0][ship]
             game_data['ships'][player][ship] = game_data['ships'][0][ship]
-            #del game_data['board'][position][0][ship]
-            #del game_data['ships'][0][ship]
+            del game_data['board'][position][0][ship]
+            del game_data['ships'][0][ship]
 
 #---------------------------------------------------------------------------------------------------#
 
@@ -476,9 +476,14 @@ def _move_ship(player, ship_name, game_data):
     #change the position of the ship
     game_data['board'][new_position][player][ship_name] = game_data['board'][position][player][ship_name]
     
+    
+    #NOT NEEDED ==> WTF
+    
     #delete the ship from the ex position
-    ###########################################################################################################del game_data['board'][position][player][ship_name]
+    #del game_data['board'][position][player][ship_name]
     #change the position of the ship 
+   
+    
     game_data['ships'][player][ship_name] = new_position
 
 #---------------------------------------------------------------------------------------------------#
@@ -617,7 +622,7 @@ def _make_attacks(attacks_list, game_data):
         for player in game_data['board'][position].copy():
             for ship in game_data['board'][position][player].copy():
                 # attack only player's ship
-                if player != 0:
+                #if player != 0:
                     health = game_data['board'][position][player][ship]['health'] - damage
                     #if health <= 0:  # verify if the ship his destroyed
                        # delete the ship from the game
@@ -861,6 +866,6 @@ def _get_IA_orders(game_data, player):
 
 
 if __name__ == '__main__':
-    main('C:/Users/gmetens/Documents/vbfbf/test.cis', 'IA', 'IA')
+    main('F:/Desktop/Coders-in-space-master/test.cis', 'IA', 'IA')
 
 
