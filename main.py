@@ -622,14 +622,14 @@ def _make_attacks(attacks_list, game_data):
         for player in game_data['board'][position].copy():
             for ship in game_data['board'][position][player].copy():
                 # attack only player's ship
-                #if player != 0:
+                if player != 0:
                     health = game_data['board'][position][player][ship]['health'] - damage
-                    #if health <= 0:  # verify if the ship his destroyed
+                    if health <= 0:  # verify if the ship his destroyed
                        # delete the ship from the game
-                        #del game_data['board'][position][player][ship]
-                        #del game_data['ships'][player][ship]
-                    #else:
-                    game_data['board'][position][player][ship]['health'] = health
+                        del game_data['board'][position][player][ship]
+                        del game_data['ships'][player][ship]
+                    else:
+                        game_data['board'][position][player][ship]['health'] = health
 
 #---------------------------------------------------------------------------------------------------#
 
