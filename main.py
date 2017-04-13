@@ -627,7 +627,8 @@ def _make_attacks(attacks_list, game_data):
                     if health <= 0:  # verify if the ship his destroyed
                        # delete the ship from the game
                         del game_data['board'][position][player][ship]
-                        del game_data['ships'][player][ship]
+                        if ship in game_data['ships'][player]:
+                            del game_data['ships'][player][ship]
                     else:
                         game_data['board'][position][player][ship]['health'] = health
 
@@ -823,7 +824,7 @@ def _buy_IA():
     action = ''
     name = 'i%d'
     while wallet > 0:
-        number = random.randint(0, 9999999999)
+        number = random.randint(1, 10)
         action += name % number
         ship = random.randint(1, 3)
         if ship == 1:
