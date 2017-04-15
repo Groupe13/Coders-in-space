@@ -94,17 +94,17 @@ def _game_loop(game_data,player1,player2):
 
         if player1 == 'IA':
             player1_orders = _get_IA_orders(game_data, 1)
-        #elif player1 == 'remote':
-            #player1_orders = get_remote_control(connection)
-        #else:
-            #player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
+        elif player1 == 'remote':
+            player1_orders = get_remote_control(connection)
+        else:
+            player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
 
         if player2 == 'IA':
             player2_orders = _get_IA_orders(game_data, 2)
-        #elif player2 == 'remote':
-            #player2_orders = get_remote_control(connection)
-        #else:
-            #player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
+        elif player2 == 'remote':
+            player2_orders = get_remote_control(connection)
+        else:
+            player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
         
         #execute all the actions asked
         _make_actions(player1_orders, player2_orders, game_data)
@@ -672,18 +672,20 @@ def _buy_ships(game_data, player1, player2):
 
     #verify what is the type of player
 
-    #if player1 == 'player':
-        #player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
-    #elif player1 == 'remote':
-        #player1_orders = get_remote_orders()
-    player1_orders = _buy_IA()
+    if player1 == 'player':
+        player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
+    elif player1 == 'remote':
+        player1_orders = get_remote_orders()
+    else:
+        player1_orders = _buy_IA()
     
     #verify what is the type of player
-    #if player2 == 'player':
-        #player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
-    #if player1 == 'remote':
-        #player2_orders = get_remote_orders()
-    player2_orders = _buy_IA()
+    if player2 == 'player':
+        player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
+    if player1 == 'remote':
+        player2_orders = get_remote_orders()
+    else:
+        player2_orders = _buy_IA()
 
     
     _buy_and_add_ships(1, player1_orders, game_data)
@@ -867,6 +869,6 @@ def _get_IA_orders(game_data, player):
 
 
 if __name__ == '__main__':
-    main('F:/Desktop/Coders-in-space-master/test.cis', 'IA', 'IA')
+    main('F:/Desktop/Coders-in-space-master/test.cis', 'player', 'player')
 
 
