@@ -55,22 +55,6 @@ def main(path, player_1, player_2):
     _game_loop(game_data, player_1, player_2)
 
 
-def _show_game(game_data):
-    """Show the board and the information about the game played
-
-    Parameters:
-    -----------
-    game_data: dictionary which contains all the information about the game played (dict)
-
-    Version:
-    --------
-    specification: Métens Guillaume (V.1 5/03/17)
-    implementation:
-    """
-
-
-
-
 def _game_loop(game_data,player1,player2):
     """Execute the game and return the winner when the game is over.
 
