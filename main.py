@@ -586,7 +586,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
     
     #Tore_value_y
     if (game_data['variables']['board_size']['y']//2) < (game_data['variables']['board_size']['y']/2.0):
-        tore_value_x = (game_data['variables']['board_size']['y']//2) +1
+        tore_value_y = (game_data['variables']['board_size']['y']//2) +1
     else:
         tore_value_y = (game_data['variables']['board_size']['y'])/2
     
