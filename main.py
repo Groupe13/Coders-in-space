@@ -545,7 +545,7 @@ def _ship_acceleration(player, ship_name, way, game_data):
 #---------------------------------------------------------------------------------------------------#
 
 def _is_in_range(player, ship_name, target_position, game_data):
-    """Verify if the case attacked by a ship is in the range of or not.
+    """Verify if the case attacked by a ship is in the range or not.
 
     Parameters:
     -----------
@@ -575,7 +575,38 @@ def _is_in_range(player, ship_name, target_position, game_data):
     #get the range of the ship
     max_range = game_data['ship_characteristics'][ship_type]['range']
 
-    manhattan_dist = abs(target_position[0] - current_position[0]) + abs(
+    #Check if we need to apply "tore" effect
+    #Calculate the tore_value:
+    
+    #Tore_value_x
+    if (game_data['variables']['board_size']['x']//2) < (game_data['variables']['board_size']['x']/2.0):
+        tore_value_x = (game_data['variables']['board_size']['x']//2) +1
+    else:
+        tore_value_x = (game_data['variables']['board_size']['x']/2)
+    
+    #Tore_value_y
+    if (game_data['variables']['board_size']['y']//2) < (game_data['variables']['board_size']['y']/2.0):
+        tore_value_x = (game_data['variables']['board_size']['y']//2) +1
+    else:
+        tore_value_y = (game_data['variables']['board_size']['y'])/2
+    
+    # 4 cases => 4 manhattan_dist
+    #Tore need to be apply in x AND Y
+    if abs(target_position[0] - current_position[0]) >= tore_value_x and abs(target_position[1] - current_position[1]) >= tore_value_y:
+        manhattan_dist = (game_data['variables']['board_size']['x'] - abs(target_position[0] - current_position[0]) ) + ( 
+        game_data['variables']['board_size']['y'] - abs(target_position[1] - current_position[1]))
+    
+    #Tore need to be apply in X
+    elif abs(target_position[0] - current_position[0]) >= tore_value_x and abs(target_position[1] - current_position[1]) < tore_value_y:
+        manhattan_dist = (game_data['variables']['board_size']['x'] - abs(target_position[0] - current_position[0]) ) + abs(target_position[1] - current_position[1])
+   
+    #Tore need to be apply in Y
+    elif abs(target_position[0] - current_position[0]) < tore_value_x and abs(target_position[1] - current_position[1]) >= tore_value_y:
+        manhattan_dist = abs(target_position[0] - current_position[0]) + (game_data['variables']['board_size']['y'] - abs(target_position[1] - current_position[1]))
+    
+    #Tore isn't needed
+    else:
+        manhattan_dist = abs(target_position[0] - current_position[0]) + abs(
         target_position[1] - current_position[1])
     return manhattan_dist <= max_range
 
@@ -853,6 +884,6 @@ def _get_IA_orders(game_data, player):
 
 
 if __name__ == '__main__':
-    main('F:/Desktop/Coders-in-space-master/test.cis', 'player', 'player')
+    main('F:/Desktop/Coders-in-space-master/test.cis', 'IA', 'IA')
 
 
