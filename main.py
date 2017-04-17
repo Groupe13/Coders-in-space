@@ -630,18 +630,19 @@ def _make_attacks(attacks_list, game_data):
     specification: Elise Hallaert (V.1 4/03/17)
     implementation:
     """
-    
+    been_touched = False
     # get the information needed
     for attack in attacks_list:
         damage = attack['power']
         position = attack['target']
-        
+
         #treat with each player
         for player in game_data['board'][position].copy():
             for ship in game_data['board'][position][player].copy():
                 # attack only player's ship
                 if player != 0:
                     health = game_data['board'][position][player][ship]['health'] - damage
+                    been_touched = True
                     if health <= 0:  # verify if the ship his destroyed
                        # delete the ship from the game
                         del game_data['board'][position][player][ship]
@@ -650,6 +651,8 @@ def _make_attacks(attacks_list, game_data):
                     else:
                         game_data['board'][position][player][ship]['health'] = health
 
+    if been_touched:
+        game_data['variables']['last_damages'] += 1
 #---------------------------------------------------------------------------------------------------#
 
 def _build_board(x_size, y_size, game_board):
