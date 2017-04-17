@@ -1,7 +1,5 @@
-#####################################################################################
-                                  # Coders-in-space
-                                  INFOB132's project
-#####################################################################################
+#Coders-in-space
+INFOB132's project
 
 Pour jouer au jeu il suffit d'appeler la fonction main(path, player_1, player_2).
 Le paramètre path doit spécifier le chemin vers le fichier .cis contenant l'ensemble des informations sur le jeu.
