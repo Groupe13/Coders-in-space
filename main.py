@@ -101,7 +101,7 @@ def _game_loop(game_data,player1,player2):
         _update_ui(game_data)
 
 
-        time.sleep(0.1)
+        time.sleep(10)
 
 
     # deal with the end of the game
@@ -159,7 +159,7 @@ def _update_ui(game_data):
     y_size = game_data['variables']['board_size']['y']
 
     # calculate baord border (to center the board)
-    border = (190 - x_size * 3) / 2  
+    border = (190 -2 - x_size * 4) / 2
     border_str = ' ' * border
     x_numbers_str = border_str + '   '
 
@@ -198,11 +198,13 @@ def _update_ui(game_data):
         print line
     print ''  # Empty line
     # max 9 line left
-    line_left = 4
+    line_left = 47 - y_size
     for p in ships_informations:
         line_size = len(ships_informations[p])
         line_left -= line_size / 190
         print 'Team %d : %s' % (p, ships_informations[p])
+
+    print line_left
 
     if line_left >= 0:
         for i in range(0, line_left):
@@ -230,13 +232,11 @@ def _process_order(player, player_orders, attacks_list, game_data):
     specification: Hugo Jacques (V.1 5/03/17)
     implementation:
     """
-    
-    print 'Player ORDER', player_orders
+
     # split all the str in orders
     for elements in player_orders.split(' '): 
         # split each orders in two elements (ship and action)
-        action = elements.split(':') 
-        print action[0] 
+        action = elements.split(':')
         # verify tat the ship exist or is owned by the player
         if not action[0] in game_data['ships'][player]:  
             print 'Error, the ship "%s" does not exist, or is not yours' % (action[0])
@@ -858,11 +858,10 @@ def _buy_IA():
             wallet -= 30
         action += ' '
     return action[:len(action) - 1]
-    print action
+
 
 def _get_IA_orders(game_data, player):
     action = ''
-    print 'All ships', game_data['ships'][player]
     for ship in game_data['ships'][player]:
         action += ship
         possibility = random.randint(1, 5)
@@ -887,6 +886,6 @@ def _get_IA_orders(game_data, player):
 
 
 if __name__ == '__main__':
-    main('F:/Desktop/Coders-in-space-master/test.cis', 'IA', 'IA')
+    main('C:/Users/Hugo/Desktop/test.cis', 'IA', 'IA')
 
 
