@@ -396,7 +396,10 @@ def _get_neutral_ships(game_data):
         #treat the case where the ship is captured
         if player != None:
             game_data['board'][position][player][ship] = game_data['board'][position][0][ship]
-            game_data['ships'][player][ship] = game_data['ships'][0][ship]
+            if ship in game_data['ships'][player]:
+                game_data['ships'][player][ship] = game_data['ships'][0][ship] +'_2'
+            else:
+                game_data['ships'][player][ship] = game_data['ships'][0][ship]
             del game_data['board'][position][0][ship]
             del game_data['ships'][0][ship]
 
@@ -841,7 +844,7 @@ def _buy_IA():
     action = ''
     name = 'i%d'
     while wallet > 0:
-        number = random.randint(1, 10)
+        number = random.randint(1, 99)
         action += name % number
         ship = random.randint(1, 3)
         if ship == 1:
