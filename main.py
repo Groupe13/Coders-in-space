@@ -291,7 +291,8 @@ def _game_loop(game_data,player1,player2, connection = None):
             player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()           
         if player1 == 'remote' and player2 =='IA':
             notify_remote_orders(connection, player2_orders)    
-        
+        #update the number of turn without damages
+        game_data['variables']['last_damages'] += 1
         #execute all the actions asked
         _make_actions(player1_orders, player2_orders, game_data)
         #move all the ships  
@@ -841,7 +842,7 @@ def _make_attacks(attacks_list, game_data):
                         game_data['board'][position][player][ship]['health'] = health
 
     if been_touched:
-        game_data['variables']['last_damages'] += 1
+        game_data['variables']['last_damages'] = 0
 #---------------------------------------------------------------------------------------------------#
 
 def _build_board(x_size, y_size, game_board):
