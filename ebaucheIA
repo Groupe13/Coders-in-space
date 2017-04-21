@@ -1,0 +1,9 @@
+    #If speed < max_speed:
+                #faster
+            #elif neutral ship in range(1 command):
+                #change orientation or speed
+            #elif enemy in range
+                #attack battlecruise first and other's then
+            #else
+                #randomly change the speed or the orientation
+               
