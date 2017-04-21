@@ -101,7 +101,6 @@ def _game_loop(game_data,player1,player2):
         _update_ui(game_data)
 
 
-        time.sleep(10)
 
 
     # deal with the end of the game
@@ -651,7 +650,7 @@ def _make_attacks(attacks_list, game_data):
                     else:
                         game_data['board'][position][player][ship]['health'] = health
 
-    if been_touched:
+    if not been_touched:
         game_data['variables']['last_damages'] += 1
 #---------------------------------------------------------------------------------------------------#
 
@@ -889,6 +888,6 @@ def _get_IA_orders(game_data, player):
 
 
 if __name__ == '__main__':
-    main('C:/Users/Hugo/Desktop/test.cis', 'IA', 'IA')
+    print main('C:/Users/Hugo/Desktop/test.cis', 'player', 'player')
 
 
