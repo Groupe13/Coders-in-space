@@ -1,9 +1,202 @@
 # -*- coding: utf-8 -*-
 import time
-import pprint
 import random
 import termcolor
+import socket
 
+def get_IP():
+    """Returns the IP of the computer where get_IP is called.
+    
+    Returns
+    -------
+    computer_IP: IP of the computer where get_IP is called (str)
+    
+    Notes
+    -----
+    If you have no internet connection, your IP will be 127.0.0.1.
+    This IP address refers to the local host, i.e. your computer.
+    
+    """   
+    
+    return socket.gethostbyname(socket.gethostname())
+
+
+def connect_to_player(player_id, remote_IP='127.0.0.1', verbose=False):
+    """Initialise communication with remote player.
+    
+    Parameters
+    ----------
+    player_id: player id of the remote player, 1 or 2 (int)
+    remote_IP: IP of the computer where remote player is (str, optional)
+    verbose: True only if connection progress must be displayed (bool, optional)
+    
+    Returns
+    -------
+    connection: sockets to receive/send orders (tuple)
+    
+    Notes
+    -----
+    Initialisation can take several seconds.  The function only
+    returns after connection has been initialised by both players.
+    
+    Use the default value of remote_IP if the remote player is running on
+    the same machine.  Otherwise, indicate the IP where the other player
+    is running with remote_IP.  On most systems, the IP of a computer
+    can be obtained by calling the get_IP function on that computer.
+        
+    """ 
+    
+    # init verbose display
+    if verbose:
+        print '\n-------------------------------------------------------------'
+        
+    # open socket (as server) to receive orders
+    socket_in = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_in.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # deal with a socket in TIME_WAIT state
+
+    if remote_IP == '127.0.0.1':
+        local_IP = '127.0.0.1'
+    else:
+        local_IP = get_IP()
+    local_port = 42000 + (3-player_id)
+    
+    try:
+        if verbose:
+            print 'binding on %s:%d to receive orders from player %d...' % (local_IP, local_port, player_id)
+        socket_in.bind((local_IP, local_port))
+    except:
+        local_port = 42000 + 100+ (3-player_id)
+        if verbose:
+            print '   referee detected, binding instead on %s:%d...' % (local_IP, local_port)
+        socket_in.bind((local_IP, local_port))
+
+    socket_in.listen(1)
+    if verbose:
+        print '   done -> now waiting for a connection on %s:%d\n' % (local_IP, local_port)
+
+    # open client socket used to send orders
+    socket_out = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    socket_out.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # deal with a socket in TIME_WAIT state
+    
+    remote_port = 42000 + player_id
+    
+    connected = False
+    msg_shown = False
+    while not connected:
+        try:
+            if verbose and not msg_shown:
+                print 'connecting on %s:%d to send orders to player %d...' % (remote_IP, remote_port, player_id)
+            socket_out.connect((remote_IP, remote_port))
+            connected = True
+            if verbose:
+                print '   done -> now sending orders to player %d on %s:%d' % (player_id, remote_IP, remote_port)
+        except:
+            if verbose and not msg_shown:
+                print '   connection failed -> will try again every 100 msec...'
+            time.sleep(.1)
+
+            msg_shown = True
+            
+    if verbose:
+        print        
+
+    # accept connection to the server socket to receive orders from remote player
+    print 'sutck on accept'
+    socket_in, remote_address = socket_in.accept()
+    if verbose:
+        print 'now listening to orders from player %d' % (player_id)
+            
+    # end verbose display
+    if verbose:
+        print '\nconnection to remote player %d successful\n-------------------------------------------------------------\n' % player_id
+
+    # return sockets for further use     
+    return (socket_in, socket_out)
+
+
+def disconnect_from_player(connection):
+    """End communication with remote player.
+    
+    Parameters
+    ----------
+    connection: sockets to receive/send orders (tuple)
+    
+    """
+    
+    # get sockets
+    socket_in = connection[0]
+    socket_out = connection[1]
+    
+    # shutdown sockets
+    socket_in.shutdown(socket.SHUT_RDWR)    
+    socket_out.shutdown(socket.SHUT_RDWR)
+    
+    # close sockets
+    socket_in.close()
+    socket_out.close()
+    
+    
+def notify_remote_orders(connection, orders):
+    """Notifies orders of the local player to a remote player.
+    
+    Parameters
+    ----------
+    connection: sockets to receive/send orders (tuple)
+    orders: orders of the local player (str)
+        
+    Raises
+    ------
+    IOError: if remote player cannot be reached
+    
+    """
+     
+    # get sockets
+    socket_in = connection[0]
+    socket_out = connection[1]
+
+    # deal with null orders (empty string)
+    if orders == '':
+        orders = 'null'
+    
+    # send orders
+    try:
+        socket_out.sendall(orders)
+    except:
+        raise IOError, 'remote player cannot be reached'
+
+
+def get_remote_orders(connection):
+    """Returns orders from a remote player.
+
+    Parameters
+    ----------
+    connection: sockets to receive/send orders (tuple)
+        
+    Returns
+    ----------
+    player_orders: orders given by remote player (str)
+
+    Raises
+    ------
+    IOError: if remote player cannot be reached
+            
+    """
+   
+    # get sockets
+    socket_in = connection[0]
+    socket_out = connection[1]
+
+    # receive orders    
+    try:
+        orders = socket_in.recv(4096)
+    except:
+        raise IOError, 'remote player cannot be reached'
+        
+    # deal with null orders
+    if orders == 'null':
+        orders = ''
+        
+    return orders
 
 
 def main(path, player_1, player_2):
@@ -22,7 +215,6 @@ def main(path, player_1, player_2):
     Version:
     --------
     specification: Hugo Jacques (V.1 5/03/17)
-    implementation:
     """
     
     #initialisation of the main dictionnary
@@ -51,17 +243,22 @@ def main(path, player_1, player_2):
     _buy_ships(game_data, player_1, player_2)
     #initialisation of the user design
     _update_ui(game_data)
+    #connect if playing with remote player
+    if player_1 == 'remote' or player_2 == 'remote':
+        connection = connect_to_player(player_id)
     #execution of the game
-    _game_loop(game_data, player_1, player_2)
+    winner = _game_loop(game_data, player_1, player_2, connection)
+    print 'The winner is player %d' (winner)
 
-
-def _game_loop(game_data,player1,player2):
+def _game_loop(game_data,player1,player2, connection = None):
     """Execute the game and return the winner when the game is over.
 
     Parameters:
     -----------
     game_data: Dictionary which contain all the information of the game (dict)
-
+    player1: type of player (str)
+    player2: type of player (str)
+    connection: sockets to receive/send orders (tuple)     
     Notes:
     ------
     Player can be IA, remote or player
@@ -69,31 +266,36 @@ def _game_loop(game_data,player1,player2):
     Version:
     --------
     specification: Elise Hallaert (V.1 4/03/17)
-    implementation:
+    
     """
-
+    #check if the game is ended
     while len(game_data['ships'][1]) > 0 \
             and len(game_data['ships'][2]) > 0 \
             and game_data['variables']['last_damages'] < 10:
-
+        
+        #turn of each type of player
         if player1 == 'IA':
             player1_orders = _get_IA_orders(game_data, 1)
         elif player1 == 'remote':
-            player1_orders = get_remote_control(connection)
+            player1_orders = get_remote_orders(connection)
         else:
             player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
-
+        if player1 == 'IA' and player2 =='remote':
+            notify_remote_orders(connection, player1_orders)
+        
         if player2 == 'IA':
             player2_orders = _get_IA_orders(game_data, 2)
         elif player2 == 'remote':
-            player2_orders = get_remote_control(connection)
+            player2_orders = get_remote_orders(connection)
         else:
-            player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
-        
+            player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()           
+        if player1 == 'remote' and player2 =='IA':
+            notify_remote_orders(connection, player2_orders)    
+        #update the number of turn without damages
+        game_data['variables']['last_damages'] += 1
         #execute all the actions asked
         _make_actions(player1_orders, player2_orders, game_data)
         #move all the ships  
-
         _move_all_ships(game_data)
         #verify if abandonned ships can be caught
         _get_neutral_ships(game_data)
@@ -150,7 +352,6 @@ def _update_ui(game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
-    implementation: 
     """
     print ''
     #get board size
@@ -229,7 +430,6 @@ def _process_order(player, player_orders, attacks_list, game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 5/03/17)
-    implementation:
     """
 
     # split all the str in orders
@@ -275,7 +475,6 @@ def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, g
     Version:
     --------
     specification: Hallaert Elise (V.1 5/03/17)
-    implementation:
     """
     # get the position of the ship attacking
     ship_position = game_data['ships'][player][ship_name]
@@ -301,7 +500,6 @@ def _make_actions(player1_orders, player2_orders, game_data):
     Version:
     --------
     specification: Elise Hallaert (V.1 4/03/17)
-    implementation:
     """
     #initialisation of the future list of possible attacks
     attacks_list = list()
@@ -326,7 +524,6 @@ def _move_all_ships(game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 5/03/17)
-    implementation:
     """
     #make the moves of the ships
     for player in game_data['ships']:
@@ -337,7 +534,7 @@ def _move_all_ships(game_data):
                 _move_ship(player, ship_name, game_data)
 
 #---------------------------------------------------------------------------------------------------#
-#!!! function to delete!!!!
+
 def _apply_tore(x_coordinate, y_coordinate, game_data):
     """Apply the effect of a tore if the ship is outside the board.
 
@@ -350,7 +547,6 @@ def _apply_tore(x_coordinate, y_coordinate, game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 4/03/17)
-    implementation:
     """
     
     board_x = game_data['variables']['board_size']['x']
@@ -379,7 +575,11 @@ def _get_neutral_ships(game_data):
     
     Note:
     -----
-    Only the ships which belong to a team can move    
+    Only the ships which belong to a team can move
+    
+    Version:
+    --------
+    specification: Hugo Jacques (V.1 3/04/17)    
     """
     #deal with each abandonned ship
     for ship in game_data['ships'][0].copy():
@@ -421,10 +621,9 @@ def _move_ship(player, ship_name, game_data):
     --------
     specification: Métens Guillaume (V.1 4/03/17)
 
-    implementation:
-    #get the position of the ship """
+    """
 
-
+    #get the position of the ship
     position = game_data['ships'][player][ship_name]
     #get the coordinates of the ship
     x_coordinate = position[0]
@@ -462,14 +661,8 @@ def _move_ship(player, ship_name, game_data):
     #change the position of the ship
     game_data['board'][new_position][player][ship_name] = game_data['board'][position][player][ship_name]
     
-    
-    #NOT NEEDED ==> WTF
-    
-    #delete the ship from the ex position
-    #del game_data['board'][position][player][ship_name]
-    #change the position of the ship 
-   
-    
+
+    #change the position of the ship     
     game_data['ships'][player][ship_name] = new_position
 
 #---------------------------------------------------------------------------------------------------#
@@ -491,7 +684,6 @@ def _turn_ship(player, ship_name, direction_str, game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 4/03/17)
-    implementation:
     """
 
     # 0=up,1=up-right,2=right,3=down-right,4=down;5=down-left,6=left,7=up-left
@@ -526,7 +718,6 @@ def _ship_acceleration(player, ship_name, way, game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 4/03/17)
-    implementation:
     """
 
     # Get the current speed and position
@@ -568,7 +759,6 @@ def _is_in_range(player, ship_name, target_position, game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
-    implementation:
     """
     #get the current position
     current_position = game_data['ships'][player][ship_name]
@@ -620,6 +810,7 @@ def _make_attacks(attacks_list, game_data):
     -----------
     attacks_list: list of the attacks that have to be made (list)
     game_data: Dictionary which contain all the informations of the game (dict)
+    
     Notes:
     ------
     the list has to be made by "_process_orders"
@@ -627,7 +818,6 @@ def _make_attacks(attacks_list, game_data):
     Version:
     --------
     specification: Elise Hallaert (V.1 4/03/17)
-    implementation:
     """
     been_touched = False
     # get the information needed
@@ -652,20 +842,19 @@ def _make_attacks(attacks_list, game_data):
 
     if not been_touched:
         game_data['variables']['last_damages'] += 1
-#---------------------------------------------------------------------------------------------------#
+
 
 def _build_board(x_size, y_size, game_board):
     """Build an empty game board.
     Parameters:
     ------------
     x_size: The size of the board in abscissa (int)
-    y_size: The ziez of the board in ordinate (int)
+    y_size: The size of the board in ordinate (int)
     game_board: empty dict that will contain all the element board (dict)
 
     Version:
     --------
     specification: Hugo Jacques (V.1 3/03/17)
-    implementation:
     """
     
     for x_coordinate in range(1, x_size + 1):
@@ -684,7 +873,6 @@ def _buy_ships(game_data, player1, player2):
     Version:
     --------
     specification: Métens Guillaume (V.1 3/03/17)
-    implementation:
     """
     
     player1_orders = ''
@@ -729,7 +917,6 @@ def _buy_and_add_ships(player, ships_list, game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 3/03/17)
-    implementation:
     """
     
     #initialisation of the money of the player
@@ -770,7 +957,6 @@ def _add_ship(player, ship_name, ship_type, game_data, position=None):
     Version:
     --------
     specification: Métens Guillaume (V.1 3/03/17)
-    implementation:
     """
     
     ship_name = ship_name.lower()
@@ -805,7 +991,6 @@ def _build_from_cis(path, game_data):
     Version:
     --------
     specification: Elise Hallaert (V.1 3/03/17)
-    implementation:
     """
     #open the .cis file
     file_handle = open(path, 'r')
@@ -842,6 +1027,11 @@ def _build_from_cis(path, game_data):
 #---------------------------------------------------------------------------------------------------#
 
 def _buy_IA():
+    """Gives naive orders to buy some ships
+    Version:
+    --------
+    specification: Elise Hallaert (V.1 31/03/17)
+    """ 
     wallet = 100
     action = ''
     name = 'i%d'
@@ -861,8 +1051,24 @@ def _buy_IA():
         action += ' '
     return action[:len(action) - 1]
 
+#---------------------------------------------------------------------------------------------------#
 
 def _get_IA_orders(game_data, player):
+    """gives naive orders to ships
+    
+    Parameters:
+    ----------
+    game_data: The board and all the informations of the game (dict)
+    player: number of the player (str)
+    
+    Notes:
+    ------
+    Player can be 1 or 2
+    
+    Version:
+    --------
+    specification: Elise Hallaert (V.1 31/03/17)
+    """
     action = ''
     for ship in game_data['ships'][player]:
         action += ship
