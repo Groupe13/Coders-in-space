@@ -880,6 +880,15 @@ def _get_IA_orders(game_data, player):
         if game_data['board'][position][player][ship]['type'] == 'battlecruiser':
         elif game_data['board'][position][player][ship]['type'] == 'fighter':
         elif game_data['board'][position][player][ship]['type'] == 'destroyer':
+            #If speed < max_speed:
+                #faster
+            #elif neutral ship in range(1 command):
+                #change orientation or speed
+            #elif enemy in range
+                #attack battlecruise first and other's then
+            #else
+                #randomly change the speed or the orientation
+                
         for in game_data
             action += ship
             possibility = random.randint(1, 5)
