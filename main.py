@@ -882,8 +882,10 @@ def _get_IA_orders(game_data, player):
         if game_data['board'][position][player][ship]['type'] == 'battlecruiser':
         elif game_data['board'][position][player][ship]['type'] == 'fighter':
         elif game_data['board'][position][player][ship]['type'] == 'destroyer':
-            ### Set enemy_player and check if enemy in range 
-           
+            ###################################################
+            ###Set enemy_player and check if enemy in range### 
+            ##################################################
+            
             # find other player number
             if player == 1:
                 enemy_player = 2
@@ -897,7 +899,11 @@ def _get_IA_orders(game_data, player):
                     #If yes add the position of the enmy_ship to the list
                     enemy_ship_list.append(game_data['ships'][enemy_player][enemy_ship])
             
-            ### Start the 'IA' check
+            
+            ###########################
+            ### Start the 'IA' check###
+            ###########################
+            
             #If speed < max_speed
             if game_data['board'][position][player][ship]['speed'] < game_data['boat_characteristics']['destroyer']['max_speed']:
                 #Faster
@@ -927,6 +933,7 @@ def _get_IA_orders(game_data, player):
             
             #else
             else:
+                #randomly change the speed or the orientation
                 action += ship
                 possibility = random.randint(1, 5)
                 if possibility == 1:
@@ -937,7 +944,7 @@ def _get_IA_orders(game_data, player):
                     action += ':left '
                 elif possibility == 4:
                     action += ':right '
-                #randomly change the speed or the orientation
+                
        ###########################################################################         
         for in game_data
             action += ship
