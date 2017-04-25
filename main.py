@@ -877,32 +877,54 @@ def _get_IA_orders(game_data, player):
     """
     action = ''
     for ship in game_data['ships'][player]:
+        enemy_ship_list = []
         position = game_data['ships'][player][ship]
         if game_data['board'][position][player][ship]['type'] == 'battlecruiser':
         elif game_data['board'][position][player][ship]['type'] == 'fighter':
         elif game_data['board'][position][player][ship]['type'] == 'destroyer':
+            ### Set enemy_player and check if enemy in range 
+           
+            # find other player number
+            if player == 1:
+                enemy_player = 2
+            else:
+                enemy_player = 1
+           
+           #select all enemy_ship position and check if there is enemy_ship in range for this boat
+            for enemy_ship in game_data['ships'][enemy_player]:
+                #Check if the enemy_ship is in the range
+                if _is_in_range(player, ship,game_data['ships'][enemy_player][enemy_ship], game_data):
+                    #If yes add the position of the enmy_ship to the list
+                    enemy_ship_list.append(game_data['ships'][enemy_player][enemy_ship])
+            
+            ### Start the 'IA' check
             #If speed < max_speed
             if game_data['board'][position][player][ship]['speed'] < game_data['boat_characteristics']['destroyer']['max_speed']:
                 #Faster
                 action +=ship
                 action += ':faster '
+            
             #elif neutral ship in range(1 command):
             neutral_in_range = #1command not implemented yet (acutal_speed <= distance?????)
             elif neutral_in_range:
-                
                 #change orientation or speed
             
-            #elif enemy in range
-            #find pos to target or not)
-            #find other player number
-            if player == 1:
-                enemy_player = 2
-            else:
-                enemy_player = 1
-            #select all ship position
-            for game_data['ships'][enemy_player]:
-                _is_in_range(player, ship_name, attack_position, game_data)
-                #attack battlecruise first and other's then
+
+            
+            
+             #elif enemy in range 
+             elif len(enemy_ship_list) > 0:
+                 #randomly get a target
+                 target_pos = random.randint(0,len(enemy_ship_list)-1)
+                 #Add the target pos to the action list
+                 
+                 action +=ship 
+                 action +=':'
+                 action += target_pos[0]
+                 action += '-'
+                 action += target_pos[1]
+                #attack battlecruise first and other's then ==> TODO
+            
             #else
             else:
                 action += ship
@@ -916,7 +938,7 @@ def _get_IA_orders(game_data, player):
                 elif possibility == 4:
                     action += ':right '
                 #randomly change the speed or the orientation
-                
+       ###########################################################################         
         for in game_data
             action += ship
             possibility = random.randint(1, 5)
