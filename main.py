@@ -877,6 +877,8 @@ def _get_IA_orders(game_data, player):
     """
     action = ''
     for ship in game_data['ships'][player]:
+        #Initialise the two list needed to compute the target
+        enemy_ship_list_prior = []
         enemy_ship_list = []
         position = game_data['ships'][player][ship]
         if game_data['board'][position][player][ship]['type'] == 'battlecruiser':
@@ -895,9 +897,14 @@ def _get_IA_orders(game_data, player):
            #select all enemy_ship position and check if there is enemy_ship in range for this boat
             for enemy_ship in game_data['ships'][enemy_player]:
                 #Check if the enemy_ship is in the range
-                if _is_in_range(player, ship,game_data['ships'][enemy_player][enemy_ship], game_data):
+                position = game_data['ships'][enemy_player][enemy_ship]
+                
+                if _is_in_range(player, ship, position, game_data):
                     #If yes add the position of the enmy_ship to the list
-                    enemy_ship_list.append(game_data['ships'][enemy_player][enemy_ship])
+                    if game_data['board'][position][enemy_player][enemy_ship]['type'] == 'battlecruiser':
+                        enemy_ship_list_prior.append(game_data['ships'][enemy_player][enemy_ship])
+                    else:
+                        enemy_ship_list.append(game_data['ships'][enemy_player][enemy_ship])
             
             
             ###########################
@@ -919,12 +926,18 @@ def _get_IA_orders(game_data, player):
             
             
              #elif enemy in range 
-             elif len(enemy_ship_list) > 0:
-                 #randomly get a target
-                 target_pos = random.randint(0,len(enemy_ship_list)-1)
-                 #Add the target pos to the action list
+             elif (len(enemy_ship_list) > 0) or (len(enemy_ship_list_prior) > 0):
+                 #Target battlecruiser first
+                 if len(enemy_ship_list_prior) > 0:
+                     target_pos_id  = random.randint(0,len(enemy_ship_list_prior)-1)
+                     target_pos = enemy_ship_list_prior[target_pos_id]
+                 #Or target other ships
+                 else:
+                     target_pos_id = random.randint(0,len(enemy_ship_list)-1)
+                     target_pos = enemy_ship_list[target_pos_id]
                  
-                 action +=ship 
+                 #Add the target pos to the action list
+                 action +=ship
                  action +=':'
                  action += target_pos[0]
                  action += '-'
