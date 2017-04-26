@@ -302,11 +302,12 @@ def _game_loop(game_data, player1, player2, connection=None):
         else:
             player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
         # gives order if playing with remote player
+
         if player1 == 'remote' and player2 == 'IA':
             notify_remote_orders(connection, player2_orders)
 
             # execute all the actions asked (except the attacks)
-
+        print player1_orders, '    ', player2_orders
         attack_list = _process_order(1, player1_orders, game_data)
 
         attack_list += _process_order(2, player2_orders, game_data)
@@ -316,6 +317,7 @@ def _game_loop(game_data, player1, player2, connection=None):
         _get_neutral_ships(game_data)
         # execute the possible attacks
         _make_attacks(attack_list, game_data)
+        game_data
         # update the user design
         #_update_ui(game_data)
         # execute the attacks
@@ -866,7 +868,7 @@ def _buy_ships(game_data, player1, player2):
     # verify what is the type of player
     if player2 == 'player':
         player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
-    if player1 == 'remote':
+    elif player1 == 'remote':
         player2_orders = get_remote_orders()
     else:
         player2_orders = _buy_IA()
@@ -992,9 +994,9 @@ def _build_from_cis(path, game_data):
     for line in lines_list[1:]:
         line_elements = line.split(' ')  # split the line to get each element
         
-        if - in line_elements[3]:
+        if '-' in line_elements[3]:
             orientation = line_elements[3].split('-')                
-            elif orientation[0]=='up' and orientation[-1] == 'right':
+            if orientation[0]=='up' and orientation[-1] == 'right':
                 orientation =2
             elif orientation[0]=='down'and orientation[-1] == 'left':
                 orientation = 6
@@ -1069,5 +1071,5 @@ def _get_IA_orders(game_data, player):
     """
     print 'NOPE'
 
-main('C:/Users/elise/Desktop/Coders-in-space-master/test.cis','player', 'player')
+main('C:/Users/Hugo/Desktop/test.cis','player', 'player')
 
