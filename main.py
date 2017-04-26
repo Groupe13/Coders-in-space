@@ -409,8 +409,8 @@ def _update_ui(game_data):
         line = border_str + ' %02d|' % row
 
         for column in range(1, x_size + 1):
-            if (column, row) in positions_save:
-                line += termcolor.colored('\033[4m%02d\033[0m|' % positions_save[(column, row)], 'cyan')
+            if (row, column) in positions_save:
+                line += termcolor.colored('\033[4m%02d\033[0m|' % positions_save[(row, column)], 'cyan')
             else:
                 line += '__|'
 
@@ -1033,8 +1033,7 @@ def _build_from_cis(path, game_data):
     game_data['variables']['board_size']['x'] = x_board_size
     for line in lines_list[1:]:
         line_elements = line.split(' ')  # split the line to get each element
-        orientation = line_elements[3]  
-        print orientation              
+        orientation = line_elements[3]             
         if orientation =='up-right':
             orientation =1
         elif orientation =='down-left':
