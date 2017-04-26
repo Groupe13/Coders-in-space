@@ -991,26 +991,27 @@ def _build_from_cis(path, game_data):
     game_data['variables']['board_size']['x'] = x_board_size
     for line in lines_list[1:]:
         line_elements = line.split(' ')  # split the line to get each element
-        orientation = line_elements[3].split('-')
         
-        if orientation[0]=='up':
-            orientation =1
-        elif orientation[0]=='down':
-            orientation = 5
-        elif orientation[0] == 'right':
-            orientation = 3
-        elif orientation[0] == 'left':
-            orientation = 7
-        elif orientation[0]=='up' and orientation[-1] == 'right':
-            orientation =2
-        elif orientation[0]=='down'and orientation[-1] == 'left':
-            orientation = 6
-        elif orientation[-1] == 'right'and orientation[0] =='down':
-            orientation = 4
-        elif orientation[-1] == 'left'and orientation[0] =='up':
-            orientation = 8
-            
-            
+        if - in line_elements[3]:
+            orientation = line_elements[3].split('-')                
+            elif orientation[0]=='up' and orientation[-1] == 'right':
+                orientation =2
+            elif orientation[0]=='down'and orientation[-1] == 'left':
+                orientation = 6
+            elif orientation[-1] == 'right'and orientation[0] =='down':
+                orientation = 4
+            elif orientation[-1] == 'left'and orientation[0] =='up':
+                orientation = 8
+        else:
+            if line_elements[3]=='up':
+                orientation =1
+            elif line_elements[3]=='down':
+                orientation = 5
+            elif line_elements[3] == 'right':
+                orientation = 3
+            elif line_elements[3] == 'left':
+                orientation = 7   
+                
         ship_name_type = line_elements[2].split(':')  # split to get the ship name and type
 
         _add_ship(0,
