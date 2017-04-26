@@ -2,6 +2,7 @@
 import random
 import socket
 import time
+import termcolor
 
 
 
@@ -244,7 +245,7 @@ def main(path, player_1, player_2):
     _buy_ships(game_data, player_1, player_2)
 
     # initialisation of the user design
-    #_update_ui(game_data)
+    _update_ui(game_data)
 
     # connect if playing with remote player
     connection = None    
@@ -319,7 +320,7 @@ def _game_loop(game_data, player1, player2, connection=None):
         _make_attacks(attack_list, game_data)
         game_data
         # update the user design
-        #_update_ui(game_data)
+        _update_ui(game_data)
         # execute the attacks
 
     # deal with the end of the game
@@ -361,35 +362,74 @@ def _game_loop(game_data, player1, player2, connection=None):
 # ---------------------------------------------------------------------------------------------------#
 
 def _update_ui(game_data):
-    first_line = '__|'
-    for column in range(game_data['variables']['board_size']['y']):
-        if column < 10:
-            first_line += '0%d' % column
-        else:
-            first_line +=str(column)
-        first_line += '|'
-        print first_line
-    line_showed = ''
-    for line in range(0, game_data['variables']['board_size']['y']):
-        if line < 10:
-            line_showed = '0'
-        line_showed += str(line) + '|'
-        
-        for column in range(game_data['variables']['board_size']['x']):
-            if len(game_data['board'][(line, column)][1]) != 0:
-                line_showed += len(game_data['board'][(line, column)][1])
+    """Show the board and the information about the game played
+    
+    Parameters:
+    -----------
+    game_data: dictionary which contains all the information about the game played (dict)
+    
+    Version:
+    --------
+    specification: Métens Guillaume (V.1 5/03/17)
+    """
+    print ''
+    #get board size
+    x_size = game_data['variables']['board_size']['x'] 
+    y_size = game_data['variables']['board_size']['y']
+
+    # calculate baord border (to center the board)
+    border = (190 -2 - x_size * 4) / 2
+    border_str = ' ' * border
+    x_numbers_str = border_str + '   '
+
+    positions_save = {}  # save position that contains ships
+
+    for number in range(1, x_size + 1):
+        x_numbers_str += ' \033[4m%02d\033[0m' % (number)
+    #initialisation of each player
+    ships_informations = {0: '', 1: '', 2: ''}
+    
+    #deal with each player
+    for player in game_data['ships']:
+        #deal with each ship
+        for ship in game_data['ships'][player]:
+            #get the position of the ship
+            position = game_data['ships'][player][ship]
+            #get the information of the ship
+            ship_info = game_data['board'][position][player][ship]
+            #add the information of the ship 
+            ships_informations[player] += '%s:%s:%s:h%d:o%d:s%d' % (ship, position, ship_info['type'], ship_info['health'], ship_info['orientation'], ship_info['speed']) + ' - '
+            if not position in positions_save:
+                positions_save[position] = 0
+            positions_save[position] += 1
+    # print positions_save
+    print x_numbers_str
+
+    for row in range(1, y_size + 1):
+        line = border_str + ' %02d|' % row
+
+        for column in range(1, x_size + 1):
+            if (column, row) in positions_save:
+                line += termcolor.colored('\033[4m%02d\033[0m|' % positions_save[(column, row)], 'cyan')
             else:
-                line_showed += '_'
+                line += '__|'
 
-            if len(game_data['board'][(line, column)][2]) != 0:
-                line_showed += len(game_data['board'][(line, column)][1])
-            else:
-                line_showed += '_'
-        line_showed += '|'
-        print line_showed
+        print line
+    print ''  # Empty line
+    # max 9 line left
+    line_left = 47 - y_size
+    for p in ships_informations:
+        line_size = len(ships_informations[p])
+        line_left -= line_size / 190
+        print 'Team %d : %s' % (p, ships_informations[p])
 
+    print line_left
 
-# ---------------------------------------------------------------------------------------------------#
+    if line_left >= 0:
+        for i in range(0, line_left):
+            print ''
+
+#---------------------------------------------------------------------------------------------------#
 
 def _process_order(player, player_orders, game_data):
     """Procces an order asked by a player.
