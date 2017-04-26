@@ -993,7 +993,8 @@ def _build_from_cis(path, game_data):
     game_data['variables']['board_size']['x'] = x_board_size
     for line in lines_list[1:]:
         line_elements = line.split(' ')  # split the line to get each element
-        orientation = line_elements[3].split('-')                
+        orientation = line_elements[3]  
+        print orientation              
         if orientation =='up-right':
             orientation =1
         elif orientation =='down-left':
@@ -1002,13 +1003,13 @@ def _build_from_cis(path, game_data):
             orientation = 3
         elif orientation == 'up-left':
                 orientation = 7
-        elif line_elements =='up':
+        elif orientation =='up':
                 orientation =0
-        elif line_elements =='down':
+        elif orientation =='down':
                 orientation = 4
-        elif line_elements == 'right':
+        elif orientation == 'right':
                 orientation = 2
-        elif line_elements == 'left':
+        elif orientation == 'left':
                 orientation = 6   
                 
         ship_name_type = line_elements[2].split(':')  # split to get the ship name and type
