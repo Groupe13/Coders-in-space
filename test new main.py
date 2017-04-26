@@ -40,7 +40,7 @@ def main(path, player_1, player_2):
                                                       'max_speed': 5,
                                                       'range': 5}},
                  'ships': {0: {}, 1: {}, 2: {}},
-                 'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0}
+                 'variables': {'board_size': {'x': 0, 'y': 0}, 'last_damages': 0}}
 
 
     #building of the board
@@ -53,6 +53,7 @@ def main(path, player_1, player_2):
     _update_ui(game_data)
     
     #connect if playing with remote player
+    connection = None
     if player_1 == 'remote' or player_2 == 'remote':
         connection = connect_to_player(player_id)
         
@@ -113,8 +114,6 @@ def _game_loop(game_data,player1,player2, connection = None):
         attack_list = _process_order(1, player1_orders, game_data)
     
         attack_list += _process_order(2, player2_orders, game_data)
-        
-    return attack_list
         #move all the ships  
         _move_all_ships(game_data)
         #verify if abandonned ships can be caught
@@ -340,7 +339,7 @@ def _move_all_ships(game_data):
 
 #---------------------------------------------------------------------------------------------------#
 
-def _apply_tore(x_coordinate, y_coordinate, game_data):
+def _apply_tore(y_coordinate, x_coordinate, game_data):
     """Apply the effect of a tore if the ship is outside the board.
 
     Parameters:
@@ -353,7 +352,7 @@ def _apply_tore(x_coordinate, y_coordinate, game_data):
     --------
     specification: Hugo Jacques (V.1 4/03/17)
     """
-    
+
     board_x = game_data['variables']['board_size']['x']
     board_y = game_data['variables']['board_size']['y']
 
@@ -367,7 +366,7 @@ def _apply_tore(x_coordinate, y_coordinate, game_data):
     if y_coordinate < 1:
         y_coordinate += board_y
 
-    return x_coordinate, y_coordinate
+    return y_coordinate, x_coordinate
 
 #---------------------------------------------------------------------------------------------------#
 
@@ -396,14 +395,14 @@ def _get_neutral_ships(game_data):
             player = 1
         elif not game_data['board'][position][1] and game_data['board'][position][2]:
             player = 2
-        
+
         #treat the case where the ship is captured
         if player != None:
             if ship in game_data['board'][position][player][ship]:
                 new_ship = ship+'_2'
             game_data['board'][position][player][ship] = game_data['board'][position][0][new_ship]
             game_data['ships'][player][ship] = game_data['ships'][0][new_ship]
-            
+
             del game_data['board'][position][0][ship]
             del game_data['ships'][0][ship]
 
@@ -431,15 +430,15 @@ def _move_ship(player, ship_name, game_data):
     #get the position of the ship
     position = game_data['ships'][player][ship_name]
     #get the coordinates of the ship
-    x_coordinate = position[0]
-    y_coordinate = position[1]
-    
+    y_coordinate = position[0]
+    x_coordinate = position[1]
+
     #get th eorientation of the ship
     orientation = game_data['board'][position][player][ship_name]['orientation']
     #get the speed of the ship
     speed = game_data['board'][position][player][ship_name]['speed']
 
-    #change the position of the ship depending to the speed and the orientation 
+    #change the position of the ship depending to the speed and the orientation
     if orientation == 0:
         y_coordinate -= speed
     elif orientation == 1:
@@ -460,16 +459,16 @@ def _move_ship(player, ship_name, game_data):
     elif orientation == 7:
         x_coordinate -= speed
         y_coordinate -= speed
-    
+
     #part to modify?
-    new_position = _apply_tore(x_coordinate, y_coordinate, game_data)
+    new_position = _apply_tore(y_coordinate, x_coordinate, game_data)
     #change the position of the ship
     game_data['board'][new_position][player][ship_name] = game_data['board'][position][player][ship_name]
-    
 
-    #change the position of the ship     
+
+    #change the position of the ship
     game_data['ships'][player][ship_name] = new_position
-    
+
     
 
 #---------------------------------------------------------------------------------------------------#
@@ -653,7 +652,7 @@ def _make_attacks(attacks_list, game_data):
         game_data['variables']['last_damages'] = 0
 
 
-def _build_board(x_size, y_size, game_board):
+def _build_board(y_size, x_size, game_board):
     """Build an empty game board.
     Parameters:
     ------------
@@ -809,19 +808,19 @@ def _build_from_cis(path, game_data):
     board_size = lines_list[0].split(' ')
     
     #get the size of the board
-    x_board_size = int(board_size[0])
-    y_board_size = int(board_size[1])
+    y_board_size = int(board_size[0])
+    x_board_size = int(board_size[1])
 
     #get the default position of the ships
     game_data['variables']['default_position'] = {}
     game_data['variables']['default_position'][1] = (10, 10)
-    game_data['variables']['default_position'][2] = (x_board_size - 9, y_board_size - 9)
+    game_data['variables']['default_position'][2] = (y_board_size - 9, x_board_size - 9)
 
 
-    _build_board(x_board_size, y_board_size, game_data['board'])
+    _build_board(y_board_size, x_board_size, game_data['board'])
     #add the information of the board
-    game_data['variables']['board_size']['x'] = x_board_size
     game_data['variables']['board_size']['y'] = y_board_size
+    game_data['variables']['board_size']['x'] = x_board_size
     for line in lines_list[1:]:
         line_elements = line.split(' ')  # split the line to get each element
         ship_name_type = line_elements[2].split(':')  # split to get the ship name and type
@@ -892,7 +891,7 @@ def _get_IA_orders(game_data, player):
             #elif neutral ship in range(1 command):
             neutral_in_range = #1command not implemented yet (acutal_speed <= distance?????)
             elif neutral_in_range:
-                
+
                 #change orientation or speed
             
             #elif enemy in range
@@ -919,7 +918,7 @@ def _get_IA_orders(game_data, player):
                 elif possibility == 4:
                     action += ':right '
                 #randomly change the speed or the orientation
-                
+
         for in game_data
             action += ship
             possibility = random.randint(1, 5)
@@ -934,10 +933,10 @@ def _get_IA_orders(game_data, player):
             else:
                 size_x = game_data['variables']['board_size']['x']
                 size_y = game_data['variables']['board_size']['y']
-    
+
                 x = random.randint(1, size_x)
                 y = random.randint(1, size_y)
-    
+
                 action += ':%d-%d ' % (x, y)
     return action[:len(action) - 1]
     ###TEST ZONE###

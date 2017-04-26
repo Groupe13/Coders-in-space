@@ -59,7 +59,7 @@ def main(path, player_1, player_2):
 
     # execution of the game
     winner = _game_loop(game_data, player_1, player_2, connection)
-    print 'The winner is player %d' % winner
+    print 'The winner is player %d'(winner)
 
 
 # ---------------------------------------------------------------------------------------------------#
@@ -163,30 +163,76 @@ def _game_loop(game_data, player1, player2, connection=None):
 # ---------------------------------------------------------------------------------------------------#
 
 def _update_ui(game_data):
-    first_line = '__|'
-    for column in range(game_data['variables']['board_size']['y']):
-        if column < 9:
-            first_line += '0%d' % column
-        else:
-            first_line +=str(column)
-        first_line += '|'
-    line_showed = ''
-    for line in range(0, game_data['variables']['board_size']['y']):
-        if line < 10:
-            line_showed = '0'
-            line_showed += str(line) + '|'
-    for column in range(game_data['variables']['board_size']['x']):
-        if len(game_data['board'][(line, column)][1]) != 0:
-            line_showed += len(game_data['board'][(line, column)][1])
-        else:
-            line_showed += '_'
+    """Show the board and the information about the game played
 
-    if len(game_data['board'][(line, column)][2]) != 0:
-        line_showed += len(game_data['board'][(line, column)][1])
-    else:
-        line_showed += '_'
-    line_showed += '|'
-    print line_showed
+    Parameters:
+    -----------
+    game_data: dictionary which contains all the information about the game played (dict)
+
+    Version:
+    --------
+    specification: Métens Guillaume (V.1 5/03/17)
+    """
+
+    print ''
+    # get board size
+    x_size = game_data['variables']['board_size']['x']
+    y_size = game_data['variables']['board_size']['y']
+
+    # calculate baord border (to center the board)
+    border = (190 - 2 - x_size * 4) / 2
+    border_str = ' ' * border
+    x_numbers_str = border_str + '   '
+
+    # save position that contains ships
+    positions_save = {}
+
+    for number in range(1, x_size + 1):
+        x_numbers_str += ' \033[4m%02d\033[0m' % (number)
+    # initialisation of each player
+    ships_informations = {0: '', 1: '', 2: ''}
+
+    # deal with each player
+    for player in game_data['ships']:
+        # deal with each ship
+        for ship in game_data['ships'][player]:
+            # get the position of the ship
+            position = game_data['ships'][player][ship]
+            # get the information of the ship
+            ship_info = game_data['board'][position][player][ship]
+            # add the information of the ship
+            ships_informations[player] += '%s:%s:%s:h%d:o%d:s%d' % (
+            ship, position, ship_info['type'], ship_info['health'], ship_info['orientation'],
+            ship_info['speed']) + ' - '
+            if not position in positions_save:
+                positions_save[position] = 0
+            positions_save[position] += 1
+    # print positions_save
+    print x_numbers_str
+
+    for row in range(1, y_size + 1):
+        line = border_str + ' %02d|' % row
+
+        for column in range(1, x_size + 1):
+            if (column, row) in positions_save:
+                line += termcolor.colored('\033[4m%02d\033[0m|' % positions_save[(column, row)], 'cyan')
+            else:
+                line += '__|'
+
+        print line
+    print ''  # Empty line
+    # max 9 line left
+    line_left = 47 - y_size
+    for p in ships_informations:
+        line_size = len(ships_informations[p])
+        line_left -= line_size / 190
+        print 'Team %d : %s' % (p, ships_informations[p])
+
+    print line_left
+
+    if line_left >= 0:
+        for i in range(0, line_left):
+            print ''
 
 
 # ---------------------------------------------------------------------------------------------------#
@@ -634,8 +680,8 @@ def _build_board(y_size, x_size, game_board):
     specification: Hugo Jacques (V.1 3/03/17)
     """
 
-    for y_coordinate in range(1, y_size + 1):
-        for x_coordinate in range(1, x_size + 1):
+    for x_coordinate in range(1, x_size + 1):
+        for y_coordinate in range(1, y_size + 1):
             game_board[(x_coordinate, y_coordinate)] = {0: {}, 1: {}, 2: {}}
 
 
@@ -703,12 +749,13 @@ def _buy_and_add_ships(player, ships_list, game_data):
     # separate all the ship bought
     for ship in ships_list.split(' '):
         # separate the name and the type of the ship
-        if ship:
-            name, ship_type = ship.split(':')
+        name, ship_type = ship.split(':')
         # substract the price of the ship
-            wallet -= game_data['ship_characteristics'][ship_type]['cost']
-            if wallet >= 0:
-                _add_ship(player, name, ship_type, game_data)
+        wallet -= game_data['ship_characteristics'][ship_type]['cost']
+        if wallet >= 0:
+            _add_ship(player, name, ship_type, game_data)
+
+    game_data['variables']['wallet'][player] = 0
 
 
 # ---------------------------------------------------------------------------------------------------#
@@ -741,7 +788,7 @@ def _add_ship(player, ship_name, ship_type, game_data, position=None):
 
     # give a default orientation
     orientation = 1
-    print 'Position : ', position
+
     # give the information of the position of the ship
     if position == None:
         if player == 1:
@@ -849,10 +896,73 @@ def _get_IA_orders(game_data, player):
     --------
     specification: Elise Hallaert (V.1 31/03/17)
     """
-    print 'NOPE'
+    action = ''
+    for ship in game_data['ships'][player]:
+        position = game_data['ships'][player][ship]
+        if game_data['board'][position][player][ship]['type'] == 'battlecruiser':
+        elif game_data['board'][position][player][ship]['type'] == 'fighter':
+        elif game_data['board'][position][player][ship]['type'] == 'destroyer':
+            # If speed < max_speed
+            if game_data['board'][position][player][ship]['speed'] < game_data['boat_characteristics']['destroyer'][
+                'max_speed']:
+                # Faster
+                action += ship
+                action += ':faster '
+            # elif neutral ship in range(1 command):
+            neutral_in_range =  # 1command not implemented yet (acutal_speed <= distance?????)
+            elif neutral_in_range:
+
+            # change orientation or speed
+
+            # elif enemy in range
+            # find pos to target or not)
+            # find other player number
+            if player == 1:
+                enemy_player = 2
+            else:
+                enemy_player = 1
+            # select all ship position
+            for game_data['ships'][enemy_player]:
+                _is_in_range(player, ship_name, attack_position, game_data)
+                # attack battlecruise first and other's then
+            # else
+            else:
+                action += ship
+                possibility = random.randint(1, 5)
+                if possibility == 1:
+                    action += ':slower '
+                elif possibility == 2:
+                    action += ':faster '
+                elif possibility == 3:
+                    action += ':left '
+                elif possibility == 4:
+                    action += ':right '
+                    # randomly change the speed or the orientation
+
+        for in game_data
+            action += ship
+            possibility = random.randint(1, 5)
+            if possibility == 1:
+                action += ':slower '
+            elif possibility == 2:
+                action += ':faster '
+            elif possibility == 3:
+                action += ':left '
+            elif possibility == 4:
+                action += ':right '
+            else:
+                size_x = game_data['variables']['board_size']['x']
+                size_y = game_data['variables']['board_size']['y']
+
+                x = random.randint(1, size_x)
+                y = random.randint(1, size_y)
+
+                action += ':%d-%d ' % (x, y)
+    return action[:len(action) - 1]
+    ###TEST ZONE###
 
 
 if __name__ == '__main__':
-    print main('C:/Users/Hugo/Desktop/test.cis', 'player', 'player')
+    print main('C:/Users/Hugo/Desktop/test.cis', 'IA', 'IA')
 
 
