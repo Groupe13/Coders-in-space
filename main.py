@@ -911,7 +911,7 @@ def _buy_and_add_ships(player, ships_list, game_data):
 
 # ---------------------------------------------------------------------------------------------------#
 
-def _add_ship(player, ship_name, ship_type, game_data, position=None):
+def _add_ship(player, ship_name, ship_type, game_data, position=None, orientation=None):
     """Add a ship to a certain position.
     Parameters:
     -----------
@@ -938,7 +938,7 @@ def _add_ship(player, ship_name, ship_type, game_data, position=None):
     ship_name = ship_name.lower()
 
     # give a default orientation
-    orientation = 1
+    orientation = 1 
     print 'Position : ', position
     # give the information of the position of the ship
     if position == None:
@@ -991,6 +991,26 @@ def _build_from_cis(path, game_data):
     game_data['variables']['board_size']['x'] = x_board_size
     for line in lines_list[1:]:
         line_elements = line.split(' ')  # split the line to get each element
+        orientation = line_elements[3].split('-')
+        
+        if orientation[0]=='up':
+            orientation =1
+        elif orientation[0]=='down':
+            orientation = 5
+        elif orientation[0] == 'right':
+            orientation = 3
+        elif orientation[0] == 'left':
+            orientation = 7
+        elif orientation[0]=='up' and orientation[-1] == 'right':
+            orientation =2
+        elif orientation[0]=='down'and orientation[-1] == 'left':
+            orientation = 6
+        elif orientation[-1] == 'right'and orientation[0] =='down':
+            orientation = 4
+        elif orientation[-1] == 'left'and orientation[0] =='up':
+            orientation = 8
+            
+            
         ship_name_type = line_elements[2].split(':')  # split to get the ship name and type
 
         _add_ship(0,
@@ -998,7 +1018,7 @@ def _build_from_cis(path, game_data):
                   ship_name_type[1],
                   game_data,
                   (int(line_elements[0]),
-                   int(line_elements[1])))  # cast str to int to get the coordonates
+                   int(line_elements[1])), orientation)  # cast str to int to get the coordonates
 
 
 # ---------------------------------------------------------------------------------------------------#
@@ -1027,7 +1047,6 @@ def _buy_IA():
             wallet -= 30
         action += ' '
     return action[:len(action) - 1]
-
 
 # ---------------------------------------------------------------------------------------------------#
 
