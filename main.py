@@ -993,26 +993,23 @@ def _build_from_cis(path, game_data):
     game_data['variables']['board_size']['x'] = x_board_size
     for line in lines_list[1:]:
         line_elements = line.split(' ')  # split the line to get each element
-        
-        if '-' in line_elements[3]:
-            orientation = line_elements[3].split('-')                
-            if orientation[0]=='up' and orientation[-1] == 'right':
-                orientation =2
-            elif orientation[0]=='down'and orientation[-1] == 'left':
-                orientation = 6
-            elif orientation[-1] == 'right'and orientation[0] =='down':
+        orientation = line_elements[3].split('-')                
+        if orientation =='up-right':
+            orientation =1
+        elif orientation =='down-left':
+            orientation = 5
+        elif orientation == 'down-right':
+            orientation = 3
+        elif orientation == 'up-left':
+                orientation = 7
+        elif line_elements =='up':
+                orientation =0
+        elif line_elements =='down':
                 orientation = 4
-            elif orientation[-1] == 'left'and orientation[0] =='up':
-                orientation = 8
-        else:
-            if line_elements[3]=='up':
-                orientation =1
-            elif line_elements[3]=='down':
-                orientation = 5
-            elif line_elements[3] == 'right':
-                orientation = 3
-            elif line_elements[3] == 'left':
-                orientation = 7   
+        elif line_elements == 'right':
+                orientation = 2
+        elif line_elements == 'left':
+                orientation = 6   
                 
         ship_name_type = line_elements[2].split(':')  # split to get the ship name and type
 
@@ -1071,5 +1068,5 @@ def _get_IA_orders(game_data, player):
     """
     print 'NOPE'
 
-main('C:/Users/Hugo/Desktop/test.cis','player', 'player')
+main('F:/Desktop/Coders-in-space-master/test.cis','player', 'player')
 
