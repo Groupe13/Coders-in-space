@@ -1213,7 +1213,39 @@ def find_five_possibilities(player,position,game_data, name, type, take =False )
         if take and game_data['board'][(y_coordinate, x_coordinate)][opponent_player]!= {}:
                 return ('orientation', changement)
     return possibilities
-
+def fighter_action(player, ship_name, game_data):
+    action = ship_name
+    position = game_data['ships'][player][ship_name]
+    ship_in_range = ship_in_range() 
+    if game_data['board'][position][player][ship_name]['speed']<4:
+        luck = random.randint(1,3)
+        if luck == 1or luck == 2:
+            action +='faster'
+        else:
+            luck =random.randint(1,2)
+            if luck ==1:
+                action+='left'
+            else:
+                action+='right'
+            
+    elif ship_in_range('get_ship', player, ship_name, 'fighter', game_data)!= None:
+        action += ship_in_range(goal, player, name, type, game_data)
+    elif ship_in_range('attack', player, ship_name, 'fighter', game_data)!= None:
+        position_to_attack = ship_in_range('attack', player, ship_name, 'fighter', game_data)
+        action+=str(position_to_attack[0]) + '-' +str(position_to_attack[1])
+    else:
+        luck = random.randint(1,5)
+        if luck = 1:
+            action+='slower'
+        elif luck = 2:
+            action +='faster'
+        elif luck=3:
+            action+='right'
+        elif luck=4:
+            action+='left'
+        elif luck = 5:
+            action+='nothing'
+        
 #########################################################
 
 def _get_IA_orders(game_data, player):
@@ -1231,7 +1263,8 @@ def _get_IA_orders(game_data, player):
     Version:
     --------
     specification: Elise Hallaert (V.1 31/03/17)
-    """ 
+    """
+    action = [] 
     for ship in game_data['ships'][player]:
         
         position = game_data['ships'][player][ship]
@@ -1246,10 +1279,10 @@ def _get_IA_orders(game_data, player):
             ###########################
             
             #Add ship name
-            action +=ship
+            action += ship
             
             #If speed < max_speed
-            if game_data['board'][position][player][ship]['speed'] < game_data['boat_characteristics']['destroyer']['max_speed']:
+            if game_data['board'][position][player][ship]['speed'] < game_data['ship_characteristics']['destroyer']['max_speed']:
                 #Faster
                 action += ':faster '
             
@@ -1274,5 +1307,5 @@ def _get_IA_orders(game_data, player):
    
     return action[:len(action) - 1]
     ###TEST ZONE###
-main('F:/Desktop/Coders-in-space-master/test.cis','player', 'player')
+main('F:/Desktop/Coders-in-space-master/test.cis','IA', 'IA')
 
