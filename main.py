@@ -3,7 +3,7 @@ import random
 import socket
 import time
 import termcolor
-
+import intermediate_functions
 
 
 def get_IP():
@@ -1089,6 +1089,132 @@ def _buy_IA():
     return action[:len(action) - 1]
 
 # ---------------------------------------------------------------------------------------------------#
+############################
+###IA specific functions###
+###########################
+def ship_in_range(goal, player, name, type, game_data):
+    opponent_player = 2
+    if player == 2:
+        opponent_player = 1
+    
+    ship_position = game_data['ships'][player][name]
+    
+    if goal =='attack':
+        possible_attack = []
+        ship_range = game_data['ship_characteristics'][type]['range']
+        for x in range (0-ship_range, ship_range):
+            for y in range (0-ship_range, ship_range):
+                if x + y < ship_range:
+                    possible_position = (ship_position[0] + x, ship_position[1] +y)
+                    possible_position = apply_tore(possible_position)                   
+                    if game_data['board'][possible_position][opponent_player] != {}:
+                        possible_attack += possible_position
+        if possible_attack ==[]:
+            return None
+        priority = False
+        for possible_position in possible_attack:
+            for ship in game_data['board'][possible_position][opponent_player]:
+                if game_data['board'][possible_position][opponent_player][ship]['type'] == 'battlecruiser':
+                    priority = True
+                    ship_priority = possible_position
+                    ship_name_priority = ship
+                else:
+                    attack_position = possible_position
+                    ship_name = ship
+        if priority:
+            attack_position = ship_priority               
+            ship_name = ship_name_priority
+             
+        ship_type = game_data['board'][attack_position][opponent_player][ship_name]['type']   
+        choice = random.randint(1,5)
+        attack_position = find_five_possibilities(opponent_player, attack_position, game_data,ship_name,ship_type)[choice]
+        return attack_position                   
+                        
+    elif goal =='get_ship':
+        ship_possibility = find_five_possibilities(player,ship_position, name, type, True)
+        if ship_possibility[0] == 'orientation':
+            if ship_possibility[1] == -1:
+                return 'left'
+            elif ship_possibility[1] == 1:
+                return 'right'
+            else: 
+                return None
+        elif ship_possibility[0] == 'speed':
+            if ship_possibility[1] == -1:
+                return 'slower'
+            elif ship_possibility[1] == 1:
+                return 'faster'
+            
+    
+def find_five_possibilities(player,position,game_data, name, type, take =False ):
+    orientation = game_data['board'][position][player][name]['orientation']
+    speed=game_data['board'][position][player][name]['speed']
+    max_speed = game_data['ship_characteristics'][type]['max_speed']
+    possibilities = []
+    opponent_player = 2
+    if player == 2:
+        opponent_player = 1
+    for changement in (-1,0,1):        
+        new_speed = speed + changement
+        
+        if new_speed > 0 and new_speed <= max_speed:
+            y_coordinate = position[0]
+            x_coordinate = position [1]
+            if orientation == 0:        
+                y_coordinate -= new_speed        
+            elif orientation == 1:        
+                x_coordinate += new_speed        
+                y_coordinate -= new_speed        
+            elif orientation == 2:        
+                x_coordinate += new_speed        
+            elif orientation == 3:        
+                x_coordinate += new_speed        
+                y_coordinate += new_speed        
+            elif orientation == 4:        
+                y_coordinate += new_speed        
+            elif orientation == 5:        
+                x_coordinate -= new_speed        
+                y_coordinate += new_speed        
+            elif orientation == 6:        
+                x_coordinate -= new_speed        
+            elif orientation == 7:        
+                x_coordinate -= new_speed        
+                y_coordinate -= new_speed
+            if take and game_data['board'][(y_coordinate, x_coordinate)][opponent_player]!= {}:
+                return ('speed', changement)
+                
+            possibilities += (y_coordinate,x_coordinate)
+    for turn in (-1,1):
+        new_orientation = orientation + turn
+        new_orientation = new_orientation%8
+        y_coordinate = position[0]
+        x_coordinate = position [1]
+        if orientation == 0:        
+            y_coordinate -= speed    
+        elif orientation == 1:    
+            x_coordinate += speed    
+            y_coordinate -= speed    
+        elif orientation == 2:    
+            x_coordinate += speed    
+        elif orientation == 3:    
+            x_coordinate += speed    
+            y_coordinate += speed    
+        elif orientation == 4:    
+            y_coordinate += speed    
+        elif orientation == 5:    
+            x_coordinate -= speed    
+            y_coordinate += speed    
+        elif orientation == 6:    
+            x_coordinate -= speed    
+        elif orientation == 7:    
+            x_coordinate -= speed    
+            y_coordinate -= speed
+        possibilities+=(y_coordinate,x_coordinate)
+        if take and game_data['board'][(y_coordinate, x_coordinate)][opponent_player]!= {}:
+                return ('orientation', changement)
+    return possibilities
+
+#########################################################
 
 def _get_IA_orders(game_data, player):
     """gives naive orders to ships
@@ -1105,8 +1231,48 @@ def _get_IA_orders(game_data, player):
     Version:
     --------
     specification: Elise Hallaert (V.1 31/03/17)
-    """
-    print 'NOPE'
-
+    """ 
+    for ship in game_data['ships'][player]:
+        
+        position = game_data['ships'][player][ship]
+        if game_data['board'][position][player][ship]['type'] == 'battlecruiser':
+            pass
+        elif game_data['board'][position][player][ship]['type'] == 'fighter':
+            pass
+        elif game_data['board'][position][player][ship]['type'] == 'destroyer':
+            
+            ###########################
+            ### Start the 'IA' check###
+            ###########################
+            
+            #Add ship name
+            action +=ship
+            
+            #If speed < max_speed
+            if game_data['board'][position][player][ship]['speed'] < game_data['boat_characteristics']['destroyer']['max_speed']:
+                #Faster
+                action += ':faster '
+            
+            #elif neutral ship in range:
+            elif ship_in_range('get_ship', player, ship, 'destroyer', game_data) != None:
+                action += -ship_in_range('get_ship', player, ship, 'destroyer', game_data)
+            #elif enemy in range 
+            elif -ship_in_range('attack', player, ship, 'destroyer', game_data) != None:
+                 action +=- ship_in_range('attack', player, ship, 'destroyer', game_data)
+            #else
+            else:
+                #randomly change the speed or the orientation
+                possibility = random.randint(1, 5)
+                if possibility == 1:
+                    action += ':slower '
+                elif possibility == 2:
+                    action += ':faster '
+                elif possibility == 3:
+                    action += ':left '
+                elif possibility == 4:
+                    action += ':right '
+   
+    return action[:len(action) - 1]
+    ###TEST ZONE###
 main('F:/Desktop/Coders-in-space-master/test.cis','player', 'player')
 
