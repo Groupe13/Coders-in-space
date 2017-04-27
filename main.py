@@ -1235,15 +1235,15 @@ def fighter_action(player, ship_name, game_data):
         action+=str(position_to_attack[0]) + '-' +str(position_to_attack[1])
     else:
         luck = random.randint(1,5)
-        if luck = 1:
+        if luck == 1:
             action+='slower'
-        elif luck = 2:
+        elif luck == 2:
             action +='faster'
-        elif luck=3:
+        elif luck == 3:
             action+='right'
-        elif luck=4:
+        elif luck == 4:
             action+='left'
-        elif luck = 5:
+        elif luck == 5:
             action+='nothing'
         
 #########################################################
