@@ -9,7 +9,7 @@ def ship_in_range(goal, player, name, type, game_data):
     ship_position = game_data['ships'][player][name]
     
     if goal =='attack':
-        possible_attack = ()
+        possible_attack = []
         ship_range = game_data['ship_characteristics'][type]['range']
         for x in range (0-ship_range, ship_range):
             for y in range (0-ship_range, ship_range):
@@ -17,7 +17,9 @@ def ship_in_range(goal, player, name, type, game_data):
                     possible_position = (ship_position[0] + x, ship_position[1] +y)
                     possible_position = apply_tore(possible_position)                   
                     if game_data['board'][possible_position][opponent_player] != {}:
-                        possible_attack += possible_position        
+                        possible_attack += possible_position
+        if possible_attack ==[]:
+            return None
         priority = False
         for possible_position in possible_attack:
             for ship in game_data['board'][possible_position][opponent_player]:
