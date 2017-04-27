@@ -468,7 +468,7 @@
            (20, 18): {0: {}, 1: {}, 2: {}},
            (20, 19): {0: {}, 1: {}, 2: {}},
            (20, 20): {0: {}, 1: {}, 2: {}}},
- 'boat_characteristics': {'battlecruiser': {'attack': 4,
+ 'ship_characteristics': {'battlecruiser': {'attack': 4,
                                             'cost': 30,
                                             'health': 20,
                                             'max_speed': 1,
