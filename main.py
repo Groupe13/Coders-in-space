@@ -3,7 +3,6 @@ import random
 import socket
 import time
 import termcolor
-import intermediate_functions
 
 
 def get_IP():
@@ -311,6 +310,7 @@ def _game_loop(game_data, player1, player2, connection=None):
         print player1_orders, '    ', player2_orders
         attack_list = _process_order(1, player1_orders, game_data)
 
+
         attack_list += _process_order(2, player2_orders, game_data)
         # move all the ships
         _move_all_ships(game_data)
@@ -335,6 +335,8 @@ def _game_loop(game_data, player1, player2, connection=None):
             # deal with each ship
             for ship in game_data['ships'][player]:
                 # get the type of the left ship
+                print player
+                print ship
                 ship_type = game_data['board'][player][ship]['type']
 
                 # get the price of the type of ship for each player
@@ -454,7 +456,6 @@ def _process_order(player, player_orders, game_data):
     specification: Hugo Jacques (V.1 5/03/17)
     """
     attack_list = ()
-
     # split all the string in orders
     for elements in player_orders.split(' '):
 
@@ -981,7 +982,6 @@ def _add_ship(player, ship_name, ship_type, game_data, position=None, orientatio
 
     # give a default orientation
     orientation = 1 
-    print 'Position : ', position
     # give the information of the position of the ship
     if position == None:
         if player == 1:
@@ -1092,7 +1092,7 @@ def _buy_IA():
 ############################
 ###IA specific functions###
 ###########################
-def ship_in_range(goal, player, name, type, game_data):
+def ship_in_range(goal, player, name, kind, game_data):
     opponent_player = 2
     if player == 2:
         opponent_player = 1
@@ -1101,18 +1101,21 @@ def ship_in_range(goal, player, name, type, game_data):
     
     if goal =='attack':
         possible_attack = []
-        ship_range = game_data['ship_characteristics'][type]['range']
+        ship_range = game_data['ship_characteristics'][kind]['range']
         for x in range (0-ship_range, ship_range):
             for y in range (0-ship_range, ship_range):
                 if x + y < ship_range:
                     possible_position = (ship_position[0] + x, ship_position[1] +y)
-                    possible_position = _apply_tore(possible_position)                   
+                    possible_position = _apply_tore(possible_position[0], possible_position[1],game_data)                   
                     if game_data['board'][possible_position][opponent_player] != {}:
-                        possible_attack += possible_position
+                        possible_attack.append(possible_position)
         if possible_attack ==[]:
             return None
         priority = False
+        print possible_attack
         for possible_position in possible_attack:
+            print possible_position
+            print possible_attack
             for ship in game_data['board'][possible_position][opponent_player]:
                 if game_data['board'][possible_position][opponent_player][ship]['type'] == 'battlecruiser':
                     priority = True
@@ -1131,7 +1134,7 @@ def ship_in_range(goal, player, name, type, game_data):
         return attack_position                   
                         
     elif goal =='get_ship':
-        ship_possibility = find_five_possibilities(player,ship_position, name, type, True)
+        ship_possibility = find_five_possibilities(player,ship_position, game_data, name, kind, True)
         if ship_possibility[0] == 'orientation':
             if ship_possibility[1] == -1:
                 return 'left'
@@ -1146,10 +1149,11 @@ def ship_in_range(goal, player, name, type, game_data):
                 return 'faster'
             
     
-def find_five_possibilities(player,position,game_data, name, type, take =False ):
+def find_five_possibilities(player,position,game_data, name, kind, take =False ):
+    print game_data['board'][position][player][name]['orientation']
     orientation = game_data['board'][position][player][name]['orientation']
     speed=game_data['board'][position][player][name]['speed']
-    max_speed = game_data['ship_characteristics'][type]['max_speed']
+    max_speed = game_data['ship_characteristics'][kind]['max_speed']
     possibilities = []
     opponent_player = 2
     if player == 2:
@@ -1180,10 +1184,12 @@ def find_five_possibilities(player,position,game_data, name, type, take =False )
             elif orientation == 7:        
                 x_coordinate -= new_speed        
                 y_coordinate -= new_speed
-            if take and game_data['board'][(y_coordinate, x_coordinate)][opponent_player]!= {}:
+            temp_pos = _apply_tore(y_coordinate, x_coordinate, game_data)
+            
+            if take and game_data['board'][temp_pos][opponent_player]!= {}:
                 return ('speed', changement)
                 
-            possibilities += (y_coordinate,x_coordinate)
+            possibilities.append(temp_pos)
     for turn in (-1,1):
         new_orientation = orientation + turn
         new_orientation = new_orientation%8
@@ -1209,8 +1215,9 @@ def find_five_possibilities(player,position,game_data, name, type, take =False )
         elif orientation == 7:    
             x_coordinate -= speed    
             y_coordinate -= speed
-        possibilities+=(y_coordinate,x_coordinate)
-        if take and game_data['board'][(y_coordinate, x_coordinate)][opponent_player]!= {}:
+        temp_pos = _apply_tore(y_coordinate, x_coordinate, game_data)
+        possibilities.append(temp_pos)
+        if take and game_data['board'][temp_pos][opponent_player]!= {}:
                 return ('orientation', changement)
     return possibilities
 def fighter_action(player, ship_name, game_data):
@@ -1228,7 +1235,7 @@ def fighter_action(player, ship_name, game_data):
                 action+='right'
             
     elif ship_in_range('get_ship', player, ship_name, 'fighter', game_data)!= None:
-        action += ship_in_range('get_ship' , player, ship_name, type, game_data)
+        action += ship_in_range('get_ship' , player, ship_name, 'fighter', game_data)
     elif ship_in_range('attack', player, ship_name, 'fighter', game_data)!= None:
         position_to_attack = ship_in_range('attack', player, ship_name, 'fighter', game_data)
         action+=str(position_to_attack[0]) + '-' +str(position_to_attack[1])
@@ -1263,7 +1270,7 @@ def _get_IA_orders(game_data, player):
     --------
     specification: Elise Hallaert (V.1 31/03/17)
     """
-    action = [] 
+    action = '' 
     for ship in game_data['ships'][player]:
         
         position = game_data['ships'][player][ship]
@@ -1287,10 +1294,10 @@ def _get_IA_orders(game_data, player):
             
             #elif neutral ship in range:
             elif ship_in_range('get_ship', player, ship, 'destroyer', game_data) != None:
-                action += -ship_in_range('get_ship', player, ship, 'destroyer', game_data)
+                action += ship_in_range('get_ship', player, ship, 'destroyer', game_data)
             #elif enemy in range 
-            elif -ship_in_range('attack', player, ship, 'destroyer', game_data) != None:
-                 action +=- ship_in_range('attack', player, ship, 'destroyer', game_data)
+            elif ship_in_range('attack', player, ship, 'destroyer', game_data) != None:
+                 action += ship_in_range('attack', player, ship, 'destroyer', game_data)
             #else
             else:
                 #randomly change the speed or the orientation
@@ -1303,8 +1310,6 @@ def _get_IA_orders(game_data, player):
                     action += ':left '
                 elif possibility == 4:
                     action += ':right '
-    print action
     return action[:len(action) - 1]
     ###TEST ZONE###
-main('F:/Desktop/Coders-in-space-master/test.cis','IA', 'IA')
-
+main('C:/Users/gmetens/Desktop/coder/test.cis','IA', 'IA')
