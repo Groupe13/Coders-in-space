@@ -2,71 +2,70 @@
 import random
 import socket
 import time
-import termcolor
 
 
 def get_IP():
     """Returns the IP of the computer where get_IP is called.
-    
+
     Returns
     -------
     computer_IP: IP of the computer where get_IP is called (str)
-    
+
     Notes
     -----
     If you have no internet connection, your IP will be 127.0.0.1.
     This IP address refers to the local host, i.e. your computer.
-    
-    """   
-    
+
+    """
+
     return socket.gethostbyname(socket.gethostname())
 
 
 def connect_to_player(player_id, remote_IP='127.0.0.1', verbose=False):
     """Initialise communication with remote player.
-    
+
     Parameters
     ----------
     player_id: player id of the remote player, 1 or 2 (int)
     remote_IP: IP of the computer where remote player is (str, optional)
     verbose: True only if connection progress must be displayed (bool, optional)
-    
+
     Returns
     -------
     connection: sockets to receive/send orders (tuple)
-    
+
     Notes
     -----
     Initialisation can take several seconds.  The function only
     returns after connection has been initialised by both players.
-    
+
     Use the default value of remote_IP if the remote player is running on
     the same machine.  Otherwise, indicate the IP where the other player
     is running with remote_IP.  On most systems, the IP of a computer
     can be obtained by calling the get_IP function on that computer.
-        
-    """ 
-    
+
+    """
+
     # init verbose display
     if verbose:
         print '\n-------------------------------------------------------------'
-        
+
     # open socket (as server) to receive orders
     socket_in = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    socket_in.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # deal with a socket in TIME_WAIT state
+    socket_in.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # deal with a socket in TIME_WAIT state
 
     if remote_IP == '127.0.0.1':
         local_IP = '127.0.0.1'
     else:
         local_IP = get_IP()
-    local_port = 42000 + (3-player_id)
-    
+    local_port = 42000 + (3 - player_id)
+
     try:
         if verbose:
             print 'binding on %s:%d to receive orders from player %d...' % (local_IP, local_port, player_id)
         socket_in.bind((local_IP, local_port))
     except:
-        local_port = 42000 + 100+ (3-player_id)
+        local_port = 42000 + 100 + (3 - player_id)
         if verbose:
             print '   referee detected, binding instead on %s:%d...' % (local_IP, local_port)
         socket_in.bind((local_IP, local_port))
@@ -77,10 +76,10 @@ def connect_to_player(player_id, remote_IP='127.0.0.1', verbose=False):
 
     # open client socket used to send orders
     socket_out = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    socket_out.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # deal with a socket in TIME_WAIT state
-    
+    socket_out.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # deal with a socket in TIME_WAIT state
+
     remote_port = 42000 + player_id
-    
+
     connected = False
     msg_shown = False
     while not connected:
@@ -97,60 +96,60 @@ def connect_to_player(player_id, remote_IP='127.0.0.1', verbose=False):
             time.sleep(.1)
 
             msg_shown = True
-            
-    if verbose:
-        print        
 
-    # accept connection to the server socket to receive orders from remote player
+    if verbose:
+        print
+
+        # accept connection to the server socket to receive orders from remote player
     print 'sutck on accept'
     socket_in, remote_address = socket_in.accept()
     if verbose:
         print 'now listening to orders from player %d' % (player_id)
-            
+
     # end verbose display
     if verbose:
         print '\nconnection to remote player %d successful\n-------------------------------------------------------------\n' % player_id
 
-    # return sockets for further use     
+    # return sockets for further use
     return (socket_in, socket_out)
 
 
 def disconnect_from_player(connection):
     """End communication with remote player.
-    
+
     Parameters
     ----------
     connection: sockets to receive/send orders (tuple)
-    
+
     """
-    
+
     # get sockets
     socket_in = connection[0]
     socket_out = connection[1]
-    
+
     # shutdown sockets
-    socket_in.shutdown(socket.SHUT_RDWR)    
+    socket_in.shutdown(socket.SHUT_RDWR)
     socket_out.shutdown(socket.SHUT_RDWR)
-    
+
     # close sockets
     socket_in.close()
     socket_out.close()
-    
-    
+
+
 def notify_remote_orders(connection, orders):
     """Notifies orders of the local player to a remote player.
-    
+
     Parameters
     ----------
     connection: sockets to receive/send orders (tuple)
     orders: orders of the local player (str)
-        
+
     Raises
     ------
     IOError: if remote player cannot be reached
-    
+
     """
-     
+
     # get sockets
     socket_in = connection[0]
     socket_out = connection[1]
@@ -158,7 +157,7 @@ def notify_remote_orders(connection, orders):
     # deal with null orders (empty string)
     if orders == '':
         orders = 'null'
-    
+
     # send orders
     try:
         socket_out.sendall(orders)
@@ -172,7 +171,7 @@ def get_remote_orders(connection):
     Parameters
     ----------
     connection: sockets to receive/send orders (tuple)
-        
+
     Returns
     ----------
     player_orders: orders given by remote player (str)
@@ -180,24 +179,25 @@ def get_remote_orders(connection):
     Raises
     ------
     IOError: if remote player cannot be reached
-            
+
     """
-   
+
     # get sockets
     socket_in = connection[0]
     socket_out = connection[1]
 
-    # receive orders    
+    # receive orders
     try:
         orders = socket_in.recv(4096)
     except:
         raise IOError, 'remote player cannot be reached'
-        
+
     # deal with null orders
     if orders == 'null':
         orders = ''
-        
+
     return orders
+
 
 def main(path, player_1, player_2):
     """Execute the game
@@ -247,8 +247,8 @@ def main(path, player_1, player_2):
     _update_ui(game_data)
 
     # connect if playing with remote player
-    connection = None    
-    if player_1 == 'remote': 
+    connection = None
+    if player_1 == 'remote':
         connection = connect_to_player(1)
     elif player_2 == 'remote':
         connection = connect_to_player(2)
@@ -310,7 +310,6 @@ def _game_loop(game_data, player1, player2, connection=None):
         print player1_orders, '    ', player2_orders
         attack_list = _process_order(1, player1_orders, game_data)
 
-
         attack_list += _process_order(2, player2_orders, game_data)
         # move all the ships
         _move_all_ships(game_data)
@@ -335,15 +334,14 @@ def _game_loop(game_data, player1, player2, connection=None):
             # deal with each ship
             for ship in game_data['ships'][player]:
                 # get the type of the left ship
-                print player
-                print ship
-                ship_type = game_data['board'][player][ship]['type']
+                if player != 0:
+                    ship_type = game_data['board'][player][ship]['type']
 
-                # get the price of the type of ship for each player
-                if player == 1:
-                    player_money1 += game_data['ship_characteristics'][ship_type]['cost']
-                else:
-                    player_money2 += game_data['ship_characteristics'][ship_type]['cost']
+                    # get the price of the type of ship for each player
+                    if player == 1:
+                        player_money1 += game_data['ship_characteristics'][ship_type]['cost']
+                    else:
+                        player_money2 += game_data['ship_characteristics'][ship_type]['cost']
 
             # verify who has won the game
             if player_money1 > player_money2:
@@ -365,22 +363,22 @@ def _game_loop(game_data, player1, player2, connection=None):
 
 def _update_ui(game_data):
     """Show the board and the information about the game played
-    
+
     Parameters:
     -----------
     game_data: dictionary which contains all the information about the game played (dict)
-    
+
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
     """
     print ''
-    #get board size
-    x_size = game_data['variables']['board_size']['x'] 
+    # get board size
+    x_size = game_data['variables']['board_size']['x']
     y_size = game_data['variables']['board_size']['y']
 
     # calculate baord border (to center the board)
-    border = (190 -2 - x_size * 4) / 2
+    border = (190 - 2 - x_size * 4) / 2
     border_str = ' ' * border
     x_numbers_str = border_str + '   '
 
@@ -388,19 +386,21 @@ def _update_ui(game_data):
 
     for number in range(1, x_size + 1):
         x_numbers_str += ' \033[4m%02d\033[0m' % (number)
-    #initialisation of each player
+    # initialisation of each player
     ships_informations = {0: '', 1: '', 2: ''}
-    
-    #deal with each player
+
+    # deal with each player
     for player in game_data['ships']:
-        #deal with each ship
+        # deal with each ship
         for ship in game_data['ships'][player]:
-            #get the position of the ship
+            # get the position of the ship
             position = game_data['ships'][player][ship]
-            #get the information of the ship
+            # get the information of the ship
             ship_info = game_data['board'][position][player][ship]
-            #add the information of the ship 
-            ships_informations[player] += '%s:%s:%s:h%d:o%d:s%d' % (ship, position, ship_info['type'], ship_info['health'], ship_info['orientation'], ship_info['speed']) + ' - '
+            # add the information of the ship
+            ships_informations[player] += '%s:%s:%s:h%d:o%d:s%d' % (
+            ship, position, ship_info['type'], ship_info['health'], ship_info['orientation'],
+            ship_info['speed']) + ' - '
             if not position in positions_save:
                 positions_save[position] = 0
             positions_save[position] += 1
@@ -412,7 +412,7 @@ def _update_ui(game_data):
 
         for column in range(1, x_size + 1):
             if (row, column) in positions_save:
-                line += termcolor.colored('\033[4m%02d\033[0m|' % positions_save[(row, column)], 'cyan')
+                line += '\033[4m%02d\033[0m|' % positions_save[(row, column)]
             else:
                 line += '__|'
 
@@ -431,7 +431,8 @@ def _update_ui(game_data):
         for i in range(0, line_left):
             print ''
 
-#---------------------------------------------------------------------------------------------------#
+
+# ---------------------------------------------------------------------------------------------------#
 
 def _process_order(player, player_orders, game_data):
     """Procces an order asked by a player.
@@ -809,7 +810,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
     elif abs(target_position[0] - current_position[0]) < tore_value_x and abs(
                     target_position[1] - current_position[1]) >= tore_value_y:
         manhattan_dist = abs(target_position[0] - current_position[0]) + (
-        game_data['variables']['board_size']['y'] - abs(target_position[1] - current_position[1]))
+            game_data['variables']['board_size']['y'] - abs(target_position[1] - current_position[1]))
 
     # Tore isn't needed
     else:
@@ -946,7 +947,7 @@ def _buy_and_add_ships(player, ships_list, game_data):
         # separate the name and the type of the ship
         if ship:
             name, ship_type = ship.split(':')
-        # substract the price of the ship
+            # substract the price of the ship
             wallet -= game_data['ship_characteristics'][ship_type]['cost']
             if wallet >= 0:
                 _add_ship(player, name, ship_type, game_data)
@@ -981,7 +982,7 @@ def _add_ship(player, ship_name, ship_type, game_data, position=None, orientatio
     ship_name = ship_name.lower()
 
     # give a default orientation
-    orientation = 1 
+    orientation = 1
     # give the information of the position of the ship
     if position == None:
         if player == 1:
@@ -1033,24 +1034,24 @@ def _build_from_cis(path, game_data):
     game_data['variables']['board_size']['x'] = x_board_size
     for line in lines_list[1:]:
         line_elements = line.split(' ')  # split the line to get each element
-        orientation = line_elements[3]             
-        if orientation =='up-right':
-            orientation =1
-        elif orientation =='down-left':
+        orientation = line_elements[3]
+        if orientation == 'up-right':
+            orientation = 1
+        elif orientation == 'down-left':
             orientation = 5
         elif orientation == 'down-right':
             orientation = 3
         elif orientation == 'up-left':
-                orientation = 7
-        elif orientation =='up':
-                orientation =0
-        elif orientation =='down':
-                orientation = 4
+            orientation = 7
+        elif orientation == 'up':
+            orientation = 0
+        elif orientation == 'down':
+            orientation = 4
         elif orientation == 'right':
-                orientation = 2
+            orientation = 2
         elif orientation == 'left':
-                orientation = 6   
-                
+            orientation = 6
+
         ship_name_type = line_elements[2].split(':')  # split to get the ship name and type
 
         _add_ship(0,
@@ -1088,31 +1089,34 @@ def _buy_IA():
         action += ' '
     return action[:len(action) - 1]
 
+
 # ---------------------------------------------------------------------------------------------------#
 ############################
 ###IA specific functions###
 ###########################
+
+def _get_ships_in_range(player, ship_name, game_data):
+    position = game_data['ships'][player][ship_name]
+    ship_type = game_data['board'][position][player][ship_name]['type']
+    ship_range = game_data['ship_characteristics'][ship_type]['range']
+    print position
+    print ship_name
+    print ship_range
+
+
 def ship_in_range(goal, player, name, kind, game_data):
     opponent_player = 2
     if player == 2:
         opponent_player = 1
-    
+
     ship_position = game_data['ships'][player][name]
-    
-    if goal =='attack':
+
+    if goal == 'attack':
         possible_attack = []
-        ship_range = game_data['ship_characteristics'][kind]['range']
-        for x in range (0-ship_range, ship_range):
-            for y in range (0-ship_range, ship_range):
-                if x + y < ship_range:
-                    possible_position = (ship_position[0] + x, ship_position[1] +y)
-                    possible_position = _apply_tore(possible_position[0], possible_position[1],game_data)
-                    print possible_position                   
-                    if game_data['board'][possible_position][opponent_player] != {}:
-                        possible_attack.append(possible_position)
-                        print 'possible attack'
-                        print possible_attack
-        if possible_attack ==[]:
+
+        _get_ships_in_range(player, name, game_data)
+
+        if possible_attack == []:
             return None
         priority = False
         print possible_attack
@@ -1128,133 +1132,137 @@ def ship_in_range(goal, player, name, kind, game_data):
                     attack_position = possible_position
                     ship_name = ship
         if priority:
-            attack_position = ship_priority               
+            attack_position = ship_priority
             ship_name = ship_name_priority
-             
-        ship_type = game_data['board'][attack_position][opponent_player][ship_name]['type']   
-        choice = random.randint(-1,3)
-        attack_position = find_five_possibilities(opponent_player, attack_position, game_data,ship_name,ship_type)[choice]
-        
-        return str(attack_position[0])+'-'+str(attack_position[1])                   
-                        
-    elif goal =='get_ship':
-        ship_possibility = find_five_possibilities(player,ship_position, game_data, name, kind, True)
+
+        ship_type = game_data['board'][attack_position][opponent_player][ship_name]['type']
+        choice = random.randint(-1, 3)
+        attack_position = find_five_possibilities(opponent_player, attack_position, game_data, ship_name, ship_type)[
+            choice]
+        return attack_position
+
+    elif goal == 'get_ship':
+        ship_possibility = find_five_possibilities(player, ship_position, game_data, name, kind, True)
         if ship_possibility[0] == 'orientation':
             if ship_possibility[1] == -1:
                 return 'left'
             elif ship_possibility[1] == 1:
                 return 'right'
-            else: 
+            else:
                 return None
         elif ship_possibility[0] == 'speed':
             if ship_possibility[1] == -1:
                 return 'slower'
             elif ship_possibility[1] == 1:
                 return 'faster'
-            
-    
-def find_five_possibilities(player,position,game_data, name, kind, take =False ):
+
+
+def find_five_possibilities(player, position, game_data, name, kind, take=False):
+    print game_data['board'][position][player][name]['orientation']
     orientation = game_data['board'][position][player][name]['orientation']
-    speed=game_data['board'][position][player][name]['speed']
+    speed = game_data['board'][position][player][name]['speed']
     max_speed = game_data['ship_characteristics'][kind]['max_speed']
     possibilities = []
     opponent_player = 2
     if player == 2:
         opponent_player = 1
-    for changement in (-1,0,1):        
+    for changement in (-1, 0, 1):
         new_speed = speed + changement
-        
+
         if new_speed > 0 and new_speed <= max_speed:
             y_coordinate = position[0]
-            x_coordinate = position [1]
-            if orientation == 0:        
-                y_coordinate -= new_speed        
-            elif orientation == 1:        
-                x_coordinate += new_speed        
-                y_coordinate -= new_speed        
-            elif orientation == 2:        
-                x_coordinate += new_speed        
-            elif orientation == 3:        
-                x_coordinate += new_speed        
-                y_coordinate += new_speed        
-            elif orientation == 4:        
-                y_coordinate += new_speed        
-            elif orientation == 5:        
-                x_coordinate -= new_speed        
-                y_coordinate += new_speed        
-            elif orientation == 6:        
-                x_coordinate -= new_speed        
-            elif orientation == 7:        
-                x_coordinate -= new_speed        
+            x_coordinate = position[1]
+            if orientation == 0:
+                y_coordinate -= new_speed
+            elif orientation == 1:
+                x_coordinate += new_speed
+                y_coordinate -= new_speed
+            elif orientation == 2:
+                x_coordinate += new_speed
+            elif orientation == 3:
+                x_coordinate += new_speed
+                y_coordinate += new_speed
+            elif orientation == 4:
+                y_coordinate += new_speed
+            elif orientation == 5:
+                x_coordinate -= new_speed
+                y_coordinate += new_speed
+            elif orientation == 6:
+                x_coordinate -= new_speed
+            elif orientation == 7:
+                x_coordinate -= new_speed
                 y_coordinate -= new_speed
             temp_pos = _apply_tore(y_coordinate, x_coordinate, game_data)
-            
-            if take and game_data['board'][temp_pos][opponent_player]!= {}:
+
+            if take and game_data['board'][temp_pos][opponent_player] != {}:
                 return ('speed', changement)
-                
+
             possibilities.append(temp_pos)
-    for turn in (-1,1):
+    for turn in (-1, 1):
         new_orientation = orientation + turn
-        new_orientation = new_orientation%8
+        new_orientation = new_orientation % 8
         y_coordinate = position[0]
-        x_coordinate = position [1]
-        if orientation == 0:        
-            y_coordinate -= speed    
-        elif orientation == 1:    
-            x_coordinate += speed    
-            y_coordinate -= speed    
-        elif orientation == 2:    
-            x_coordinate += speed    
-        elif orientation == 3:    
-            x_coordinate += speed    
-            y_coordinate += speed    
-        elif orientation == 4:    
-            y_coordinate += speed    
-        elif orientation == 5:    
-            x_coordinate -= speed    
-            y_coordinate += speed    
-        elif orientation == 6:    
-            x_coordinate -= speed    
-        elif orientation == 7:    
-            x_coordinate -= speed    
+        x_coordinate = position[1]
+        if orientation == 0:
+            y_coordinate -= speed
+        elif orientation == 1:
+            x_coordinate += speed
+            y_coordinate -= speed
+        elif orientation == 2:
+            x_coordinate += speed
+        elif orientation == 3:
+            x_coordinate += speed
+            y_coordinate += speed
+        elif orientation == 4:
+            y_coordinate += speed
+        elif orientation == 5:
+            x_coordinate -= speed
+            y_coordinate += speed
+        elif orientation == 6:
+            x_coordinate -= speed
+        elif orientation == 7:
+            x_coordinate -= speed
             y_coordinate -= speed
         temp_pos = _apply_tore(y_coordinate, x_coordinate, game_data)
         possibilities.append(temp_pos)
-        if take and game_data['board'][temp_pos][opponent_player]!= {}:
-                return ('orientation', changement)
+        if take and game_data['board'][temp_pos][opponent_player] != {}:
+            return ('orientation', changement)
     return possibilities
+
+
 def fighter_action(player, ship_name, game_data):
-    action = ship_name
+    action = ship_name +':'
     position = game_data['ships'][player][ship_name]
-    if game_data['board'][position][player][ship_name]['speed']<4:
-        luck = random.randint(1,3)
+    if game_data['board'][position][player][ship_name]['speed'] < 4:
+        luck = random.randint(1, 3)
         if luck == 1 or luck == 2:
-            action +='faster'
+            action += 'faster '
         else:
-            luck =random.randint(1,2)
-            if luck ==1:
-                action+='left'
+            luck = random.randint(1, 2)
+            if luck == 1:
+                action += 'left '
             else:
-                action+='right'
-            
-    elif ship_in_range('get_ship', player, ship_name, 'fighter', game_data)!= None:
-        action += ship_in_range('get_ship' , player, ship_name, 'fighter', game_data)
-    elif ship_in_range('attack', player, ship_name, 'fighter', game_data)!= None:
+                action += 'right '
+
+    elif ship_in_range('get_ship', player, ship_name, 'fighter', game_data) != None:
+        action += ship_in_range('get_ship', player, ship_name, 'fighter', game_data) +' '
+    elif ship_in_range('attack', player, ship_name, 'fighter', game_data) != None:
         position_to_attack = ship_in_range('attack', player, ship_name, 'fighter', game_data)
-        action+=str(position_to_attack[0]) + '-' +str(position_to_attack[1])
+        action += str(position_to_attack[0]) + '-' + str(position_to_attack[1]) +' '
     else:
-        luck = random.randint(1,5)
+        luck = random.randint(1, 5)
         if luck == 1:
-            action+='slower'
+            action += 'slower '
         elif luck == 2:
-            action +='faster'
+            action += 'faster '
         elif luck == 3:
-            action+='right'
+            action += 'right '
         elif luck == 4:
-            action+='left'
+            action += 'left '
         elif luck == 5:
-            action+='nothing'
-        
+            action += 'nothing '
+    return action
+
 #########################################################
 
 def _get_IA_orders(game_data, player):
@@ -1273,48 +1281,51 @@ def _get_IA_orders(game_data, player):
     --------
     specification: Elise Hallaert (V.1 31/03/17)
     """
-    action = '' 
+    action = ''
     for ship in game_data['ships'][player]:
-        
+
         position = game_data['ships'][player][ship]
         if game_data['board'][position][player][ship]['type'] == 'battlecruiser':
             pass
         elif game_data['board'][position][player][ship]['type'] == 'fighter':
-            pass
+            action += fighter_action(player, ship, game_data)
         elif game_data['board'][position][player][ship]['type'] == 'destroyer':
-            
+
             ###########################
             ### Start the 'IA' check###
             ###########################
-            
-            #Add ship name
-            action += ship
-            
-            #If speed < max_speed
-            if game_data['board'][position][player][ship]['speed'] < game_data['ship_characteristics']['destroyer']['max_speed']:
-                #Faster
-                action += ':faster '
-            
-            #elif neutral ship in range:
+
+            # Add ship name
+            action += ship+ ':'
+
+            # If speed < max_speed
+            if game_data['board'][position][player][ship]['speed'] < game_data['ship_characteristics']['destroyer'][
+                'max_speed']:
+                # Faster
+                action += 'faster '
+
+            # elif neutral ship in range:
             elif ship_in_range('get_ship', player, ship, 'destroyer', game_data) != None:
                 action += ship_in_range('get_ship', player, ship, 'destroyer', game_data)
-                action = action[:len(action) - 1]
-            #elif enemy in range 
+                action +=' '
+            # elif enemy in range
             elif ship_in_range('attack', player, ship, 'destroyer', game_data) != None:
-                 action += ship_in_range('attack', player, ship, 'destroyer', game_data)
-                 action = action[:len(action) - 1]
-            #else
+                action += ship_in_range('attack', player, ship, 'destroyer', game_data)
+                action += ' '
+            # else
             else:
-                #randomly change the speed or the orientation
-                possibility = random.randint(1, 5)
+                # randomly change the speed or the orientation
+                possibility = random.randint(1, 4)
                 if possibility == 1:
-                    action += ':slower '
+                    action += 'slower '
                 elif possibility == 2:
-                    action += ':faster '
+                    action += 'faster '
                 elif possibility == 3:
-                    action += ':left '
+                    action += 'left '
                 elif possibility == 4:
-                    action += ':right '
+                    action += 'right '
     return action[:len(action) - 1]
     ###TEST ZONE###
-main('C:/Users/gmetens/Desktop/coder/test.cis','IA', 'IA')
+
+
+main('C:/Users/gmetens/Desktop/coder/test.cis', 'IA', 'IA')
