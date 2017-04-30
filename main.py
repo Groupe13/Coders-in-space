@@ -2,6 +2,7 @@
 import random
 import socket
 import time
+import termcolor
 
 
 def get_IP():
