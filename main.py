@@ -1395,7 +1395,7 @@ def _get_IA_orders(game_data, player):
         #deals with each type of ship
         position = game_data['ships'][player][ship]
         if game_data['board'][position][player][ship]['type'] == 'battlecruiser':
-            pass
+            action += battlecruiser_action
         elif game_data['board'][position][player][ship]['type'] == 'fighter':
             action += fighter_action(player, ship, game_data)
         elif game_data['board'][position][player][ship]['type'] == 'destroyer':
@@ -1459,7 +1459,65 @@ def get_new_position (y_coordinate, x_coordinate, speed, orientation, game_data)
     return temp_pos
 
 # ---------------------------------------------------------------------------------------------------#
-        
+def battlecruiser_action(player, ship_name, game_data):
+    """return the action of a battlecruiser ship
+    
+    Parameters:
+    -----------
+    player: number of the current player(int)
+    ship_name: name of the ship playing (str)
+    game_data: dictionnay which contains the entire game (dict)
+    
+    Returns:
+    --------
+    action: action that the battlecruiser will do (str)
+    
+    Notes:
+    ------
+    the action contains 'name:action '
+    
+    Version:
+    --------
+    specifications: Métens Guillaume (v.1 29/04/17)
+    implementation: Métens Guillaume (v.1 30/04/17) 
+    """
+    
+    position = game_data['ships'][player][ship_name]
+    # Add ship name
+    action = ship_name+ ':'       
+    
+    # If speed = 0
+    if game_data['board'][position][player][ship_name]['speed'] == 0:
+        # Faster the boat or change the orientation
+        possibility = random.randint(1, 3)
+        if possibility == 1:
+            action += 'faster'
+        elif possibility == 2:
+            action += 'left'
+        elif possibility == 3:
+            action += 'right'
+
+    # elif enemy in range
+    elif ship_in_range('attack', player, ship_name, 'battlecruiser', game_data) != None:
+        #Atack enemy (battlecruiser first)
+        action += ship_in_range('attack', player, ship_name, 'battlecruiser', game_data)
+    
+    # else
+    else:
+        # randomly change the speed, the orientation or do nothing
+        possibility = random.randint(1, 4)
+        if possibility == 1:
+            action += 'slower'
+        elif possibility == 2:
+            action += 'faster'
+        elif possibility == 3:
+            action += 'left'
+        elif possibility == 4:
+            action += 'right'
+    action +=' '
+    
+    return action
+
 def destroyer_action (player, ship_name, game_data):
     """return the action of a destroyer ship
     
@@ -1483,7 +1541,6 @@ def destroyer_action (player, ship_name, game_data):
     implementation: Métens Guillaume (v.1 30/04/17) 
     """
     
-    action = ship_name +':'
     position = game_data['ships'][player][ship_name]
     # Add ship name
     action = ship_name+ ':'
@@ -1492,28 +1549,27 @@ def destroyer_action (player, ship_name, game_data):
     if game_data['board'][position][player][ship_name]['speed'] < game_data['ship_characteristics']['destroyer'][
         'max_speed']:
         # Faster
-        action += 'faster '
+        action += 'faster'
 
     # elif neutral ship in range:
     elif ship_in_range('get_ship', player, ship_name, 'destroyer', game_data) != None:
         action += ship_in_range('get_ship', player, ship_name, 'destroyer', game_data)
-        action +=' '
     # elif enemy in range
     elif ship_in_range('attack', player, ship_name, 'destroyer', game_data) != None:
         action += ship_in_range('attack', player, ship_name, 'destroyer', game_data)
-        action += ' '
     # else
     else:
-        # randomly change the speed or the orientation
+        # randomly change the speed, the orientation or do nothing
         possibility = random.randint(1, 4)
         if possibility == 1:
-            action += 'slower '
+            action += 'slower'
         elif possibility == 2:
-            action += 'faster '
+            action += 'faster'
         elif possibility == 3:
-            action += 'left '
+            action += 'left'
         elif possibility == 4:
-            action += 'right '
+            action += 'right'
+    action +=' '
     return action
 
 main('C:/Users/gmetens/Desktop/coder/test.cis', 'IA', 'IA')
