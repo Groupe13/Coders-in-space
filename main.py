@@ -216,6 +216,7 @@ def main(path, player_1, player_2):
     Version:
     --------
     specification: Hugo Jacques (V.1 5/03/17)
+    Implementation: Hugo Jacques(v.1 12/04/17)
     """
 
     # initialisation of the main dictionnary
@@ -274,10 +275,15 @@ def _game_loop(game_data, player1, player2, connection=None):
     Notes:
     ------
     Player can be IA, remote or player
+    
+    Return: 
+    -------
+    winner: number of the player which has won the game (int)
 
     Version:
     --------
     specification: Elise Hallaert (V.1 4/03/17)
+    Implementation: elise Hallaert (v.1 17/04/17)
 
     """
     # check if the game is ended
@@ -302,23 +308,21 @@ def _game_loop(game_data, player1, player2, connection=None):
             player2_orders = get_remote_orders(connection)
         else:
             player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
+        
         # gives order if playing with remote player
-
         if player1 == 'remote' and player2 == 'IA':
             notify_remote_orders(connection, player2_orders)
 
-            # execute all the actions asked (except the attacks)
-        print player1_orders, '    ', player2_orders
+        # execute all the actions asked (except the attacks)
         attack_list = _process_order(1, player1_orders, game_data)
-
         attack_list += _process_order(2, player2_orders, game_data)
+        
         # move all the ships
         _move_all_ships(game_data)
         # verify if abandonned ships can be caught
         _get_neutral_ships(game_data)
         # execute the possible attacks
         _make_attacks(attack_list, game_data)
-        game_data
         # update the user design
         _update_ui(game_data)
         # execute the attacks
@@ -372,6 +376,7 @@ def _update_ui(game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
+    implementation: Hugo Jacques (v.1 19/04/17)
     """
     print ''
     # get board size
@@ -405,6 +410,7 @@ def _update_ui(game_data):
             if not position in positions_save:
                 positions_save[position] = 0
             positions_save[position] += 1
+            
     # print positions_save
     print x_numbers_str
 
@@ -456,6 +462,7 @@ def _process_order(player, player_orders, game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 5/03/17)
+    implementation: Métens Guillaume (v.1 18/04/17)
     """
     attack_list = ()
     # split all the string in orders
@@ -507,6 +514,7 @@ def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, g
     Version:
     --------
     specification: Hallaert Elise (V.1 5/03/17)
+    implementation: Hallaert Elise (v.1 22/04/17)
     """
     # get the position of the ship attacking
     ship_position = game_data['ships'][player][ship_name]
@@ -531,6 +539,7 @@ def _move_all_ships(game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 5/03/17)
+    Implementation: Hugo Jacques (v.1 15/04/17)
     """
     # make the moves of the ships
     for player in game_data['ships']:
@@ -555,11 +564,13 @@ def _apply_tore(y_coordinate, x_coordinate, game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 4/03/17)
+    implementation: Hugo Jacques (v.1 3/04/17)
     """
-
+    #get the information of teh board
     board_x = game_data['variables']['board_size']['x']
     board_y = game_data['variables']['board_size']['y']
 
+    #get the right coordinate
     if x_coordinate > board_x:
         x_coordinate -= board_x
     if y_coordinate > board_y:
@@ -589,6 +600,7 @@ def _get_neutral_ships(game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 3/04/17)
+    implementation; Hugo Jacques (v.1 5/04/17)
     """
     # deal with each abandonned ship
     for ship in game_data['ships'][0].copy():
@@ -630,6 +642,7 @@ def _move_ship(player, ship_name, game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 4/03/17)
+    implementation: Métens Guillaume (v.1 17/04/17)
 
     """
 
@@ -645,29 +658,8 @@ def _move_ship(player, ship_name, game_data):
     speed = game_data['board'][position][player][ship_name]['speed']
 
     # change the position of the ship depending to the speed and the orientation
-    if orientation == 0:
-        y_coordinate -= speed
-    elif orientation == 1:
-        x_coordinate += speed
-        y_coordinate -= speed
-    elif orientation == 2:
-        x_coordinate += speed
-    elif orientation == 3:
-        x_coordinate += speed
-        y_coordinate += speed
-    elif orientation == 4:
-        y_coordinate += speed
-    elif orientation == 5:
-        x_coordinate -= speed
-        y_coordinate += speed
-    elif orientation == 6:
-        x_coordinate -= speed
-    elif orientation == 7:
-        x_coordinate -= speed
-        y_coordinate -= speed
-
-    # part to modify?
-    new_position = _apply_tore(y_coordinate, x_coordinate, game_data)
+    new_position = get_new_position (y_coordinate,x_coordinate, speed, orientation)
+        
     # change the position of the ship
     game_data['board'][new_position][player][ship_name] = game_data['board'][position][player][ship_name]
 
@@ -694,6 +686,7 @@ def _turn_ship(player, ship_name, direction_str, game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 4/03/17)
+    Implementation : Métens Guillaume (v.1 19/04/17)
     """
 
     # 0=up,1=up-right,2=right,3=down-right,4=down;5=down-left,6=left,7=up-left
@@ -729,6 +722,7 @@ def _ship_acceleration(player, ship_name, way, game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 4/03/17)
+    implementation : Métens Guillaume (v.1 21/04/17)
     """
 
     # Get the current speed and position
@@ -771,6 +765,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
+    implementation; Hugo Jacques (v.1 17/04/17)
     """
     # get the current position
     current_position = game_data['ships'][player][ship_name]
@@ -836,6 +831,7 @@ def _make_attacks(attacks_list, game_data):
     Version:
     --------
     specification: Elise Hallaert (V.1 4/03/17)
+    impelmentation : Elise Hallaert (v.1 2/04/17)
     """
     been_touched = False
     # get the information needed
@@ -875,6 +871,7 @@ def _build_board(y_size, x_size, game_board):
     Version:
     --------
     specification: Hugo Jacques (V.1 3/03/17)
+    implementation: Métens Guillaume (v.1 5/04/17)
     """
 
     for y_coordinate in range(1, y_size + 1):
@@ -890,10 +887,18 @@ def _buy_ships(game_data, player1, player2):
     Parameters:
     ------------
     game_board: empty dict that will contain all the element of board (dict)
+    player1: type of the player one (str)
+    player2: type of the player two (str)
+    
+    Notes:
+    ------
+    the type can be IA, remote or player
 
     Version:
     --------
     specification: Métens Guillaume (V.1 3/03/17)
+    implementation: Métens Guillaume (v.1 1/04/17)
+    
     """
 
     player1_orders = ''
@@ -938,6 +943,7 @@ def _buy_and_add_ships(player, ships_list, game_data):
     Version:
     --------
     specification: Hugo Jacques (V.1 3/03/17)
+    implementation: Elise Hallaert (v.1 21/03/17)
     """
 
     # initialisation of the money of the player
@@ -964,7 +970,8 @@ def _add_ship(player, ship_name, ship_type, game_data, position=None, orientatio
     ship_name: The name of the ship (str)
     ship_type: The type of the ship (str)
     game_data: The board and all the informations of the game (dict)
-    position: position for the new spaceship (tuple(int, int), )
+    position: position for the new spaceship (tuple(int, int),optional )
+    orientation: orientation of the ship (int, optional)
 
     Notes:
     ------
@@ -974,10 +981,12 @@ def _add_ship(player, ship_name, ship_type, game_data, position=None, orientatio
     Note:
     -----
     Player can be 0 for abandonned ship, 1 for player one and 2 for player two
+    the orientation can be between 0 and 7
 
     Version:
     --------
     specification: Métens Guillaume (V.1 3/03/17)
+    implementation: Métens Guillaume (v.1 02/04/17)
     """
 
     ship_name = ship_name.lower()
@@ -1012,6 +1021,7 @@ def _build_from_cis(path, game_data):
     Version:
     --------
     specification: Elise Hallaert (V.1 3/03/17)
+    implementation: Hugo Jacques (v.1 2/04/17)
     """
     # open the .cis file
     file_handle = open(path, 'r')
@@ -1066,11 +1076,14 @@ def _build_from_cis(path, game_data):
 # ---------------------------------------------------------------------------------------------------#
 
 def _buy_IA():
-    """Gives naive orders to buy some ships
+    """Give the orders of the IA to buy some ships
+    
     Version:
     --------
     specification: Elise Hallaert (V.1 31/03/17)
+    implementation: Elise Hallaert (v.1 6/04/17)
     """
+    
     wallet = 100
     action = ''
     name = 'i%d'
@@ -1096,16 +1109,24 @@ def _buy_IA():
 ###IA specific functions###
 ###########################
 
-def _get_ships_in_range(player, ship_name, game_data):
-    position = game_data['ships'][player][ship_name]
-    ship_type = game_data['board'][position][player][ship_name]['type']
-    ship_range = game_data['ship_characteristics'][ship_type]['range']
-    print position
-    print ship_name
-    print ship_range
-
-
 def ship_in_range(goal, player, name, kind, game_data):
+    """verify if there are ships to attack or to capture in the range
+    
+    Parameters:
+    goal: name of the action the ship has to do (str)
+    player: number of the current player (int)
+    name: name of the ship playing (str)
+    kind: type of the ship playing (str)
+    game_data: dictionnary which contains the entire game (dict)
+    
+    Notes:
+    goal can be 'attack' or 'get_ship'
+    player can be 1 or 2
+    kind can be 'fighter', 'detroyer' or 'battlecruiser'
+    
+    specifications: Elise Hallaert (v.1 28/04/17)
+    implementation: Elise Hallaert (v.1 29/04/17)  
+    """
     opponent_player = 2
     if player == 2:
         opponent_player = 1
@@ -1115,7 +1136,6 @@ def ship_in_range(goal, player, name, kind, game_data):
     if goal == 'attack':
         possible_attack = []
 
-        _get_ships_in_range(player, name, game_data)
 
         if possible_attack == []:
             return None
@@ -1159,6 +1179,24 @@ def ship_in_range(goal, player, name, kind, game_data):
 
 
 def find_five_possibilities(player, position, game_data, name, kind, take=False):
+    """return five possibilities of position of a ship after the turn of one player
+    
+    Parameters:
+    player: number of the player who owns the ship (int)
+    position: position of the ship (tuple)
+    game_data: dictionnary which contains the entire game (dict)
+    name: name of the ship (str)
+    kind: type of the ship (str)
+    take: say if the player want to capture a ship (bool, optional)
+    
+    Notes:    
+    player can be 1 or 2
+    kind can be 'fighter', 'detroyer' or 'battlecruiser'
+    take is True if the player want to capture, False otherwhise
+    
+    specifications: Elise Hallaert (v.1 28/04/17)
+    implementation: Elise Hallaert (v.1 29/04/17)    
+    """
     print game_data['board'][position][player][name]['orientation']
     orientation = game_data['board'][position][player][name]['orientation']
     speed = game_data['board'][position][player][name]['speed']
@@ -1173,28 +1211,8 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
         if new_speed > 0 and new_speed <= max_speed:
             y_coordinate = position[0]
             x_coordinate = position[1]
-            if orientation == 0:
-                y_coordinate -= new_speed
-            elif orientation == 1:
-                x_coordinate += new_speed
-                y_coordinate -= new_speed
-            elif orientation == 2:
-                x_coordinate += new_speed
-            elif orientation == 3:
-                x_coordinate += new_speed
-                y_coordinate += new_speed
-            elif orientation == 4:
-                y_coordinate += new_speed
-            elif orientation == 5:
-                x_coordinate -= new_speed
-                y_coordinate += new_speed
-            elif orientation == 6:
-                x_coordinate -= new_speed
-            elif orientation == 7:
-                x_coordinate -= new_speed
-                y_coordinate -= new_speed
-            temp_pos = _apply_tore(y_coordinate, x_coordinate, game_data)
-
+            temp_pos = get_new_position (y_coordinate, x_coordinate, speed, orientation)
+            
             if take and game_data['board'][temp_pos][opponent_player] != {}:
                 return ('speed', changement)
 
@@ -1204,27 +1222,7 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
         new_orientation = new_orientation % 8
         y_coordinate = position[0]
         x_coordinate = position[1]
-        if orientation == 0:
-            y_coordinate -= speed
-        elif orientation == 1:
-            x_coordinate += speed
-            y_coordinate -= speed
-        elif orientation == 2:
-            x_coordinate += speed
-        elif orientation == 3:
-            x_coordinate += speed
-            y_coordinate += speed
-        elif orientation == 4:
-            y_coordinate += speed
-        elif orientation == 5:
-            x_coordinate -= speed
-            y_coordinate += speed
-        elif orientation == 6:
-            x_coordinate -= speed
-        elif orientation == 7:
-            x_coordinate -= speed
-            y_coordinate -= speed
-        temp_pos = _apply_tore(y_coordinate, x_coordinate, game_data)
+        temp_pos = get_new_position (y_coordinate, x_coordinate, speed, orientation)        
         possibilities.append(temp_pos)
         if take and game_data['board'][temp_pos][opponent_player] != {}:
             return ('orientation', changement)
@@ -1232,6 +1230,16 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
 
 
 def fighter_action(player, ship_name, game_data):
+    """gives the action of a fighter ship
+    
+    Parameters:
+    player: number of the current player(int)
+    ship_name: name of the ship playing (str)
+    game_data: dictionnay which contains the entire game (dict)
+    
+    specifications: Elise Hallaert (v.1 28/04/17)
+    implementation: Elise Hallaert (v.1 29/04/17) 
+    """
     action = ship_name +':'
     position = game_data['ships'][player][ship_name]
     if game_data['board'][position][player][ship_name]['speed'] < 4:
@@ -1281,6 +1289,7 @@ def _get_IA_orders(game_data, player):
     Version:
     --------
     specification: Elise Hallaert (V.1 31/03/17)
+    implementation: Elise Hallaert (v.1 29/04/17)
     """
     action = ''
     for ship in game_data['ships'][player]:
@@ -1291,42 +1300,88 @@ def _get_IA_orders(game_data, player):
         elif game_data['board'][position][player][ship]['type'] == 'fighter':
             action += fighter_action(player, ship, game_data)
         elif game_data['board'][position][player][ship]['type'] == 'destroyer':
-
-            ###########################
-            ### Start the 'IA' check###
-            ###########################
-
-            # Add ship name
-            action += ship+ ':'
-
-            # If speed < max_speed
-            if game_data['board'][position][player][ship]['speed'] < game_data['ship_characteristics']['destroyer'][
-                'max_speed']:
-                # Faster
-                action += 'faster '
-
-            # elif neutral ship in range:
-            elif ship_in_range('get_ship', player, ship, 'destroyer', game_data) != None:
-                action += ship_in_range('get_ship', player, ship, 'destroyer', game_data)
-                action +=' '
-            # elif enemy in range
-            elif ship_in_range('attack', player, ship, 'destroyer', game_data) != None:
-                action += ship_in_range('attack', player, ship, 'destroyer', game_data)
-                action += ' '
-            # else
-            else:
-                # randomly change the speed or the orientation
-                possibility = random.randint(1, 4)
-                if possibility == 1:
-                    action += 'slower '
-                elif possibility == 2:
-                    action += 'faster '
-                elif possibility == 3:
-                    action += 'left '
-                elif possibility == 4:
-                    action += 'right '
+            action += destroyer_action
     return action[:len(action) - 1]
     ###TEST ZONE###
 
+def get_new_position (y_coordinate, x_coordinate, speed, orientation):
+    """return the new position of a ship after moving
+    
+    Parameters:
+    y_coordinate: number of the line of the position (int)
+    x_coordinate: number of the column of the position (int)
+    speed: speed of the ship (int)
+    orientation: orientation of the ship (int)
+    
+    Notes:
+    orientation can be between 0 and 7
+    
+    specifications: Elise Hallaert (v.1 28/04/17)
+    implementation: Elise Hallaert (v.1 29/04/17)    
+    """
+    if orientation == 0:
+        y_coordinate -= speed
+    elif orientation == 1:
+        x_coordinate += speed
+        y_coordinate -= speed
+    elif orientation == 2:
+        x_coordinate += speed
+    elif orientation == 3:
+        x_coordinate += speed
+        y_coordinate += speed
+    elif orientation == 4:
+        y_coordinate += speed
+    elif orientation == 5:
+        x_coordinate -= speed
+        y_coordinate += speed
+    elif orientation == 6:
+        x_coordinate -= speed
+    elif orientation == 7:
+        x_coordinate -= speed
+        y_coordinate -= speed
+    temp_pos = _apply_tore(y_coordinate, x_coordinate, game_data)
+    
+        return temp_pos
+def destroyer_action (player, ship_name, game_data):
+    """gives the action of a destroyer ship
+    
+    Parameters:
+    player: number of the current player(int)
+    ship_name: name of the ship playing (str)
+    game_data: dictionnay which contains the entire game (dict)
+    
+    specifications: Elise Hallaert (v.1 28/04/17)
+    implementation: Métens Guillaume (v.1 30/04/17) 
+    """
+    # Add ship name
+    action += ship+ ':'
+
+    # If speed < max_speed
+    if game_data['board'][position][player][ship]['speed'] < game_data['ship_characteristics']['destroyer'][
+        'max_speed']:
+        # Faster
+        action += 'faster '
+
+    # elif neutral ship in range:
+    elif ship_in_range('get_ship', player, ship, 'destroyer', game_data) != None:
+        action += ship_in_range('get_ship', player, ship, 'destroyer', game_data)
+        action +=' '
+    # elif enemy in range
+    elif ship_in_range('attack', player, ship, 'destroyer', game_data) != None:
+        action += ship_in_range('attack', player, ship, 'destroyer', game_data)
+        action += ' '
+    # else
+    else:
+        # randomly change the speed or the orientation
+        possibility = random.randint(1, 4)
+        if possibility == 1:
+            action += 'slower '
+        elif possibility == 2:
+            action += 'faster '
+        elif possibility == 3:
+            action += 'left '
+        elif possibility == 4:
+            action += 'right '
+    return action
 
 main('C:/Users/gmetens/Desktop/coder/test.cis', 'IA', 'IA')
