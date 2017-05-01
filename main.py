@@ -2,8 +2,6 @@
 import random
 import socket
 import time
-import termcolor
-
 
 def get_IP():
     """Returns the IP of the computer where get_IP is called.
@@ -274,7 +272,8 @@ def _game_loop(game_data, player1, player2, connection=None):
 
     Notes:
     ------
-    Player can be IA, remote or player
+    player1 and player2 can be IA, remote or player
+    winner can be 1 or 2
     
     Return: 
     -------
@@ -283,9 +282,9 @@ def _game_loop(game_data, player1, player2, connection=None):
     Version:
     --------
     specification: Elise Hallaert (V.1 4/03/17)
-    Implementation: elise Hallaert (v.1 17/04/17)
-
+    Implementation: Elise Hallaert (v.1 17/04/17)
     """
+    
     # check if the game is ended
     while len(game_data['ships'][1]) > 0 \
             and len(game_data['ships'][2]) > 0 \
@@ -328,7 +327,7 @@ def _game_loop(game_data, player1, player2, connection=None):
         # execute the attacks
 
     # deal with the end of the game
-    # deal with the case where  turn has passed without any damage
+    # deal with the case where 10 turn has passed without any damage
     if game_data['variables']['last_damages'] == 10:
 
         # initialisation of the players money
@@ -378,6 +377,7 @@ def _update_ui(game_data):
     specification: Métens Guillaume (V.1 5/03/17)
     implementation: Hugo Jacques (v.1 19/04/17)
     """
+    
     print ''
     # get board size
     x_size = game_data['variables']['board_size']['x']
@@ -464,6 +464,7 @@ def _process_order(player, player_orders, game_data):
     specification: Hugo Jacques (V.1 5/03/17)
     implementation: Métens Guillaume (v.1 18/04/17)
     """
+    
     attack_list = ()
     # split all the string in orders
     for elements in player_orders.split(' '):
@@ -498,6 +499,7 @@ def _process_order(player, player_orders, game_data):
 
 def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, game_data):
     """Append  the attack to a list if it can be made.
+    
     Parameters:
     -----------
     player: number of the player who is playing (int)
@@ -516,6 +518,7 @@ def _check_and_memory_attack(player, ship_name, attack_position, attacks_list, g
     specification: Hallaert Elise (V.1 5/03/17)
     implementation: Hallaert Elise (v.1 22/04/17)
     """
+    
     # get the position of the ship attacking
     ship_position = game_data['ships'][player][ship_name]
     # get the type of the ship attacking
@@ -679,8 +682,8 @@ def _turn_ship(player, ship_name, direction_str, game_data):
     direction_str: Must be left(Anti-clockwise) or right(clockwise) (str)
     game_data: Dictionary which contain all the information of the game (dict)
 
-    Note:
-    -----
+    Notes:
+    ------
     Player can be 1 for player one and 2 for player two
 
     Version:
@@ -819,6 +822,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
 
 def _make_attacks(attacks_list, game_data):
     """Performs the requested attacks
+    
     Parameters:
     -----------
     attacks_list: list of the attacks that have to be made (list)
@@ -831,7 +835,7 @@ def _make_attacks(attacks_list, game_data):
     Version:
     --------
     specification: Elise Hallaert (V.1 4/03/17)
-    impelmentation : Elise Hallaert (v.1 2/04/17)
+    implementation : Elise Hallaert (v.1 2/04/17)
     """
     been_touched = False
     # get the information needed
@@ -862,6 +866,7 @@ def _make_attacks(attacks_list, game_data):
 
 def _build_board(y_size, x_size, game_board):
     """Build an empty game board.
+    
     Parameters:
     ------------
     x_size: The size of the board in abscissa (int)
@@ -905,7 +910,6 @@ def _buy_ships(game_data, player1, player2):
     player2_orders = ''
 
     # verify what is the type of player
-
     if player1 == 'player':
         player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
     elif player1 == 'remote':
@@ -934,7 +938,7 @@ def _buy_and_add_ships(player, ships_list, game_data):
     ------------
     player: The player who makes the action (int)
     ships_list: The list wich contains all the new ships (list)
-    game_board: empty dict that will contain all the element of board (dict)
+    game_data: empty dict that will contain all the element of board (dict)
 
     Note:
     -----
@@ -951,9 +955,11 @@ def _buy_and_add_ships(player, ships_list, game_data):
 
     # separate all the ship bought
     for ship in ships_list.split(' '):
+        
         # separate the name and the type of the ship
         if ship:
             name, ship_type = ship.split(':')
+            
             # substract the price of the ship
             wallet -= game_data['ship_characteristics'][ship_type]['cost']
             if wallet >= 0:
@@ -993,6 +999,7 @@ def _add_ship(player, ship_name, ship_type, game_data, position=None, orientatio
 
     # give a default orientation
     orientation = 1
+    
     # give the information of the position of the ship
     if position == None:
         if player == 1:
@@ -1040,6 +1047,7 @@ def _build_from_cis(path, game_data):
     game_data['variables']['default_position'][2] = (y_board_size - 9, x_board_size - 9)
 
     _build_board(y_board_size, x_board_size, game_data['board'])
+    
     # add the information of the board
     game_data['variables']['board_size']['y'] = y_board_size
     game_data['variables']['board_size']['x'] = x_board_size
@@ -1078,19 +1086,30 @@ def _build_from_cis(path, game_data):
 def _buy_IA():
     """Give the orders of the IA to buy some ships
     
+    Returns:
+    --------
+    action: action that the IA makes to buy ships (str)
+    
     Version:
     --------
     specification: Elise Hallaert (V.1 31/03/17)
-    implementation: Elise Hallaert (v.1 6/04/17)
+    implementation: Hugo Jacques (v.1 6/04/17)
     """
     
+    #initialisation of the values
     wallet = 100
     action = ''
     name = 'i%d'
+    
+    #check if the player can still buy ships
     while wallet > 0:
+        
+        #gives the name of the ship
         number = random.randint(1, 99)
         action += name % number
         ship = random.randint(1, 3)
+        
+        #gives the type of the ship
         if ship == 1:
             action += ':fighter'
             wallet -= 10
@@ -1101,18 +1120,17 @@ def _buy_IA():
             action += ':battlecruiser'
             wallet -= 30
         action += ' '
+        
     return action[:len(action) - 1]
 
 
 # ---------------------------------------------------------------------------------------------------#
-############################
-###IA specific functions###
-###########################
 
 def ship_in_range(goal, player, name, kind, game_data):
     """verify if there are ships to attack or to capture in the range
     
     Parameters:
+    -----------
     goal: name of the action the ship has to do (str)
     player: number of the current player (int)
     name: name of the ship playing (str)
@@ -1120,10 +1138,13 @@ def ship_in_range(goal, player, name, kind, game_data):
     game_data: dictionnary which contains the entire game (dict)
     
     Notes:
+    ------
     goal can be 'attack' or 'get_ship'
     player can be 1 or 2
     kind can be 'fighter', 'detroyer' or 'battlecruiser'
     
+    Version:
+    --------
     specifications: Elise Hallaert (v.1 28/04/17)
     implementation: Elise Hallaert (v.1 29/04/17)  
     """
@@ -1178,10 +1199,13 @@ def ship_in_range(goal, player, name, kind, game_data):
                 return 'faster'
 
 
+# ---------------------------------------------------------------------------------------------------#
+
 def find_five_possibilities(player, position, game_data, name, kind, take=False):
     """return five possibilities of position of a ship after the turn of one player
     
     Parameters:
+    -----------
     player: number of the player who owns the ship (int)
     position: position of the ship (tuple)
     game_data: dictionnary which contains the entire game (dict)
@@ -1190,10 +1214,13 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
     take: say if the player want to capture a ship (bool, optional)
     
     Notes:    
+    ------
     player can be 1 or 2
     kind can be 'fighter', 'detroyer' or 'battlecruiser'
     take is True if the player want to capture, False otherwhise
     
+    Version:
+    --------
     specifications: Elise Hallaert (v.1 28/04/17)
     implementation: Elise Hallaert (v.1 29/04/17)    
     """
@@ -1229,14 +1256,19 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
     return possibilities
 
 
+# ---------------------------------------------------------------------------------------------------#
+
 def fighter_action(player, ship_name, game_data):
     """gives the action of a fighter ship
     
     Parameters:
+    -----------
     player: number of the current player(int)
     ship_name: name of the ship playing (str)
     game_data: dictionnay which contains the entire game (dict)
     
+    Version:
+    --------
     specifications: Elise Hallaert (v.1 28/04/17)
     implementation: Elise Hallaert (v.1 29/04/17) 
     """
@@ -1272,7 +1304,8 @@ def fighter_action(player, ship_name, game_data):
             action += 'nothing '
     return action
 
-#########################################################
+
+# ---------------------------------------------------------------------------------------------------#
 
 def _get_IA_orders(game_data, player):
     """gives naive orders to ships
@@ -1302,20 +1335,26 @@ def _get_IA_orders(game_data, player):
         elif game_data['board'][position][player][ship]['type'] == 'destroyer':
             action += destroyer_action
     return action[:len(action) - 1]
-    ###TEST ZONE###
 
-def get_new_position (y_coordinate, x_coordinate, speed, orientation):
+# ---------------------------------------------------------------------------------------------------#
+
+def get_new_position (y_coordinate, x_coordinate, speed, orientation, game_data):
     """return the new position of a ship after moving
     
     Parameters:
+    -----------
     y_coordinate: number of the line of the position (int)
     x_coordinate: number of the column of the position (int)
     speed: speed of the ship (int)
     orientation: orientation of the ship (int)
+    game_data: dictionnary which contains all the information of the game (dict)
     
     Notes:
+    ------
     orientation can be between 0 and 7
     
+    Version:
+    --------
     specifications: Elise Hallaert (v.1 28/04/17)
     implementation: Elise Hallaert (v.1 29/04/17)    
     """
@@ -1341,34 +1380,43 @@ def get_new_position (y_coordinate, x_coordinate, speed, orientation):
         y_coordinate -= speed
     temp_pos = _apply_tore(y_coordinate, x_coordinate, game_data)
     
-        return temp_pos
+    return temp_pos
+
+# ---------------------------------------------------------------------------------------------------#
+        
 def destroyer_action (player, ship_name, game_data):
     """gives the action of a destroyer ship
     
     Parameters:
+    -----------
     player: number of the current player(int)
     ship_name: name of the ship playing (str)
     game_data: dictionnay which contains the entire game (dict)
     
+    Version:
+    --------
     specifications: Elise Hallaert (v.1 28/04/17)
     implementation: Métens Guillaume (v.1 30/04/17) 
     """
+    
+    action = ship_name +':'
+    position = game_data['ships'][player][ship_name]
     # Add ship name
-    action += ship+ ':'
+    action = ship_name+ ':'
 
     # If speed < max_speed
-    if game_data['board'][position][player][ship]['speed'] < game_data['ship_characteristics']['destroyer'][
+    if game_data['board'][position][player][ship_name]['speed'] < game_data['ship_characteristics']['destroyer'][
         'max_speed']:
         # Faster
         action += 'faster '
 
     # elif neutral ship in range:
-    elif ship_in_range('get_ship', player, ship, 'destroyer', game_data) != None:
-        action += ship_in_range('get_ship', player, ship, 'destroyer', game_data)
+    elif ship_in_range('get_ship', player, ship_name, 'destroyer', game_data) != None:
+        action += ship_in_range('get_ship', player, ship_name, 'destroyer', game_data)
         action +=' '
     # elif enemy in range
-    elif ship_in_range('attack', player, ship, 'destroyer', game_data) != None:
-        action += ship_in_range('attack', player, ship, 'destroyer', game_data)
+    elif ship_in_range('attack', player, ship_name, 'destroyer', game_data) != None:
+        action += ship_in_range('attack', player, ship_name, 'destroyer', game_data)
         action += ' '
     # else
     else:
