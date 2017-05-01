@@ -1148,23 +1148,26 @@ def ship_in_range(goal, player, name, kind, game_data):
     specifications: Elise Hallaert (v.1 28/04/17)
     implementation: Elise Hallaert (v.1 29/04/17)  
     """
+    
+    #get the number of the opponent player
     opponent_player = 2
     if player == 2:
         opponent_player = 1
-
+    
+    #get the position of the ship
     ship_position = game_data['ships'][player][name]
 
+    #deals with the case where the player wants to attack ships
     if goal == 'attack':
         possible_attack = []
 
-
+        #check if attacks are possible
         if possible_attack == []:
             return None
+        
         priority = False
-        print possible_attack
+        #check which one can be attacked in priority or not
         for possible_position in possible_attack:
-            print possible_position
-            print possible_attack
             for ship in game_data['board'][possible_position][opponent_player]:
                 if game_data['board'][possible_position][opponent_player][ship]['type'] == 'battlecruiser':
                     priority = True
@@ -1173,16 +1176,20 @@ def ship_in_range(goal, player, name, kind, game_data):
                 else:
                     attack_position = possible_position
                     ship_name = ship
+                    
+        #check if a ship has to be attacked in priority            
         if priority:
             attack_position = ship_priority
             ship_name = ship_name_priority
-
+        
+        #choose a position randomly
         ship_type = game_data['board'][attack_position][opponent_player][ship_name]['type']
         choice = random.randint(-1, 3)
         attack_position = find_five_possibilities(opponent_player, attack_position, game_data, ship_name, ship_type)[
             choice]
         return attack_position
-
+    
+    #deals with the case where the player wants to catch ships
     elif goal == 'get_ship':
         ship_possibility = find_five_possibilities(player, ship_position, game_data, name, kind, True)
         if ship_possibility[0] == 'orientation':
@@ -1224,26 +1231,35 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
     specifications: Elise Hallaert (v.1 28/04/17)
     implementation: Elise Hallaert (v.1 29/04/17)    
     """
-    print game_data['board'][position][player][name]['orientation']
+    #get the information needed
     orientation = game_data['board'][position][player][name]['orientation']
     speed = game_data['board'][position][player][name]['speed']
     max_speed = game_data['ship_characteristics'][kind]['max_speed']
+    
+    #initialisation of the list
     possibilities = []
+    
+    #get the opponent player
     opponent_player = 2
     if player == 2:
         opponent_player = 1
+        
+    #deals with the case where the speed is changed    
     for changement in (-1, 0, 1):
         new_speed = speed + changement
-
         if new_speed > 0 and new_speed <= max_speed:
             y_coordinate = position[0]
             x_coordinate = position[1]
             temp_pos = get_new_position (y_coordinate, x_coordinate, speed, orientation)
             
+            #return the changement to do if the player wants to catch ships
             if take and game_data['board'][temp_pos][opponent_player] != {}:
                 return ('speed', changement)
-
+                
+            #add the possibility
             possibilities.append(temp_pos)
+            
+    #deals with the case where the orientation is changed        
     for turn in (-1, 1):
         new_orientation = orientation + turn
         new_orientation = new_orientation % 8
@@ -1251,8 +1267,12 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
         x_coordinate = position[1]
         temp_pos = get_new_position (y_coordinate, x_coordinate, speed, orientation)        
         possibilities.append(temp_pos)
+        
+        #return the changement to do to catch ships
         if take and game_data['board'][temp_pos][opponent_player] != {}:
             return ('orientation', changement)
+            
+    #return the possibilities of the ship        
     return possibilities
 
 
@@ -1272,8 +1292,11 @@ def fighter_action(player, ship_name, game_data):
     specifications: Elise Hallaert (v.1 28/04/17)
     implementation: Elise Hallaert (v.1 29/04/17) 
     """
+    #initialisation of the action
     action = ship_name +':'
     position = game_data['ships'][player][ship_name]
+    
+    #deals with the beginning of the game
     if game_data['board'][position][player][ship_name]['speed'] < 4:
         luck = random.randint(1, 3)
         if luck == 1 or luck == 2:
@@ -1284,12 +1307,17 @@ def fighter_action(player, ship_name, game_data):
                 action += 'left '
             else:
                 action += 'right '
-
+    
+    #check if the ship can catch another one
     elif ship_in_range('get_ship', player, ship_name, 'fighter', game_data) != None:
         action += ship_in_range('get_ship', player, ship_name, 'fighter', game_data) +' '
+        
+    #check if a ship can be attacked
     elif ship_in_range('attack', player, ship_name, 'fighter', game_data) != None:
         position_to_attack = ship_in_range('attack', player, ship_name, 'fighter', game_data)
         action += str(position_to_attack[0]) + '-' + str(position_to_attack[1]) +' '
+        
+    #deals with any other case
     else:
         luck = random.randint(1, 5)
         if luck == 1:
@@ -1302,6 +1330,7 @@ def fighter_action(player, ship_name, game_data):
             action += 'left '
         elif luck == 5:
             action += 'nothing '
+            
     return action
 
 
@@ -1324,9 +1353,13 @@ def _get_IA_orders(game_data, player):
     specification: Elise Hallaert (V.1 31/03/17)
     implementation: Elise Hallaert (v.1 29/04/17)
     """
+    #initialisation of the order
     action = ''
+    
+    #deals with each ship
     for ship in game_data['ships'][player]:
-
+        
+        #deals with each type of ship
         position = game_data['ships'][player][ship]
         if game_data['board'][position][player][ship]['type'] == 'battlecruiser':
             pass
@@ -1334,6 +1367,8 @@ def _get_IA_orders(game_data, player):
             action += fighter_action(player, ship, game_data)
         elif game_data['board'][position][player][ship]['type'] == 'destroyer':
             action += destroyer_action
+            
+    #return the orders
     return action[:len(action) - 1]
 
 # ---------------------------------------------------------------------------------------------------#
@@ -1358,6 +1393,8 @@ def get_new_position (y_coordinate, x_coordinate, speed, orientation, game_data)
     specifications: Elise Hallaert (v.1 28/04/17)
     implementation: Elise Hallaert (v.1 29/04/17)    
     """
+    
+    #deals with each case
     if orientation == 0:
         y_coordinate -= speed
     elif orientation == 1:
@@ -1378,6 +1415,8 @@ def get_new_position (y_coordinate, x_coordinate, speed, orientation, game_data)
     elif orientation == 7:
         x_coordinate -= speed
         y_coordinate -= speed
+        
+    #verify if the position is on the board
     temp_pos = _apply_tore(y_coordinate, x_coordinate, game_data)
     
     return temp_pos
