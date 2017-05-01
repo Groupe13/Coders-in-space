@@ -442,7 +442,7 @@ def _update_ui(game_data):
 # ---------------------------------------------------------------------------------------------------#
 
 def _process_order(player, player_orders, game_data):
-    """Procces an order asked by a player.
+    """Procces an order asked by a player and return the attack list
 
     Parameters:
     -----------
@@ -556,13 +556,18 @@ def _move_all_ships(game_data):
 # ---------------------------------------------------------------------------------------------------#
 
 def _apply_tore(y_coordinate, x_coordinate, game_data):
-    """Apply the effect of a tore if the ship is outside the board.
+    """Apply the effect of a tore if the ship is outside the board and return the new position
 
     Parameters:
     -----------
     x_coordinate: The abscissa of the ship (int)
     y_coordinate: The ordinate of the sip (int)
     game_data: Dictionary which contain all the information of the game(dict)
+    
+    Returns:
+    --------
+    y_coordinate: number of the line of the ship's position (int)
+    x_coordinate: number of the column of the ship's position (int)
 
     Version:
     --------
@@ -1084,7 +1089,7 @@ def _build_from_cis(path, game_data):
 # ---------------------------------------------------------------------------------------------------#
 
 def _buy_IA():
-    """Give the orders of the IA to buy some ships
+    """Returns the orders of the IA to buy some ships
     
     Returns:
     --------
@@ -1127,7 +1132,7 @@ def _buy_IA():
 # ---------------------------------------------------------------------------------------------------#
 
 def ship_in_range(goal, player, name, kind, game_data):
-    """verify if there are ships to attack or to capture in the range
+    """verify if there are ships to attack or to capture in the range and return the action to effectuate
     
     Parameters:
     -----------
@@ -1142,6 +1147,15 @@ def ship_in_range(goal, player, name, kind, game_data):
     goal can be 'attack' or 'get_ship'
     player can be 1 or 2
     kind can be 'fighter', 'detroyer' or 'battlecruiser'
+    action is returned if goal is get_ship, attack_position otherwhise
+    None is returned if there is no possible attack
+    attack_position is (y,x)
+    action can be 'fatser', 'slower', 'right' or 'left'
+    
+    Returns:
+    --------
+    attack_position: position of the attack to do (tuple)
+    action: action to effectuate (str)
     
     Version:
     --------
@@ -1220,11 +1234,18 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
     kind: type of the ship (str)
     take: say if the player want to capture a ship (bool, optional)
     
+    Returns:
+    --------
+    element_changed: type of changement to do (str)
+    changement:the type of changement (int)
+    
     Notes:    
     ------
     player can be 1 or 2
     kind can be 'fighter', 'detroyer' or 'battlecruiser'
     take is True if the player want to capture, False otherwhise
+    element_changed is 'speed' or 'orientation'
+    changement can be -1 or 1 
     
     Version:
     --------
@@ -1279,13 +1300,21 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
 # ---------------------------------------------------------------------------------------------------#
 
 def fighter_action(player, ship_name, game_data):
-    """gives the action of a fighter ship
+    """returns the action of a fighter ship
     
     Parameters:
     -----------
     player: number of the current player(int)
     ship_name: name of the ship playing (str)
     game_data: dictionnay which contains the entire game (dict)
+    
+    Returns:
+    --------
+    action: action of the fighter (str)
+    
+    Notes:
+    ------
+    action contains 'name:action '
     
     Version:
     --------
@@ -1337,7 +1366,7 @@ def fighter_action(player, ship_name, game_data):
 # ---------------------------------------------------------------------------------------------------#
 
 def _get_IA_orders(game_data, player):
-    """gives naive orders to ships
+    """return orders of the IA for the ships
 
     Parameters:
     ----------
@@ -1348,6 +1377,10 @@ def _get_IA_orders(game_data, player):
     ------
     Player can be 1 or 2
 
+    Returns:
+    --------
+    action: all the orders of the IA (str)
+    
     Version:
     --------
     specification: Elise Hallaert (V.1 31/03/17)
@@ -1388,6 +1421,10 @@ def get_new_position (y_coordinate, x_coordinate, speed, orientation, game_data)
     ------
     orientation can be between 0 and 7
     
+    Returns:
+    --------
+    temp_pos: new position of the ship if it moves (tuple)
+    
     Version:
     --------
     specifications: Elise Hallaert (v.1 28/04/17)
@@ -1424,13 +1461,21 @@ def get_new_position (y_coordinate, x_coordinate, speed, orientation, game_data)
 # ---------------------------------------------------------------------------------------------------#
         
 def destroyer_action (player, ship_name, game_data):
-    """gives the action of a destroyer ship
+    """return the action of a destroyer ship
     
     Parameters:
     -----------
     player: number of the current player(int)
     ship_name: name of the ship playing (str)
     game_data: dictionnay which contains the entire game (dict)
+    
+    Returns:
+    --------
+    action: action that the destroyer will do (str)
+    
+    Notes:
+    ------
+    the action contains 'name:action '
     
     Version:
     --------
