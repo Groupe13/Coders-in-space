@@ -708,6 +708,7 @@ def _buy_ships(game_data, player1, player2, connection):
     game_board: empty dict that will contain all the element of board (dict)
     player1: type of the player one (str)
     player2: type of the player two (str)
+    connection: sockets to receive/send orders (tuple, optional)
     
     Notes:
     ------
