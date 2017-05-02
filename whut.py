@@ -61,6 +61,8 @@ def main(path, player_1, player_2, ip_connection = None):
 
     # execution of the game
     winner = _game_loop(game_data, player_1, player_2, connection)
+    if player_1 == 'remote' or player_2 == 'remote':
+        disconnect_from_player(connection)
     print 'The winner is player %d' % winner
 
 
@@ -108,9 +110,11 @@ def _game_loop(game_data, player1, player2 , connection=None):
             player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
             
         if player1 == 'IA' and player2 == 'remote':
+            player1_orders = _get_IA_orders(game_data,1)
             notify_remote_orders(connection, player1_orders)
             player2_orders = get_remote_orders(connection)
         elif player1 == 'remote' and player2 == 'IA':
+            player2_orders = _get_IA_orders(game_data, 2)
             player1_orders = get_remote_orders(connection)
             notify_remote_orders(connection, player2_orders)
 
@@ -1375,4 +1379,4 @@ def destroyer_action (player, ship_name, game_data):
     action +=' '
     return action
 
-main('F:/Desktop/Coders-in-space-master/test.cis', 'IA', 'IA',)
+main('F:/Desktop/Coders-in-space-master/test.cis', 'IA', 'IA')
