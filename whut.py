@@ -593,7 +593,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
     if (game_data['variables']['board_size']['x'] // 2) < (game_data['variables']['board_size']['x'] / 2.0):
         tore_value_x = (game_data['variables']['board_size']['x'] // 2) + 1
     else:
-        tore_value_x = (game_data['variables']['board_size']['x'] / 2)
+        tore_value_x = game_data['variables']['board_size']['x'] / 2
 
     # Tore_value_y
     if (game_data['variables']['board_size']['y'] // 2) < (game_data['variables']['board_size']['y'] / 2.0):
@@ -1070,7 +1070,7 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
         opponent_player = 1
         
     #deals with the case where the speed is changed    
-    for changement in (-1, 0, 1):
+    for changement in -1, 0, 1:
         new_speed = speed + changement
         if new_speed > 0 and new_speed <= max_speed:
             y_coordinate = position[0]
@@ -1079,13 +1079,13 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
             
             #return the changement to do if the player wants to catch ships
             if take and game_data['board'][temp_pos][opponent_player] != {}:
-                return ('speed', changement)
+                return 'speed', changement
                 
             #add the possibility
             possibilities.append(temp_pos)
             
     #deals with the case where the orientation is changed        
-    for turn in (-1, 1):
+    for turn in -1, 1:
         new_orientation = orientation + turn
         new_orientation = new_orientation % 8
         y_coordinate = position[0]
@@ -1095,7 +1095,7 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
         
         #return the changement to do to catch ships
         if take and game_data['board'][temp_pos][opponent_player] != {}:
-            return ('orientation', changement)
+            return 'orientation', changement
             
     #return the possibilities of the ship        
     return possibilities
