@@ -51,7 +51,8 @@ def main(path, player_1, player_2, ip_connection = None):
         connection = connect_to_player(1, ip_connection, True)
     elif player_2 == 'remote':
         connection = connect_to_player(2, ip_connection, True)
-    
+    else:
+        connection = None
     # buying of the ships
     _buy_ships(game_data, player_1, player_2, connection)
 
@@ -1374,4 +1375,4 @@ def destroyer_action (player, ship_name, game_data):
     action +=' '
     return action
 
-main('C:/Users/gmetens/Desktop/Coders-in-space-master/cis.cis', 'IA', 'remote', '138.48.160.127')
+main('F:/Desktop/Coders-in-space-master/test.cis', 'IA', 'IA',)
