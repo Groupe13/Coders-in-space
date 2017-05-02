@@ -577,7 +577,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
-    implementation; Hugo Jacques (v.1 17/04/17)
+    implementation: Métens Guillaume (v.1 17/04/17)
     """
     # get the current position
     current_position = game_data['ships'][player][ship_name]
@@ -1152,7 +1152,7 @@ def fighter_action(player, ship_name, game_data):
         
     #deals with any other case
     else:
-        luck = random.randint(1, 5)
+        luck = random.randint(1, 4)
         if luck == 1:
             action += 'slower '
         elif luck == 2:
@@ -1161,8 +1161,6 @@ def fighter_action(player, ship_name, game_data):
             action += 'right '
         elif luck == 4:
             action += 'left '
-        elif luck == 5:
-            action += 'nothing '
             
     return action
 
