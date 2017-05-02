@@ -2,6 +2,7 @@
 import random
 import socket
 import time
+import termcolor
 from remote_play import *
 
 def main(path, player_1, player_2, ip_connection = None):
@@ -226,8 +227,8 @@ def _update_ui(game_data):
         line = border_str + ' %02d|' % row
 
         for column in range(1, x_size + 1):
-            if (column, row) in positions_save:
-                line += termcolor.colored('\033[4m%02d\033[0m|' % positions_save[(column, row)], 'cyan')
+            if (row, column) in positions_save:
+                line += termcolor.colored('\033[4m%02d\033[0m|' % positions_save[(row, column)], 'cyan')
             else:
                 line += '__|'
 
@@ -1368,4 +1369,4 @@ def destroyer_action (player, ship_name, game_data):
     action +=' '
     return action
 
-main('F:/Desktop/Coders-in-space-master/test.cis', 'remote', 'IA', '212.68.251.144')
+main('F:/Desktop/Coders-in-space-master/test.cis', 'IA', 'IA')
