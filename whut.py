@@ -154,7 +154,7 @@ def _game_loop(game_data, player1, player2 , connection=None):
             # verify who has won the game
             if player_money1 > player_money2:
                 return 1
-            elif player_money2 < player_money1:
+            elif player_money2 > player_money1:
                 return 2
             else:
                 # determine the winner randomly
