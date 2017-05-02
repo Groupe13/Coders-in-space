@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<!-- saved from url=(0108)http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#resolved=false|types=BUG -->
+<html><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="shortcut icon" type="image/x-icon" href="http://apps.info.fundp.ac.be/images/favicon.ico?1478727422">
+  
+  <title>Memoire :: Experimentation :: Group13</title>
+
+  <link href="./Memoire __ Experimentation __ Group13_files/sonar.css" rel="stylesheet" media="all">
+  
+  <script>
+    var pageLang = 'en_US';
+    
+    window.SS = {
+      hoursInDay: 8,
+      user: 'Group13',
+      userName: 'Group13',
+      userEmail: '',
+      lf: {
+        enableGravatar: true,
+        gravatarServerUrl: 'https://secure.gravatar.com/avatar/{EMAIL_MD5}.jpg?s={SIZE}&d=identicon'
+      },
+      updateCenterActive: true
+    };
+  </script>
+  <script src="./Memoire __ Experimentation __ Group13_files/vendor.js"></script>
+  <script src="./Memoire __ Experimentation __ Group13_files/sonar.js"></script>
+  <script>
+    window.baseUrl = '';
+  </script>
+  </head>
+<body>
+
+
+  
+<div class="page-wrapper page-wrapper-context" id="container">
+  <nav class="navbar navbar-global page-container" id="global-navigation"><div data-reactroot="" class="container"><div class="navbar-header"><a class="navbar-brand" href="http://apps.info.fundp.ac.be/"><img src="./Memoire __ Experimentation __ Group13_files/logo.svg" width="100" height="30" alt="Embrace Quality" title="Embrace Quality"></a></div><ul class="nav navbar-nav"><li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#"><!-- react-text: 8 -->Dashboards<!-- /react-text --><!-- react-text: 9 -->&nbsp;<!-- /react-text --><span class="icon-dropdown"></span></a><ul class="dropdown-menu"><li><a href="http://apps.info.fundp.ac.be/dashboard/index?did=2">Home</a></li><li class="divider"></li><li><a href="http://apps.info.fundp.ac.be/dashboards">Manage Dashboards</a></li></ul></li><li><a href="http://apps.info.fundp.ac.be/issues/search">Issues</a></li><li><a href="http://apps.info.fundp.ac.be/measures/search?qualifiers[]=TRK">Measures</a></li><li><a href="http://apps.info.fundp.ac.be/coding_rules">Rules</a></li><li><a href="http://apps.info.fundp.ac.be/profiles">Quality Profiles</a></li><li><a href="http://apps.info.fundp.ac.be/quality_gates">Quality Gates</a></li><li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#"><!-- react-text: 29 -->More<!-- /react-text --><!-- react-text: 30 -->&nbsp;<!-- /react-text --><span class="icon-dropdown"></span></a><ul class="dropdown-menu"><li><a href="http://apps.info.fundp.ac.be/comparison">Compare Projects</a></li></ul></li></ul><ul class="nav navbar-nav navbar-right"><li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#"><img class="rounded" src="./Memoire __ Experimentation __ Group13_files/d41d8cd98f00b204e9800998ecf8427e.jpg" width="20" height="20" alt=""><!-- react-text: 39 -->&nbsp;<!-- /react-text --><!-- react-text: 40 -->Group13<!-- /react-text --><!-- react-text: 41 -->&nbsp;<!-- /react-text --><i class="icon-dropdown"></i></a><ul class="dropdown-menu dropdown-menu-right"><li><a href="http://apps.info.fundp.ac.be/account/">My Account</a></li><li><a href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#">Log out</a></li></ul></li><li class="dropdown"><a class="navbar-search-dropdown" href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#"><i class="icon-search navbar-icon"></i><!-- react-text: 51 -->&nbsp;<!-- /react-text --><i class="icon-dropdown"></i></a><div class="dropdown-menu dropdown-menu-right global-navbar-search-dropdown"></div></li><li><a href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#"><i class="icon-help navbar-icon"></i></a></li></ul></div></nav>
+
+  
+    <nav class="navbar navbar-context page-container" id="context-navigation"><div data-reactroot="" class="container"><div class="navbar-context-favorite"><a class="icon-star" href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#"><svg width="16" height="16" style="fill-rule: evenodd; clip-rule: evenodd; stroke-linejoin: round; stroke-miterlimit: 1.41421;"><path d="M15.4275,5.77678C15.4275,5.90773 15.3501,6.05059 15.1953,6.20536L11.9542,9.36608L12.7221,13.8304C12.728,13.872 12.731,13.9316 12.731,14.0089C12.731,14.1339 12.6998,14.2396 12.6373,14.3259C12.5748,14.4122 12.484,14.4554 12.3649,14.4554C12.2518,14.4554 12.1328,14.4197 12.0078,14.3482L7.99888,12.2411L3.98995,14.3482C3.85901,14.4197 3.73996,14.4554 3.63281,14.4554C3.50781,14.4554 3.41406,14.4122 3.35156,14.3259C3.28906,14.2396 3.25781,14.1339 3.25781,14.0089C3.25781,13.9732 3.26377,13.9137 3.27567,13.8304L4.04353,9.36608L0.793531,6.20536C0.644719,6.04464 0.570313,5.90178 0.570313,5.77678C0.570313,5.55654 0.736979,5.41964 1.07031,5.36606L5.55245,4.71428L7.56138,0.651781C7.67447,0.407729 7.8203,0.285703 7.99888,0.285703C8.17745,0.285703 8.32328,0.407729 8.43638,0.651781L10.4453,4.71428L14.9274,5.36606C15.2608,5.41964 15.4274,5.55654 15.4274,5.77678L15.4275,5.77678Z" style="fill-rule: nonzero;"></path></svg></a></div><ul class="nav navbar-nav nav-crumbs"><li><a href="http://apps.info.fundp.ac.be/dashboard/index?id=be.unamur.memoire.bertrand.group13"><i class="icon-qualifier-trk"></i><!-- react-text: 10 -->&nbsp;<!-- /react-text --><!-- react-text: 11 -->Memoire :: Experimentation :: Group13<!-- /react-text --></a></li></ul><div class="navbar-right navbar-context-meta"><ul class="list-inline"><li>May 2, 2017 9:08 PM</li><li><!-- react-text: 16 -->Version <!-- /react-text --><!-- react-text: 17 -->1.0<!-- /react-text --></li></ul></div><ul class="nav navbar-nav nav-tabs"><li class=""><a href="http://apps.info.fundp.ac.be/overview?id=be.unamur.memoire.bertrand.group13"><i class="icon-home"></i></a></li><li class="active"><a href="http://apps.info.fundp.ac.be/component_issues/index?id=be.unamur.memoire.bertrand.group13">Issues</a></li><li><a href="http://apps.info.fundp.ac.be/component_measures/?id=be.unamur.memoire.bertrand.group13">Measures</a></li><li><a href="http://apps.info.fundp.ac.be/code/index?id=be.unamur.memoire.bertrand.group13">Code</a></li><li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#"><!-- react-text: 30 -->Dashboards<!-- /react-text --><!-- react-text: 31 -->&nbsp;<!-- /react-text --><i class="icon-dropdown"></i></a><ul class="dropdown-menu"><li class=""><a href="http://apps.info.fundp.ac.be/dashboard?id=be.unamur.memoire.bertrand.group13&amp;did=1">Custom</a></li><li class="divider"></li><li class="pill-right"><a class="note" href="http://apps.info.fundp.ac.be/dashboards?resource=be.unamur.memoire.bertrand.group13">Manage Dashboards</a></li></ul></li></ul></div></nav>
+  
+
+  
+  <div id="body" class="page-container">
+    <div id="content"><div class="issues search-navigator sticky">
+  <div class="search-navigator-side" style="top: 95px;">
+    <div class="search-navigator-filters hidden"></div>
+    <div class="search-navigator-facets"><div class="search-navigator-facets-list"><div class="search-navigator-facet-box" data-property="facetMode"><div class="issues-facet-mode">
+  <ul class="radio-toggle">
+    <li>
+      <input type="radio" name="issues-page-mode" value="count" id="issues-page-mode-count" checked="">
+      <label for="issues-page-mode-count">Issues</label>
+    </li>
+    <li>
+      <input type="radio" name="issues-page-mode" value="effort" id="issues-page-mode-effort">
+      <label for="issues-page-mode-effort">Effort</label>
+    </li>
+  </ul>
+</div>
+</div><div class="search-navigator-facet-box hidden"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  Issue Key
+</a>
+
+<div class="search-navigator-facet-container">
+  <div class="facet search-navigator-facet active" style="cursor: default;">
+    <span class="facet-name"></span>
+  </div>
+</div>
+</div><div class="search-navigator-facet-box" data-property="types"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox icon-checkbox-checked"></i>
+  Type
+</a>
+
+<div class="search-navigator-facet-list">
+    <a class="facet search-navigator-facet js-facet active" data-value="BUG">
+      <span class="facet-name">Bug</span>
+      <span class="facet-stat">
+        1
+      </span>
+    </a>
+    <a class="facet search-navigator-facet js-facet" data-value="VULNERABILITY">
+      <span class="facet-name">Vulnerability</span>
+      <span class="facet-stat">
+        0
+      </span>
+    </a>
+    <a class="facet search-navigator-facet js-facet" data-value="CODE_SMELL">
+      <span class="facet-name">Code Smell</span>
+      <span class="facet-stat">
+        56
+      </span>
+    </a>
+</div>
+</div><div class="search-navigator-facet-box" data-property="resolutions"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox icon-checkbox-checked"></i>
+  Resolution
+</a>
+
+<div class="search-navigator-facet-list">
+      <a class="facet search-navigator-facet search-navigator-facet-half js-facet active" data-unresolved="" title="" data-toggle="tooltip" data-placement="right" data-original-title="Unresolved issues have not been addressed in any way.">
+        <span class="facet-name">Unresolved</span>
+        <span class="facet-stat">
+          1
+        </span>
+      </a>
+      <a class="facet search-navigator-facet search-navigator-facet-half js-facet" data-value="FIXED" title="" data-toggle="tooltip" data-placement="right" data-original-title="Issues that were corrected in code and reanalyzed.">
+        <span class="facet-name">Fixed</span>
+        <span class="facet-stat">
+          0
+        </span>
+      </a>
+      <a class="facet search-navigator-facet search-navigator-facet-half js-facet" data-value="FALSE-POSITIVE" title="" data-toggle="tooltip" data-placement="right" data-original-title="Issues that manual review determined were False Positives. Effort from these issues is ignored.">
+        <span class="facet-name">False Positive</span>
+        <span class="facet-stat">
+          0
+        </span>
+      </a>
+      <a class="facet search-navigator-facet search-navigator-facet-half js-facet" data-value="WONTFIX" title="" data-toggle="tooltip" data-placement="right" data-original-title="Issues that are accepted in this context. They and their effort will be ignored.">
+        <span class="facet-name">Won't fix</span>
+        <span class="facet-stat">
+          0
+        </span>
+      </a>
+      <a class="facet search-navigator-facet search-navigator-facet-half js-facet" data-value="REMOVED" title="" data-toggle="tooltip" data-placement="right" data-original-title="Either the rule or the resource was changed (removed, relocated, parameters changed, etc.) so that analysis no longer finds these issues.">
+        <span class="facet-name">Removed</span>
+        <span class="facet-stat">
+          0
+        </span>
+      </a>
+</div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed" data-property="severities"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  Severity
+</a>
+
+<div class="search-navigator-facet-list">
+</div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed" data-property="statuses"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  Status
+</a>
+
+<div class="search-navigator-facet-list">
+</div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  New Issues
+</a>
+
+  <div class="search-navigator-facet-container">
+    <div class="js-barchart" data-height="75"><svg width="2" height="77" class="sonar-d3"><g class="plot" transform="translate(1, 18)"></g></svg></div>
+    <div class="search-navigator-date-facet-selection">
+      <a class="js-select-period-start search-navigator-date-facet-selection-dropdown-left">
+        Past&nbsp;<i class="icon-dropdown"></i>
+      </a>
+      <a class="js-select-period-end search-navigator-date-facet-selection-dropdown-right">
+        Now&nbsp;<i class="icon-dropdown"></i>
+      </a>
+      <input class="js-period-start search-navigator-date-facet-selection-input-left hasDatepicker" type="text" value="" name="createdAfter" id="dp1493752189303">
+      <input class="js-period-end search-navigator-date-facet-selection-input-right hasDatepicker" type="text" value="" name="createdBefore" id="dp1493752189304">
+    </div>
+
+    <div class="spacer-top">
+      <span class="spacer-right">Or:</span>
+      <a class="js-all spacer-right" href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#">All</a>
+        <a class="js-leak spacer-right " href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#">Leak Period</a>
+    </div>
+  </div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed" data-property="rules"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  Rule
+</a>
+
+<div class="search-navigator-facet-list">
+
+  <div class="search-navigator-facet-custom-value">
+    <div class="select2-container js-custom-value" id="s2id_autogen6" style="width: 100%">    <a href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#" onclick="return false;" class="select2-choice select2-default">   <span>Search</span><abbr class="select2-search-choice-close" style="display:none;"></abbr>   <div><b></b></div></a>    <div class="select2-drop select2-offscreen">   <div class="select2-search">       <input type="text" autocomplete="off" class="select2-input">   </div>   <ul class="select2-results">   </ul></div></div><input type="hidden" class="js-custom-value" style="display: none;">
+  </div>
+</div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed" data-property="tags"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  Tag
+</a>
+
+<div class="search-navigator-facet-list">
+
+  <div class="search-navigator-facet-custom-value">
+    <div class="select2-container js-custom-value" id="s2id_autogen7" style="width: 100%">    <a href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#" onclick="return false;" class="select2-choice select2-default">   <span>Search</span><abbr class="select2-search-choice-close" style="display:none;"></abbr>   <div><b></b></div></a>    <div class="select2-drop select2-offscreen">   <div class="select2-search">       <input type="text" autocomplete="off" class="select2-input">   </div>   <ul class="select2-results">   </ul></div></div><input type="hidden" class="js-custom-value" style="display: none;">
+  </div>
+</div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed" data-property="moduleUuids"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  Module
+</a>
+<div class="search-navigator-facet-list">
+</div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed" data-property="directories"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  Directory
+</a>
+<div class="search-navigator-facet-list">
+</div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed" data-property="fileUuids"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  File
+</a>
+
+<div class="search-navigator-facet-list search-navigator-facet-list-align-right">
+</div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed" data-property="assignees"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  Assignee
+</a>
+
+<div class="search-navigator-facet-list">
+
+
+  <div class="search-navigator-facet-custom-value">
+    <div class="select2-container js-custom-value" id="s2id_autogen8" style="width: 100%">    <a href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#" onclick="return false;" class="select2-choice select2-default">   <span>Search</span><abbr class="select2-search-choice-close" style="display:none;"></abbr>   <div><b></b></div></a>    <div class="select2-drop select2-offscreen">   <div class="select2-search">       <input type="text" autocomplete="off" class="select2-input">   </div>   <ul class="select2-results">   </ul></div></div><input type="hidden" class="js-custom-value" style="display: none;">
+  </div>
+</div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed" data-property="authors"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  Author
+</a>
+
+<div class="search-navigator-facet-list">
+
+  <div class="search-navigator-facet-custom-value">
+    <div class="select2-container js-custom-value" id="s2id_autogen9" style="width: 100%">    <a href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#" onclick="return false;" class="select2-choice select2-default">   <span>Search</span><abbr class="select2-search-choice-close" style="display:none;"></abbr>   <div><b></b></div></a>    <div class="select2-drop select2-offscreen">   <div class="select2-search">       <input type="text" autocomplete="off" class="select2-input">   </div>   <ul class="select2-results">   </ul></div></div><input type="hidden" class="js-custom-value" style="display: none;">
+  </div>
+</div>
+</div><div class="search-navigator-facet-box search-navigator-facet-box-collapsed" data-property="languages"><a class="search-navigator-facet-header js-facet-toggle">
+  <i class="icon-checkbox "></i>
+  Language
+</a>
+
+<div class="search-navigator-facet-list">
+
+  <div class="search-navigator-facet-custom-value">
+    <div class="select2-container js-custom-value" id="s2id_autogen10" style="width: 100%">    <a href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#" onclick="return false;" class="select2-choice select2-default">   <span>Search</span><abbr class="select2-search-choice-close" style="display:none;"></abbr>   <div><b></b></div></a>    <div class="select2-drop select2-offscreen">   <div class="select2-search">       <input type="text" autocomplete="off" class="select2-input">   </div>   <ul class="select2-results">   </ul></div></div><input type="hidden" class="js-custom-value" style="display: none;">
+  </div>
+</div>
+</div></div></div>
+  </div>
+
+  <div class="search-navigator-workspace">
+    <div class="search-navigator-workspace-header" style="top: 95px;"><div><div class="issues-header-component nowrap">
+  <div class="component-name">
+        <a class="js-selection icon-checkbox  " data-toggle="tooltip" title="" data-original-title="(De-)Select all currently visible issues"></a>
+  </div>
+</div>
+
+
+<div class="search-navigator-header-actions">
+    <div class="search-navigator-header-pagination flash flash-heavy">
+        <a class="js-prev icon-prev" title="Previous"></a>
+        <span class="current">
+          1
+          /
+          <span id="issues-total">1</span>
+        </span>
+        <a class="js-next icon-next" title="Next"></a>
+    </div>
+
+
+  <div class="search-navigator-header-buttons button-group dropdown">
+    <button id="issues-reload" class="js-reload">Reload</button>
+    <button class="js-new-search" id="issues-new-search">New Search</button>
+      <button id="issues-bulk-change" class="dropdown-toggle" data-toggle="dropdown">Bulk Change</button>
+      <ul class="dropdown-menu dropdown-menu-right">
+        <li>
+          <a class="js-bulk-change" href="http://apps.info.fundp.ac.be/component_issues?id=be.unamur.memoire.bertrand.group13#">All Issues (1)</a>
+        </li>
+      </ul>
+  </div>
+</div>
+</div></div>
+    <div class="search-navigator-workspace-list"><div><div class="js-list"><div class="component-name issues-workspace-list-component">
+  <a class="component-name-parent link-no-underline" href="http://apps.info.fundp.ac.be/dashboard/index?id=be.unamur.memoire.bertrand.group13">
+    <i class="icon-qualifier-trk"></i>&nbsp;Memoire :: Experimentation :: Group13
+  </a>
+  <a class="component-name-file link-no-underline" href="http://apps.info.fundp.ac.be/dashboard/index?id=be.unamur.memoire.bertrand.group13%3Amain.py">
+    <i class="icon-qualifier-fil"></i>&nbsp;main.py
+  </a>
+</div>
+<div class="issue selected issue-navigate-right issue-with-checkbox" data-key="AVr_VnFYM3aaBVDS6v_K"><div class="issue-inner">
+
+  <table class="issue-table">
+    <tbody><tr>
+      <td>
+        <div class="issue-message">
+          This branch duplicates the one on line 147.&nbsp;
+          <button class="button-link js-issue-rule issue-rule icon-ellipsis-h"></button>
+        </div>
+      </td>
+
+      <td class="issue-table-meta-cell issue-table-meta-cell-first">
+        <ul class="list-inline issue-meta-list">
+          <li class="issue-meta">
+            <button class="button-link issue-action issue-action-with-options js-issue-show-changelog" title="March 24, 2017 9:02 AM">
+              <span class="issue-meta-label">a month ago</span>&nbsp;<i class="icon-dropdown"></i>
+            </button>
+          </li>
+
+            <li class="issue-meta">
+              <span class="issue-meta-label" title="Line Number">L149</span>
+            </li>
+
+            <li class="issue-meta issue-meta-locations">
+              <button class="button-link issue-action js-issue-locations">
+                <i class="icon-issue-flow"></i>
+              </button>
+            </li>
+
+          <li class="issue-meta">
+            <a class="js-issue-permalink icon-link" href="http://apps.info.fundp.ac.be/issues/search#issues=AVr_VnFYM3aaBVDS6v_K" target="_blank"></a>
+          </li>
+        <li class="issue-meta">
+  <button class="button-link issue-action issue-action-with-options js-issue-filter">
+    <i class="icon-filter icon-half-transparent"></i>&nbsp;<i class="icon-dropdown"></i>
+  </button>
+</li>
+</ul>
+      </td>
+    </tr>
+  </tbody></table>
+
+  <table class="issue-table">
+    <tbody><tr>
+      <td>
+        <ul class="list-inline issue-meta-list">
+          <li class="issue-meta">
+              Bug
+          </li>
+
+          <li class="issue-meta">
+              <i class="icon-severity-critical"></i>&nbsp;Critical
+          </li>
+
+          <li class="issue-meta">
+              <button class="button-link issue-action issue-action-with-options js-issue-transition">
+                <span class="issue-meta-label"><i class="icon-status-open"></i>&nbsp;Open</span>&nbsp;<i class="icon-dropdown"></i>
+              </button>
+          </li>
+
+          <li class="issue-meta">
+              <button class="button-link issue-action issue-action-with-options js-issue-assign">
+                <span class="issue-meta-label">Not assigned</span>&nbsp;<i class="icon-dropdown"></i>
+              </button>
+          </li>
+
+            <li class="issue-meta">
+              <span class="issue-meta-label">
+                10min effort
+              </span>
+            </li>
+
+            <li class="issue-meta">
+              <button class="button-link issue-action js-issue-comment"><span class="issue-meta-label">Comment</span></button>
+            </li>
+        </ul>
+
+          <button class="button-link hidden js-issue-assign-to-me"></button>
+      </td>
+
+      <td class="issue-table-meta-cell">
+        <ul class="list-inline">
+          <li class="issue-meta js-issue-tags">
+              <button class="button-link issue-action issue-action-with-options js-issue-edit-tags">
+              <span>
+                <i class="icon-tags icon-half-transparent"></i>&nbsp;<span>cert, pitfall, unused</span>
+              </span>&nbsp;<i class="icon-dropdown"></i>
+              </button>
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody></table>
+
+
+</div>
+
+<a class="issue-navigate js-issue-navigate">
+  <i class="issue-navigate-to-left icon-chevron-left"></i>
+  <i class="issue-navigate-to-right icon-chevron-right"></i>
+</a>
+<div class="js-toggle issue-checkbox-container">
+  <i class="issue-checkbox icon-checkbox "></i>
+</div>
+</div></div>
+
+<div class="search-navigator-workspace-list-more">
+  <span class="js-more" style="display: none;"><i class="spinner"></i></span>
+</div>
+</div></div>
+    <div class="issues-workspace-component-viewer"></div>
+    <div class="issues-workspace-home"></div>
+  </div>
+</div>
+</div>
+  </div>
+</div>
+
+
+  
+  <ul class="processes-container"></ul><div id="footer" class="page-footer page-container search-navigator-footer">
+    
+    
+      <div class="alert alert-danger">
+        <p class="big" id="evaluation_warning">Embedded database should be used for evaluation purpose only</p>
+        <p>The embedded database will not scale, it will not support upgrading to newer versions of ???, and there is no support for migrating your data out of it into a different database engine.</p>
+      </div>
+    
+    <div>???™ technology is powered by <a href="http://www.sonarsource.com/" target="SonarSource SA">SonarSource SA</a></div>
+    <div>
+      Version 5.6.3 -
+      <a href="http://www.gnu.org/licenses/lgpl-3.0.txt" target="lgpl_v3">LGPL v3</a> -
+      <a href="http://www.sonarqube.org/" target="sonar">Community</a> -
+      <a href="http://www.sonarqube.org/documentation" target="sonar_doc">Documentation</a> -
+      <a href="http://www.sonarqube.org/support" target="support">Get Support</a> -
+      <a href="http://redirect.sonarsource.com/doc/plugin-library.html" target="plugins">Plugins</a> -
+      <a href="http://apps.info.fundp.ac.be/web_api">Web API</a>
+    </div>
+    <!--[if lte IE 8 ]><p class="spacer-top alert alert-danger">IE 8 is not supported. Some widgets may not be properly displayed. Please switch to a <a target="_blank" href="http://redirect.sonarsource.com/doc/requirements.html">supported version or another supported browser</a>.</p><!--<![endif]-->
+  </div>
+
+
+  
+
+<script>
+  (function () {
+    
+    window.sonarqube.space = 'component';
+    window.sonarqube.componentKey = 'be.unamur.memoire.bertrand.group13';
+    
+
+    
+
+    window.SS.isUserAdmin = false;
+  })();
+</script>
+
+
+<!--[if lte IE 7 ]>
+<div style="position:fixed;z-index:99999;top:0;bottom:0;left:0;right:0;background:#fff;">
+  <div style="margin-top:150px;text-align:center;line-height:1.4;color:#333;">
+    The web interface cannot be displayed because your browser is not supported.<br>
+    Please switch to a <a target="_blank"
+                          href="http://redirect.sonarsource.com/doc/requirements.html">supported version or another supported browser</a>.
+  </div>
+</div>
+<!--<![endif]-->
+
+
+
+<script src="./Memoire __ Experimentation __ Group13_files/main.js"></script>
+
+  <script>
+    (function () {
+      window.sonarqube.config = {
+        resource: 'AVr8xMwuZkj7XYZv9kdt',
+        resourceQualifier: 'TRK',
+        resourceName: 'Memoire :: Experimentation :: Group13',
+        periodDate: null
+      };
+    })();
+  </script>
+  <script src="./Memoire __ Experimentation __ Group13_files/component-issues.js"></script><div class="workspace-nav"><ul class="workspace-nav-list"></ul>
+</div>
+
+
+
+
+<div id="ui-datepicker-div" class="ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all"></div></body></html>
