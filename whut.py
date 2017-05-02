@@ -184,10 +184,9 @@ def _update_ui(game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
-    implementation: Hugo Jacques (v.1 19/04/17)
     """
-    
-    print ''
+
+    print '\033[0;0H'
     # get board size
     x_size = game_data['variables']['board_size']['x']
     y_size = game_data['variables']['board_size']['y']
@@ -197,7 +196,8 @@ def _update_ui(game_data):
     border_str = ' ' * border
     x_numbers_str = border_str + '   '
 
-    positions_save = {}  # save position that contains ships
+    # save position that contains ships
+    positions_save = {}
 
     for number in range(1, x_size + 1):
         x_numbers_str += ' \033[4m%02d\033[0m' % (number)
@@ -219,7 +219,6 @@ def _update_ui(game_data):
             if not position in positions_save:
                 positions_save[position] = 0
             positions_save[position] += 1
-            
     # print positions_save
     print x_numbers_str
 
@@ -227,26 +226,15 @@ def _update_ui(game_data):
         line = border_str + ' %02d|' % row
 
         for column in range(1, x_size + 1):
-            if (row, column) in positions_save:
-                line += '\033[4m%02d\033[0m|' % positions_save[(row, column)]
+            if (column, row) in positions_save:
+                line += termcolor.colored('\033[4m%02d\033[0m|' % positions_save[(column, row)], 'cyan')
             else:
                 line += '__|'
 
         print line
-    print ''  # Empty line
-    # max 9 line left
-    line_left = 47 - y_size
+
     for p in ships_informations:
-        line_size = len(ships_informations[p])
-        line_left -= line_size / 190
         print 'Team %d : %s' % (p, ships_informations[p])
-
-    print line_left
-
-    if line_left >= 0:
-        for i in range(0, line_left):
-            print ''
-
 
 # ---------------------------------------------------------------------------------------------------#
 
