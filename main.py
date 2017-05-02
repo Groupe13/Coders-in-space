@@ -666,7 +666,7 @@ def _move_ship(player, ship_name, game_data):
     speed = game_data['board'][position][player][ship_name]['speed']
 
     # change the position of the ship depending to the speed and the orientation
-    new_position = get_new_position (y_coordinate,x_coordinate, speed, orientation)
+    new_position = get_new_position (y_coordinate,x_coordinate, speed, orientation, game_data)
         
     # change the position of the ship
     game_data['board'][new_position][player][ship_name] = game_data['board'][position][player][ship_name]
@@ -1271,7 +1271,7 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
         if new_speed > 0 and new_speed <= max_speed:
             y_coordinate = position[0]
             x_coordinate = position[1]
-            temp_pos = get_new_position (y_coordinate, x_coordinate, speed, orientation)
+            temp_pos = get_new_position (y_coordinate, x_coordinate, speed, orientation, game_data)
             
             #return the changement to do if the player wants to catch ships
             if take and game_data['board'][temp_pos][opponent_player] != {}:
@@ -1286,7 +1286,7 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
         new_orientation = new_orientation % 8
         y_coordinate = position[0]
         x_coordinate = position[1]
-        temp_pos = get_new_position (y_coordinate, x_coordinate, speed, orientation)        
+        temp_pos = get_new_position (y_coordinate, x_coordinate, speed, orientation, game_data)        
         possibilities.append(temp_pos)
         
         #return the changement to do to catch ships
@@ -1395,11 +1395,11 @@ def _get_IA_orders(game_data, player):
         #deals with each type of ship
         position = game_data['ships'][player][ship]
         if game_data['board'][position][player][ship]['type'] == 'battlecruiser':
-            action += battlecruiser_action
+            action += battlecruiser_action(player, ship, game_data)
         elif game_data['board'][position][player][ship]['type'] == 'fighter':
             action += fighter_action(player, ship, game_data)
         elif game_data['board'][position][player][ship]['type'] == 'destroyer':
-            action += destroyer_action
+            action += destroyer_action(player, ship, game_data)
             
     #return the orders
     return action[:len(action) - 1]
@@ -1572,4 +1572,4 @@ def destroyer_action (player, ship_name, game_data):
     action +=' '
     return action
 
-main('C:/Users/gmetens/Desktop/coder/test.cis', 'IA', 'IA')
+main('C:/Users/gmetens/Desktop/Coders-in-space-master/cis.cis', 'IA', 'IA')
