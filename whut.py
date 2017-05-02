@@ -1379,4 +1379,4 @@ def destroyer_action (player, ship_name, game_data):
     action +=' '
     return action
 
-main('F:/Desktop/Coders-in-space-master/test.cis', 'IA', 'IA')
+main('F:/Desktop/Coders-in-space-master/test.cis', 'remote', 'IA', '212.68.251.144')
