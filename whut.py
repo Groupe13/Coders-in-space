@@ -97,7 +97,7 @@ def _game_loop(game_data, player1, player2 , connection=None):
     # check if the game is ended
     while len(game_data['ships'][1]) > 0 \
             and len(game_data['ships'][2]) > 0 \
-            and game_data['variables']['last_damages'] < 10:
+            and game_data['variables']['last_damages'] < 20:
 
         # turn of each type of player
         if player1 == 'IA':
@@ -112,12 +112,12 @@ def _game_loop(game_data, player1, player2 , connection=None):
             
         if player1 == 'IA' and player2 == 'remote':
             player1_orders = _get_IA_orders(game_data,1)
-            notify_remote_orders(connection, player1_orders)
+	    notify_remote_orders(connection, player1_orders)
             player2_orders = get_remote_orders(connection)
         elif player1 == 'remote' and player2 == 'IA':
             player2_orders = _get_IA_orders(game_data, 2)
+	    notify_remote_orders(connection, player2_orders)
             player1_orders = get_remote_orders(connection)
-            notify_remote_orders(connection, player2_orders)
 
             
 
@@ -138,7 +138,7 @@ def _game_loop(game_data, player1, player2 , connection=None):
 
     # deal with the end of the game
     # deal with the case where 10 turn has passed without any damage
-    if game_data['variables']['last_damages'] == 10:
+    if game_data['variables']['last_damages'] == 20:
 
         # initialisation of the players money
         player_money1 = 0
@@ -720,14 +720,16 @@ def _buy_ships(game_data, player1, player2, connection):
         player1_orders = get_remote_orders(connection)
     else:
         player1_orders = _buy_IA()
+	notify_remote_orders(connection, player1_orders)
 
     # verify what is the type of player
     if player2 == 'player':
         player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
-    elif player1 == 'remote':
+    elif player2 == 'remote':
         player2_orders = get_remote_orders(connection)
     else:
         player2_orders = _buy_IA()
+	notify_remote_orders(connection, player2_orders)
 
     _buy_and_add_ships(1, player1_orders, game_data)
     _buy_and_add_ships(2, player2_orders, game_data)
@@ -1369,4 +1371,4 @@ def destroyer_action (player, ship_name, game_data):
     action +=' '
     return action
 
-main('F:/Desktop/Coders-in-space-master/test.cis', 'IA', 'IA')
+main('/home/users/100/gmetens/Desktop/Coders-in-space-master/test.cis', 'IA', 'remote','138.48.160.124')
