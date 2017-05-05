@@ -119,7 +119,7 @@ def _game_loop(game_data, player1, player2 , connection=None):
 	    notify_remote_orders(connection, player2_orders)
             player1_orders = get_remote_orders(connection)
 
-            
+       
 
 
         # execute all the actions asked (except the attacks)
@@ -135,7 +135,7 @@ def _game_loop(game_data, player1, player2 , connection=None):
         # update the user design
         _update_ui(game_data)
         # execute the attacks
-
+	time.sleep(1)
     # deal with the end of the game
     # deal with the case where 10 turn has passed without any damage
     if game_data['variables']['last_damages'] == 20:
@@ -149,8 +149,8 @@ def _game_loop(game_data, player1, player2 , connection=None):
             for ship in game_data['ships'][player]:
                 # get the type of the left ship
                 if player != 0:
-                    ship_type = game_data['board'][player][ship]['type']
-
+                    position = game_data['ships'][player][ship]
+                    ship_type = game_data['board'][position][player][ship]['type']
                     # get the price of the type of ship for each player
                     if player == 1:
                         player_money1 += game_data['ship_characteristics'][ship_type]['cost']
@@ -158,13 +158,13 @@ def _game_loop(game_data, player1, player2 , connection=None):
                         player_money2 += game_data['ship_characteristics'][ship_type]['cost']
 
             # verify who has won the game
-            if player_money1 > player_money2:
-                return 1
-            elif player_money2 > player_money1:
-                return 2
-            else:
+        if player_money1 > player_money2:
+            return 1
+        elif player_money2 > player_money1:
+            return 2
+        else:
                 # determine the winner randomly
-                return random.randint(1, 2)
+            return random.randint(1, 2)
 
     # deal with the case where the number of ships is 0
     elif len(game_data['ships'][1]) == 0:
@@ -263,7 +263,7 @@ def _process_order(player, player_orders, game_data):
     implementation: Métens Guillaume (v.1 18/04/17)
     """
     
-    attack_list = ()
+    attack_list = []
     # split all the string in orders
     for elements in player_orders.split(' '):
 
@@ -421,8 +421,10 @@ def _get_neutral_ships(game_data):
 
         # treat the case where the ship is captured
         if player != None:
-            if ship in game_data['board'][position][player][ship]:
+            new_ship = ship
+            if ship in game_data['board'][position][player]:
                 new_ship = ship + '_2'
+
             game_data['board'][position][player][ship] = game_data['board'][position][0][new_ship]
             game_data['ships'][player][ship] = game_data['ships'][0][new_ship]
 
@@ -730,7 +732,8 @@ def _buy_ships(game_data, player1, player2, connection):
     else:
         player2_orders = _buy_IA()
 	notify_remote_orders(connection, player2_orders)
-
+    print player1_orders
+    print player2_orders
     _buy_and_add_ships(1, player1_orders, game_data)
     _buy_and_add_ships(2, player2_orders, game_data)
 
@@ -1371,4 +1374,4 @@ def destroyer_action (player, ship_name, game_data):
     action +=' '
     return action
 
-main('/home/users/100/gmetens/Desktop/Coders-in-space-master/test.cis', 'IA', 'remote','138.48.160.124')
+main('test.cis', 'IA', 'remote', '138.48.160.130')
