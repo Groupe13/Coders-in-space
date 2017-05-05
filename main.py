@@ -2,203 +2,10 @@
 import random
 import socket
 import time
+import termcolor
+from remote_play import *
 
-def get_IP():
-    """Returns the IP of the computer where get_IP is called.
-
-    Returns
-    -------
-    computer_IP: IP of the computer where get_IP is called (str)
-
-    Notes
-    -----
-    If you have no internet connection, your IP will be 127.0.0.1.
-    This IP address refers to the local host, i.e. your computer.
-
-    """
-
-    return socket.gethostbyname(socket.gethostname())
-
-
-def connect_to_player(player_id, remote_IP='127.0.0.1', verbose=False):
-    """Initialise communication with remote player.
-
-    Parameters
-    ----------
-    player_id: player id of the remote player, 1 or 2 (int)
-    remote_IP: IP of the computer where remote player is (str, optional)
-    verbose: True only if connection progress must be displayed (bool, optional)
-
-    Returns
-    -------
-    connection: sockets to receive/send orders (tuple)
-
-    Notes
-    -----
-    Initialisation can take several seconds.  The function only
-    returns after connection has been initialised by both players.
-
-    Use the default value of remote_IP if the remote player is running on
-    the same machine.  Otherwise, indicate the IP where the other player
-    is running with remote_IP.  On most systems, the IP of a computer
-    can be obtained by calling the get_IP function on that computer.
-
-    """
-
-    # init verbose display
-    if verbose:
-        print '\n-------------------------------------------------------------'
-
-    # open socket (as server) to receive orders
-    socket_in = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    socket_in.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # deal with a socket in TIME_WAIT state
-
-    if remote_IP == '127.0.0.1':
-        local_IP = '127.0.0.1'
-    else:
-        local_IP = get_IP()
-    local_port = 42000 + (3 - player_id)
-
-    try:
-        if verbose:
-            print 'binding on %s:%d to receive orders from player %d...' % (local_IP, local_port, player_id)
-        socket_in.bind((local_IP, local_port))
-    except:
-        local_port = 42000 + 100 + (3 - player_id)
-        if verbose:
-            print '   referee detected, binding instead on %s:%d...' % (local_IP, local_port)
-        socket_in.bind((local_IP, local_port))
-
-    socket_in.listen(1)
-    if verbose:
-        print '   done -> now waiting for a connection on %s:%d\n' % (local_IP, local_port)
-
-    # open client socket used to send orders
-    socket_out = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    socket_out.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # deal with a socket in TIME_WAIT state
-
-    remote_port = 42000 + player_id
-
-    connected = False
-    msg_shown = False
-    while not connected:
-        try:
-            if verbose and not msg_shown:
-                print 'connecting on %s:%d to send orders to player %d...' % (remote_IP, remote_port, player_id)
-            socket_out.connect((remote_IP, remote_port))
-            connected = True
-            if verbose:
-                print '   done -> now sending orders to player %d on %s:%d' % (player_id, remote_IP, remote_port)
-        except:
-            if verbose and not msg_shown:
-                print '   connection failed -> will try again every 100 msec...'
-            time.sleep(.1)
-
-            msg_shown = True
-
-    if verbose:
-        print
-
-        # accept connection to the server socket to receive orders from remote player
-    print 'sutck on accept'
-    socket_in, remote_address = socket_in.accept()
-    if verbose:
-        print 'now listening to orders from player %d' % (player_id)
-
-    # end verbose display
-    if verbose:
-        print '\nconnection to remote player %d successful\n-------------------------------------------------------------\n' % player_id
-
-    # return sockets for further use
-    return (socket_in, socket_out)
-
-
-def disconnect_from_player(connection):
-    """End communication with remote player.
-
-    Parameters
-    ----------
-    connection: sockets to receive/send orders (tuple)
-
-    """
-
-    # get sockets
-    socket_in = connection[0]
-    socket_out = connection[1]
-
-    # shutdown sockets
-    socket_in.shutdown(socket.SHUT_RDWR)
-    socket_out.shutdown(socket.SHUT_RDWR)
-
-    # close sockets
-    socket_in.close()
-    socket_out.close()
-
-
-def notify_remote_orders(connection, orders):
-    """Notifies orders of the local player to a remote player.
-
-    Parameters
-    ----------
-    connection: sockets to receive/send orders (tuple)
-    orders: orders of the local player (str)
-
-    Raises
-    ------
-    IOError: if remote player cannot be reached
-
-    """
-
-    # get sockets
-    socket_in = connection[0]
-    socket_out = connection[1]
-
-    # deal with null orders (empty string)
-    if orders == '':
-        orders = 'null'
-
-    # send orders
-    try:
-        socket_out.sendall(orders)
-    except:
-        raise IOError, 'remote player cannot be reached'
-
-
-def get_remote_orders(connection):
-    """Returns orders from a remote player.
-
-    Parameters
-    ----------
-    connection: sockets to receive/send orders (tuple)
-
-    Returns
-    ----------
-    player_orders: orders given by remote player (str)
-
-    Raises
-    ------
-    IOError: if remote player cannot be reached
-
-    """
-
-    # get sockets
-    socket_in = connection[0]
-    socket_out = connection[1]
-
-    # receive orders
-    try:
-        orders = socket_in.recv(4096)
-    except:
-        raise IOError, 'remote player cannot be reached'
-
-    # deal with null orders
-    if orders == 'null':
-        orders = ''
-
-    return orders
-
-
-def main(path, player_1, player_2):
+def main(path, player_1, player_2, ip_connection = None):
     """Execute the game
 
     Parameters:
@@ -239,28 +46,30 @@ def main(path, player_1, player_2):
 
     # building of the board
     _build_from_cis(path, game_data)
-
+    
+    # connect if playing with remote player
+    if player_1 == 'remote':
+        connection = connect_to_player(1, ip_connection, True)
+    elif player_2 == 'remote':
+        connection = connect_to_player(2, ip_connection, True)
+    else:
+        connection = None
     # buying of the ships
-    _buy_ships(game_data, player_1, player_2)
+    _buy_ships(game_data, player_1, player_2, connection)
 
     # initialisation of the user design
     _update_ui(game_data)
 
-    # connect if playing with remote player
-    connection = None
-    if player_1 == 'remote':
-        connection = connect_to_player(1)
-    elif player_2 == 'remote':
-        connection = connect_to_player(2)
-
     # execution of the game
     winner = _game_loop(game_data, player_1, player_2, connection)
+    if player_1 == 'remote' or player_2 == 'remote':
+        disconnect_from_player(connection)
     print 'The winner is player %d' % winner
 
 
 # ---------------------------------------------------------------------------------------------------#
 
-def _game_loop(game_data, player1, player2, connection=None):
+def _game_loop(game_data, player1, player2 , connection=None):
     """Execute the game and return the winner when the game is over.
 
     Parameters:
@@ -288,29 +97,30 @@ def _game_loop(game_data, player1, player2, connection=None):
     # check if the game is ended
     while len(game_data['ships'][1]) > 0 \
             and len(game_data['ships'][2]) > 0 \
-            and game_data['variables']['last_damages'] < 10:
+            and game_data['variables']['last_damages'] < 20:
 
         # turn of each type of player
         if player1 == 'IA':
             player1_orders = _get_IA_orders(game_data, 1)
-        elif player1 == 'remote':
-            player1_orders = get_remote_orders(connection)
-        else:
+        elif player1 == 'player':          
             player1_orders = raw_input('Player1 - What do you want to play ? : ').lower()
-        # gives order if playing with remote player
-        if player1 == 'IA' and player2 == 'remote':
-            notify_remote_orders(connection, player1_orders)
-
+        
         if player2 == 'IA':
             player2_orders = _get_IA_orders(game_data, 2)
-        elif player2 == 'remote':
-            player2_orders = get_remote_orders(connection)
-        else:
+        elif player2 == 'player':
             player2_orders = raw_input('Player2 - What do you want to play ? : ').lower()
-        
-        # gives order if playing with remote player
-        if player1 == 'remote' and player2 == 'IA':
-            notify_remote_orders(connection, player2_orders)
+            
+        if player1 == 'IA' and player2 == 'remote':
+            player1_orders = _get_IA_orders(game_data,1)
+	    notify_remote_orders(connection, player1_orders)
+            player2_orders = get_remote_orders(connection)
+        elif player1 == 'remote' and player2 == 'IA':
+            player2_orders = _get_IA_orders(game_data, 2)
+	    notify_remote_orders(connection, player2_orders)
+            player1_orders = get_remote_orders(connection)
+
+            
+
 
         # execute all the actions asked (except the attacks)
         attack_list = _process_order(1, player1_orders, game_data)
@@ -328,7 +138,7 @@ def _game_loop(game_data, player1, player2, connection=None):
 
     # deal with the end of the game
     # deal with the case where 10 turn has passed without any damage
-    if game_data['variables']['last_damages'] == 10:
+    if game_data['variables']['last_damages'] == 20:
 
         # initialisation of the players money
         player_money1 = 0
@@ -339,7 +149,8 @@ def _game_loop(game_data, player1, player2, connection=None):
             for ship in game_data['ships'][player]:
                 # get the type of the left ship
                 if player != 0:
-                    ship_type = game_data['board'][player][ship]['type']
+                    position = game_data['ships'][player][ship]
+                    ship_type = game_data['board'][position][player][ship]['type']
 
                     # get the price of the type of ship for each player
                     if player == 1:
@@ -348,13 +159,13 @@ def _game_loop(game_data, player1, player2, connection=None):
                         player_money2 += game_data['ship_characteristics'][ship_type]['cost']
 
             # verify who has won the game
-            if player_money1 > player_money2:
-                return 1
-            elif player_money1 < player_money2:
-                return 2
-            else:
-                # determine the winner randomly
-                return random.randint(1, 2)
+        if player_money1 > player_money2:            
+	   return 1
+        elif player_money2 > player_money1:
+           return 2
+        else:
+            # determine the winner randomly
+            return random.randint(1, 2)
 
     # deal with the case where the number of ships is 0
     elif len(game_data['ships'][1]) == 0:
@@ -375,10 +186,9 @@ def _update_ui(game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
-    implementation: Hugo Jacques (v.1 19/04/17)
     """
-    
-    print ''
+
+    print '\033[0;0H'
     # get board size
     x_size = game_data['variables']['board_size']['x']
     y_size = game_data['variables']['board_size']['y']
@@ -388,7 +198,8 @@ def _update_ui(game_data):
     border_str = ' ' * border
     x_numbers_str = border_str + '   '
 
-    positions_save = {}  # save position that contains ships
+    # save position that contains ships
+    positions_save = {}
 
     for number in range(1, x_size + 1):
         x_numbers_str += ' \033[4m%02d\033[0m' % (number)
@@ -410,7 +221,6 @@ def _update_ui(game_data):
             if not position in positions_save:
                 positions_save[position] = 0
             positions_save[position] += 1
-            
     # print positions_save
     print x_numbers_str
 
@@ -419,25 +229,14 @@ def _update_ui(game_data):
 
         for column in range(1, x_size + 1):
             if (row, column) in positions_save:
-                line += '\033[4m%02d\033[0m|' % positions_save[(row, column)]
+                line += termcolor.colored('\033[4m%02d\033[0m|' % positions_save[(row, column)], 'cyan')
             else:
                 line += '__|'
 
         print line
-    print ''  # Empty line
-    # max 9 line left
-    line_left = 47 - y_size
+
     for p in ships_informations:
-        line_size = len(ships_informations[p])
-        line_left -= line_size / 190
         print 'Team %d : %s' % (p, ships_informations[p])
-
-    print line_left
-
-    if line_left >= 0:
-        for i in range(0, line_left):
-            print ''
-
 
 # ---------------------------------------------------------------------------------------------------#
 
@@ -623,7 +422,8 @@ def _get_neutral_ships(game_data):
 
         # treat the case where the ship is captured
         if player != None:
-            if ship in game_data['board'][position][player][ship]:
+            new_ship = ship
+            if ship in game_data['board'][position][player]:
                 new_ship = ship + '_2'
             game_data['board'][position][player][ship] = game_data['board'][position][0][new_ship]
             game_data['ships'][player][ship] = game_data['ships'][0][new_ship]
@@ -773,7 +573,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
     Version:
     --------
     specification: Métens Guillaume (V.1 5/03/17)
-    implementation; Hugo Jacques (v.1 17/04/17)
+    implementation: Métens Guillaume (v.1 17/04/17)
     """
     # get the current position
     current_position = game_data['ships'][player][ship_name]
@@ -789,7 +589,7 @@ def _is_in_range(player, ship_name, target_position, game_data):
     if (game_data['variables']['board_size']['x'] // 2) < (game_data['variables']['board_size']['x'] / 2.0):
         tore_value_x = (game_data['variables']['board_size']['x'] // 2) + 1
     else:
-        tore_value_x = (game_data['variables']['board_size']['x'] / 2)
+        tore_value_x = game_data['variables']['board_size']['x'] / 2
 
     # Tore_value_y
     if (game_data['variables']['board_size']['y'] // 2) < (game_data['variables']['board_size']['y'] / 2.0):
@@ -891,7 +691,7 @@ def _build_board(y_size, x_size, game_board):
 
 # ---------------------------------------------------------------------------------------------------#
 
-def _buy_ships(game_data, player1, player2):
+def _buy_ships(game_data, player1, player2, connection):
     """Ask to the player what he wants to buy.
 
     Parameters:
@@ -899,6 +699,7 @@ def _buy_ships(game_data, player1, player2):
     game_board: empty dict that will contain all the element of board (dict)
     player1: type of the player one (str)
     player2: type of the player two (str)
+    connection: sockets to receive/send orders (tuple, optional)
     
     Notes:
     ------
@@ -918,17 +719,19 @@ def _buy_ships(game_data, player1, player2):
     if player1 == 'player':
         player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
     elif player1 == 'remote':
-        player1_orders = get_remote_orders()
+        player1_orders = get_remote_orders(connection)
     else:
         player1_orders = _buy_IA()
+	notify_remote_orders(connection, player1_orders)
 
     # verify what is the type of player
     if player2 == 'player':
         player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
-    elif player1 == 'remote':
-        player2_orders = get_remote_orders()
+    elif player2 == 'remote':
+        player2_orders = get_remote_orders(connection)
     else:
         player2_orders = _buy_IA()
+	notify_remote_orders(connection, player2_orders)
 
     _buy_and_add_ships(1, player1_orders, game_data)
     _buy_and_add_ships(2, player2_orders, game_data)
@@ -1266,7 +1069,7 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
         opponent_player = 1
         
     #deals with the case where the speed is changed    
-    for changement in (-1, 0, 1):
+    for changement in -1, 0, 1:
         new_speed = speed + changement
         if new_speed > 0 and new_speed <= max_speed:
             y_coordinate = position[0]
@@ -1275,13 +1078,13 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
             
             #return the changement to do if the player wants to catch ships
             if take and game_data['board'][temp_pos][opponent_player] != {}:
-                return ('speed', changement)
+                return 'speed', changement
                 
             #add the possibility
             possibilities.append(temp_pos)
             
     #deals with the case where the orientation is changed        
-    for turn in (-1, 1):
+    for turn in -1, 1:
         new_orientation = orientation + turn
         new_orientation = new_orientation % 8
         y_coordinate = position[0]
@@ -1291,7 +1094,7 @@ def find_five_possibilities(player, position, game_data, name, kind, take=False)
         
         #return the changement to do to catch ships
         if take and game_data['board'][temp_pos][opponent_player] != {}:
-            return ('orientation', changement)
+            return 'orientation', changement
             
     #return the possibilities of the ship        
     return possibilities
@@ -1348,7 +1151,7 @@ def fighter_action(player, ship_name, game_data):
         
     #deals with any other case
     else:
-        luck = random.randint(1, 5)
+        luck = random.randint(1, 4)
         if luck == 1:
             action += 'slower '
         elif luck == 2:
@@ -1357,8 +1160,6 @@ def fighter_action(player, ship_name, game_data):
             action += 'right '
         elif luck == 4:
             action += 'left '
-        elif luck == 5:
-            action += 'nothing '
             
     return action
 
@@ -1572,4 +1373,4 @@ def destroyer_action (player, ship_name, game_data):
     action +=' '
     return action
 
-main('C:/Users/gmetens/Desktop/Coders-in-space-master/cis.cis', 'IA', 'IA')
+main('/home/users/100/gmetens/Desktop/Coders-in-space-master/example.cis', 'IA', 'remote','138.48.160.124')
