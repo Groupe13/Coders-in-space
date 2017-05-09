@@ -123,15 +123,18 @@ def _game_loop(game_data, player1, player2 , connection=None):
 
 
         # execute all the actions asked (except the attacks)
-        attack_list = _process_order(1, player1_orders, game_data)
-        attack_list += _process_order(2, player2_orders, game_data)
+        attack_listend = _process_order(1, player1_orders, game_data)
+	future_att = _process_order(2, player2_orders, game_data)
+        attack_listend.append(future_att)
         
         # move all the ships
         _move_all_ships(game_data)
         # verify if abandonned ships can be caught
         _get_neutral_ships(game_data)
         # execute the possible attacks
-        _make_attacks(attack_list, game_data)
+        _make_attacks(attack_listend, game_data)
+        #reset the list
+        attack_listend = []
         # update the user design
         _update_ui(game_data)
         # execute the attacks
@@ -645,23 +648,26 @@ def _make_attacks(attacks_list, game_data):
     been_touched = False
     # get the information needed
     for attack in attacks_list:
-        damage = attack['power']
-        position = attack['target']
+        print '\n a \n a\n a\n a'
+        print attack
+        if attack != []:
+            damage = attack['power']
+            position = attack['target']
 
         # treat with each player
-        for player in game_data['board'][position].copy():
-            for ship in game_data['board'][position][player].copy():
-                # attack only player's ship
-                if player != 0:
-                    health = game_data['board'][position][player][ship]['health'] - damage
-                    been_touched = True
-                    if health <= 0:  # verify if the ship his destroyed
-                        # delete the ship from the game
-                        del game_data['board'][position][player][ship]
-                        if ship in game_data['ships'][player]:
-                            del game_data['ships'][player][ship]
-                    else:
-                        game_data['board'][position][player][ship]['health'] = health
+            for player in game_data['board'][position].copy():
+                for ship in game_data['board'][position][player].copy():
+                    # attack only player's ship
+                    if player != 0:
+                        health = game_data['board'][position][player][ship]['health'] - damage
+                        been_touched = True
+                        if health <= 0:  # verify if the ship his destroyed
+                            # delete the ship from the game
+                            del game_data['board'][position][player][ship]
+                            if ship in game_data['ships'][player]:
+                                del game_data['ships'][player][ship]
+                        else:
+                            game_data['board'][position][player][ship]['health'] = health
 
     if not been_touched:
         game_data['variables']['last_damages'] += 1
@@ -719,19 +725,21 @@ def _buy_ships(game_data, player1, player2, connection):
     if player1 == 'player':
         player1_orders = raw_input('Player1 - What ship do you want to buy ? :').lower()
     elif player1 == 'remote':
-        player1_orders = get_remote_orders(connection)
+        player1_orders = get_remote_orders(connection).lower()
     else:
         player1_orders = _buy_IA()
-	notify_remote_orders(connection, player1_orders)
+	if player2 == 'remote':
+	    notify_remote_orders(connection, player1_orders)
 
     # verify what is the type of player
     if player2 == 'player':
         player2_orders = raw_input('Player2 - What ship do you want to buy ? :').lower()
     elif player2 == 'remote':
-        player2_orders = get_remote_orders(connection)
+        player2_orders = get_remote_orders(connection).lower()
     else:
         player2_orders = _buy_IA()
-	notify_remote_orders(connection, player2_orders)
+	if player1 == 'remote':
+	    notify_remote_orders(connection, player2_orders)
     print player1_orders
     print player2_orders
     _buy_and_add_ships(1, player1_orders, game_data)
@@ -1374,4 +1382,4 @@ def destroyer_action (player, ship_name, game_data):
     action +=' '
     return action
 
-main('test.cis', 'IA', 'remote', '138.48.160.130')
+main('example.cis', 'IA', 'remote', '138.48.160.157')
